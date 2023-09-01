@@ -1,0 +1,57 @@
+name: Check branch before merging into main
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing node_modules
+        run: npm install
+      - name: Running Rome
+        run: npm run check
+
+  # check-models:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Installing node_modules
+  #       run: npm install
+  #     - name: Generating models
+  #       working-directory: ./scripts/generate-models
+  #       run: ./generate-models.sh
+  #     - name: Formatting generated models
+  #       run: npm run format
+  #     - name: Assert diff is zero
+  #       run: git diff --exit-code
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing node_modules
+        run: npm install
+      - name: Running Build
+        run: npm run build
+
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installing node_modules
+        run: npm install
+      - name: Building project
+        run: npm run build
+      - name: Running tests
+        run: npm run test
+

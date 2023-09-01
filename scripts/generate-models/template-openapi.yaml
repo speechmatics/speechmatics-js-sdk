@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: OpenAPI Template
+  version: 1.0.0
+paths:
+  /sample:
+    get:
+      responses:
+        '200':
+          description: successful operation
+# components:
+#   schemas:
+#     # Add here schema definitions
