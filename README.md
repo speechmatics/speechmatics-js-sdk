@@ -50,7 +50,7 @@ An API key can be used in 2 different ways for authentication:
 Bearer authentication will be used by the SDK if you pass an API key, as opposed to a JWT, when the SDK instance is created:
 
 ```typescript
-import { RealtimeSession } from '@speechmatics/sdk';
+import { RealtimeSession } from 'speechmatics';
 
 const sm = new RealtimeSession(YOUR_API_KEY);
 ```
