@@ -18,6 +18,6 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
-      - run: npm publish --dry-run
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
