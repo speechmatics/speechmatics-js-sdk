@@ -130,7 +130,7 @@ session.addListener('AddPartialTranscript', (message) => {
   console.log('message', message);
 });
 
-session.addListener('EndOfStream', () => {
+session.addListener('EndOfTranscript', () => {
   console.log('Session stopped');
 });
 
@@ -187,7 +187,7 @@ session.addListener('AddPartialTranscript', (message) => {
   console.log('message', message);
 });
 
-session.addListener('EndOfStream', () => {
+session.addListener('EndOfTranscript', () => {
   console.log('Session stopped');
 });
 
