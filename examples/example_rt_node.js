@@ -53,7 +53,7 @@ session
     });
 
     //end the session
-    fileStream.on('end', async () => {
+    fileStream.on('end', () => {
       session.stop();
     });
   })
