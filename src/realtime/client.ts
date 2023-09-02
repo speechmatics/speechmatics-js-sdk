@@ -69,9 +69,6 @@ export class RealtimeSession {
       onError: (data: ModelError) => {
         this.emitter.emit(MessagesEnum.Error, data);
       },
-      onDisconnect: () => {
-        this.emitter.emit(MessagesEnum.EndOfTranscript, this);
-      },
     };
   }
 
