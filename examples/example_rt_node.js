@@ -5,7 +5,9 @@ const path = require('path');
 const { RealtimeSession } = require('../dist');
 
 if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
-  throw new Error("Requires node 18 or higher. If this isn't possible, see our documentation about polyfilling");
+  throw new Error(
+    "Requires node 18 or higher. If this isn't possible, see our documentation about polyfilling",
+  );
 }
 const session = new RealtimeSession(process.env.API_KEY);
 
@@ -25,8 +27,8 @@ session.addListener('AddPartialTranscript', (message) => {
   // console.log('partial', message);
 });
 
-session.addListener('EndOfStream', () => {
-  console.log('Session stopped');
+session.addListener('EndOfTranscript', () => {
+  console.log('EndOfTranscript');
 });
 
 session
@@ -41,7 +43,9 @@ session
   })
   .then(() => {
     //prepare file stream
-    const fileStream = fs.createReadStream(path.join(__dirname, 'example_files/example.wav'));
+    const fileStream = fs.createReadStream(
+      path.join(__dirname, 'example_files/example.wav'),
+    );
 
     //send it
     fileStream.on('data', (sample) => {
@@ -49,7 +53,7 @@ session
     });
 
     //end the session
-    fileStream.on('end', () => {
+    fileStream.on('end', async () => {
       session.stop();
     });
   })
