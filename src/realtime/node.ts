@@ -27,19 +27,14 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
       throw new Error('process is undefined - are you running in node?');
   }
 
-  async connect(
-    runtimeURL: string,
-    authToken?: string,
-    appId?: string,
-  ): Promise<void> {
+  async connect(runtimeURL: string, authToken?: string, appId?: string): Promise<void> {
     const url = addQueryParamsToUrl(runtimeURL, {
       [SM_SDK_PARAM_NAME]: getSmSDKVersion(),
       [SM_APP_PARAM_NAME]: appId,
     });
     try {
       let options: ClientOptions | ClientRequestArgs | undefined;
-      if (authToken)
-        options = { headers: { Authorization: `Bearer ${authToken}` } };
+      if (authToken) options = { headers: { Authorization: `Bearer ${authToken}` } };
       this.socket = new WebSocket(url, {
         perMessageDeflate: false,
         ...options,
@@ -71,17 +66,21 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
     });
   }
 
-  sendAudioBuffer(buffer: ArrayBufferLike): void {
+  sendAudioBuffer(data: ArrayBufferLike | Blob): void {
     if (this.socket && this.isOpen()) {
-      this.socket.send(buffer);
+      if (data instanceof Blob) {
+        // NOTE: Maybe we should add a log message about this potentially being poorer performance in Node
+        data.arrayBuffer().then((buf) => this.socket?.send(buf));
+      } else {
+        this.socket.send(data);
+      }
     } else console.error('tried to send audio when socket was closed');
   }
 
   sendMessage(message: string): void {
     if (this.socket && this.isOpen()) {
       this.socket.send(message);
-    } else
-      console.error('tried to send message when socket was closed', message);
+    } else console.error('tried to send message when socket was closed', message);
   }
 
   isOpen(): boolean {
@@ -111,7 +110,6 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
 
   private handleSocketMessage = (message: MessageEvent): void => {
     if (message.data) this.onMessage?.(JSON.parse(message.data.toString()));
-    if (message instanceof Buffer)
-      this.onMessage?.(JSON.parse(message.toString()));
+    if (message instanceof Buffer) this.onMessage?.(JSON.parse(message.toString()));
   };
 }

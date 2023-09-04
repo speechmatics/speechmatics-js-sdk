@@ -26,11 +26,7 @@ export class WebSocketWrapper implements ISocketWrapper {
       throw new Error('window is undefined - are you running in a browser?');
   }
 
-  async connect(
-    runtimeURL: string,
-    authToken?: string,
-    appId?: string,
-  ): Promise<void> {
+  async connect(runtimeURL: string, authToken?: string, appId?: string): Promise<void> {
     const url = addQueryParamsToUrl(runtimeURL, {
       jwt: authToken,
       [SM_SDK_PARAM_NAME]: getSmSDKVersion(),
@@ -68,7 +64,7 @@ export class WebSocketWrapper implements ISocketWrapper {
     });
   }
 
-  sendAudioBuffer(buffer: ArrayBufferLike): void {
+  sendAudioBuffer(buffer: ArrayBufferLike | Blob): void {
     if (this.socket && this.isOpen()) {
       this.socket.send(buffer);
     } else console.error('Tried to send audio when socket was closed');
@@ -77,8 +73,7 @@ export class WebSocketWrapper implements ISocketWrapper {
   sendMessage(message: string): void {
     if (this.socket && this.isOpen()) {
       this.socket.send(message);
-    } else
-      console.error('Tried to send message when socket was closed', message);
+    } else console.error('Tried to send message when socket was closed', message);
   }
 
   isOpen(): boolean {
