@@ -5,12 +5,14 @@ const path = require('path');
 const { RealtimeSession } = require('../dist');
 
 if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
-  throw new Error("Requires node 18 or higher. If this isn't possible, see our documentation about polyfilling");
+  throw new Error(
+    "Requires node 18 or higher. If this isn't possible, see our documentation about polyfilling",
+  );
 }
 const session = new RealtimeSession(process.env.API_KEY);
 
 session.addListener('RecognitionStarted', () => {
-  console.log('session started');
+  console.log('RecognitionStarted');
 });
 
 session.addListener('Error', (error) => {
@@ -18,15 +20,15 @@ session.addListener('Error', (error) => {
 });
 
 session.addListener('AddTranscript', (message) => {
-  console.log('transcript> ', message.metadata.transcript);
+  console.log('AddTranscript', message.metadata.transcript);
 });
 
 session.addListener('AddPartialTranscript', (message) => {
-  // console.log('partial', message);
+  // console.log('AddPartialTranscript', message);
 });
 
-session.addListener('EndOfStream', () => {
-  console.log('Session stopped');
+session.addListener('EndOfTranscript', () => {
+  console.log('EndOfTranscript');
 });
 
 session
@@ -41,10 +43,13 @@ session
   })
   .then(() => {
     //prepare file stream
-    const fileStream = fs.createReadStream(path.join(__dirname, 'example_files/example.wav'));
+    const fileStream = fs.createReadStream(
+      path.join(__dirname, 'example_files/example.wav'),
+    );
 
     //send it
     fileStream.on('data', (sample) => {
+      console.log('sending audio', sample.length);
       session.sendAudio(sample);
     });
 

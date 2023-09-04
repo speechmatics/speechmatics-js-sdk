@@ -8,8 +8,8 @@ export default async function getShortLivedToken(
 ) {
   if (typeof window !== 'undefined') {
     console.warn(
-      "Requesting a short lived token from a browser is not recommended. \
-    More info at https://github.com/speechmatics/speechmatics-js#readme",
+      'Requesting a short lived token from a browser is not recommended. \
+    More info at https://github.com/speechmatics/speechmatics-js#readme',
     );
   }
   const jsonResponse = await request<{ key_value: string }>(

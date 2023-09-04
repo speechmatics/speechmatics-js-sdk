@@ -56,7 +56,6 @@ export class RealtimeSocketHandler {
   ): Promise<void> {
     this.seqNoIn = 0;
 
-
     return this.socketWrap.connect(runtimeURL, runtimeKey, appId);
   }
 
@@ -161,7 +160,6 @@ export class RealtimeSocketHandler {
         throw new Error('Unexpected message');
     }
   };
-
 
   private onSocketDisconnect = () => {
     this.sub.onDisconnect?.();
