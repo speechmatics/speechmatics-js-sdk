@@ -12,7 +12,7 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
 const session = new RealtimeSession(process.env.API_KEY);
 
 session.addListener('RecognitionStarted', () => {
-  console.log('session started');
+  console.log('RecognitionStarted');
 });
 
 session.addListener('Error', (error) => {
@@ -20,11 +20,11 @@ session.addListener('Error', (error) => {
 });
 
 session.addListener('AddTranscript', (message) => {
-  console.log('transcript> ', message.metadata.transcript);
+  console.log('AddTranscript', message.metadata.transcript);
 });
 
 session.addListener('AddPartialTranscript', (message) => {
-  // console.log('partial', message);
+  // console.log('AddPartialTranscript', message);
 });
 
 session.addListener('EndOfTranscript', () => {
@@ -49,6 +49,7 @@ session
 
     //send it
     fileStream.on('data', (sample) => {
+      console.log('sending audio', sample.length);
       session.sendAudio(sample);
     });
 

@@ -109,13 +109,14 @@ import { RealtimeSession } from 'speechmatics';
 
 // imports helpful for the file streaming
 const fs = require('fs');
+const path = require('path');
 
 // init the session
 const session = new RealtimeSession(YOUR_API_KEY);
 
 //add listeners
 session.addListener('RecognitionStarted', () => {
-  console.log('session started');
+  console.log('RecognitionStarted');
 });
 
 session.addListener('Error', (error) => {
@@ -123,21 +124,23 @@ session.addListener('Error', (error) => {
 });
 
 session.addListener('AddTranscript', (message) => {
-  console.log('message', message);
+  console.log('AddTranscript', message);
 });
 
 session.addListener('AddPartialTranscript', (message) => {
-  console.log('message', message);
+  console.log('AddPartialTranscript', message);
 });
 
 session.addListener('EndOfTranscript', () => {
-  console.log('Session stopped');
+  console.log('EndOfTranscript');
 });
 
 //start session which is an async method
 session.start().then(() => {
   //prepare file stream
-  const fileStream = fs.createReadStream('examples/example_files/example.wav');
+  const fileStream = fs.createReadStream(
+    path.join(__dirname, 'example_files/example.wav'),
+  );
 
   //send it
   fileStream.on('data', (sample) => {
@@ -172,7 +175,7 @@ const session = new RealtimeSession(YOUR_JWT);
 
 //add listeners
 session.addListener('RecognitionStarted', () => {
-  console.log('session started');
+  console.log('RecognitionStarted');
 });
 
 session.addListener('Error', (error) => {
@@ -180,15 +183,15 @@ session.addListener('Error', (error) => {
 });
 
 session.addListener('AddTranscript', (message) => {
-  console.log('message', message);
+  console.log('AddTranscript', message);
 });
 
 session.addListener('AddPartialTranscript', (message) => {
-  console.log('message', message);
+  console.log('AddPartialTranscript', message);
 });
 
 session.addListener('EndOfTranscript', () => {
-  console.log('Session stopped');
+  console.log('EndOfTranscript');
 });
 
 //start session which is an async method
@@ -258,6 +261,6 @@ We'd love to see your contributions! Please read our [contributing guidelines](.
 
 ## Feedback & Help
 
-- For feature requests or bugs [open an issue](https://github.com/speechmatics/speechmatics-js/issues/new) 
+- For feature requests or bugs [open an issue](https://github.com/speechmatics/speechmatics-js-sdk/issues/new) 
 - To provide direct feedback, email us at [devrel@speechmatics.com](mailto:devrel@speechmatics.com)
 - We're [@speechmatics](https://twitter.com/Speechmatics) on Twitter too!
