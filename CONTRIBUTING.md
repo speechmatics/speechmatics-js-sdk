@@ -43,7 +43,7 @@ If you want a feature, you can open a discussion via the [issues](https://github
 
 > Any color you like.
 
-We use Rome for linting https://www.npmjs.com/package/rome
+We use Biome for linting and formatting: https://www.npmjs.com/package/@biomejs/biome
 
 You can run linting and formatting using the scripts:
 
