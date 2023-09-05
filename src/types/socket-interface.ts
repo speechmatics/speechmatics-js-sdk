@@ -6,7 +6,7 @@ export interface ISocketWrapper {
   onDisconnect?: (event: CloseEvent) => void;
   connect(url: string, authToken?: string, appId?: string): Promise<void>;
   disconnect(): Promise<void>;
-  sendAudioBuffer(buffer: ArrayBufferLike): void;
+  sendAudioBuffer(buffer: ArrayBufferLike | Blob): void;
   sendMessage(message: string): void;
   isOpen(): boolean;
 }

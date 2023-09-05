@@ -71,9 +71,14 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
     });
   }
 
-  sendAudioBuffer(buffer: ArrayBufferLike): void {
+  sendAudioBuffer(data: ArrayBufferLike | Blob): void {
     if (this.socket && this.isOpen()) {
-      this.socket.send(buffer);
+      if (data instanceof Blob) {
+        // NOTE: Maybe we should add a log message about this potentially being poorer performance in Node
+        data.arrayBuffer().then((buf) => this.socket?.send(buf));
+      } else {
+        this.socket.send(data);
+      }
     } else console.error('tried to send audio when socket was closed');
   }
 

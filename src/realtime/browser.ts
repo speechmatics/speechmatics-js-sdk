@@ -68,7 +68,7 @@ export class WebSocketWrapper implements ISocketWrapper {
     });
   }
 
-  sendAudioBuffer(buffer: ArrayBufferLike): void {
+  sendAudioBuffer(buffer: ArrayBufferLike | Blob): void {
     if (this.socket && this.isOpen()) {
       this.socket.send(buffer);
     } else console.error('Tried to send audio when socket was closed');
