@@ -101,11 +101,13 @@ describe('RealtimeSocketHandler', () => {
       reason: 'Error occurred',
       type: 'data_error',
     };
+    // rome-ignore lint/complexity/useLiteralKeys: <explanation>
     realtimeSocketHandler['onSocketMessage'](error);
     expect(mockSubscriber.onError).toHaveBeenCalledWith(error);
   });
 
   test('onSocketDisconnect', () => {
+    // rome-ignore lint/complexity/useLiteralKeys: <explanation>
     realtimeSocketHandler['onSocketDisconnect']();
     expect(mockSubscriber.onDisconnect).toHaveBeenCalled();
   });
@@ -116,6 +118,7 @@ describe('RealtimeSocketHandler', () => {
       reason: 'Error occurred',
       type: 'data_error',
     };
+    // rome-ignore lint/complexity/useLiteralKeys: <explanation>
     realtimeSocketHandler['onSocketError'](error);
     expect(mockSubscriber.onError).toHaveBeenCalledWith(error);
   });
