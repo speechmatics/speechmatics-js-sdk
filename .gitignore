@@ -6,3 +6,6 @@ node_modules
 dist
 bundle
 out
+
+.next
+*.pem
