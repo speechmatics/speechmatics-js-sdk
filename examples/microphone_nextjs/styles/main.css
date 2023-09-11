@@ -22,6 +22,11 @@ button {
   border: 0;
 }
 
+button:disabled {
+  color: gray;
+  cursor: not-allowed;
+}
+
 button:hover {
   opacity: 0.8;
 }
@@ -82,4 +87,14 @@ select {
   min-width: 300px;
   padding: 0.5em 0.875em;
   margin-bottom: 1em;
+}
+
+.warning-text {
+  color: red;
+}
+
+.flex-row {
+  display: flex;
+  gap: 1em;
+  flex-direction: row;
 }
