@@ -1,4 +1,8 @@
-import { RealtimeSession, AddTranscript } from '../dist';
+import {
+  RealtimeSession,
+  AddTranscript,
+  RetrieveTranscriptResponse,
+} from '../dist';
 import { Speechmatics } from '../dist';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -22,7 +26,10 @@ describe('Testing batch capabilities', () => {
       transcription_config: { language: 'en' },
     });
     expect(transcription).toBeDefined();
-    expect(transcription.job.data_name).toEqual(exampleFileName);
+    expect(typeof transcription).toBe('object');
+    expect((transcription as RetrieveTranscriptResponse).job.data_name).toEqual(
+      exampleFileName,
+    );
   }, 30000);
 
   it('lists jobs', async () => {
