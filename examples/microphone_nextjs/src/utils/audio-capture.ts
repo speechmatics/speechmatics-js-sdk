@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const SAMPLE_RATE_48K = 48000;
 
@@ -20,7 +20,7 @@ export class AudioRecorder {
   async startRecording(deviceId: string) {
     const AudioContext = globalThis.window?.AudioContext;
     const sampleRate =
-      globalThis.navigator?.userAgent.indexOf("Firefox") != -1
+      globalThis.navigator?.userAgent.indexOf('Firefox') != -1
         ? undefined
         : SAMPLE_RATE_48K;
 
@@ -34,16 +34,16 @@ export class AudioRecorder {
     ) {
       return Promise.reject(
         new Error(
-          "AudioContext, mediaDevices API or getUserMedia methods are not supported in this browser."
-        )
+          'AudioContext, mediaDevices API or getUserMedia methods are not supported in this browser.',
+        ),
       );
     }
 
     this.audioContext = new AudioContext({ sampleRate });
 
     // We first check mic permissions in case they are explicitly denied
-    if ((await getPermissions()) === "denied") {
-      throw new Error("Microphone permission denied.");
+    if ((await getPermissions()) === 'denied') {
+      throw new Error('Microphone permission denied.');
     }
 
     // Here we set the sample rate and the deviceId that the user has selected
@@ -103,7 +103,7 @@ export class AudioRecorder {
 // requested provides us with a convenient way to control whether we ask for permissions on load
 // or on a user action e.g. clicking the select menu drop down
 export function useAudioDevices(
-  requested = false
+  requested = false,
 ): [MediaDeviceInfo[], boolean] {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [denied, setIsDenied] = useState<boolean>(false);
@@ -131,11 +131,11 @@ export function useAudioDevices(
 async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
   // We start by checking permissions
   // If permissions are denied, throw an error
-  if ((await getPermissions()) === "denied")
-    throw new Error("Permissions denied");
+  if ((await getPermissions()) === 'denied')
+    throw new Error('Permissions denied');
 
   // If permissions are prompt, we need to call getUserMedia to ask the user for permission
-  if ((await getPermissions()) === "prompt") {
+  if ((await getPermissions()) === 'prompt') {
     await navigator.mediaDevices
       .getUserMedia({ audio: true, video: false })
       .then((stream) => {
@@ -144,7 +144,7 @@ async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
       })
       // If there is an error, we can't get access to the mic
       .catch((err) => {
-        throw new Error("Unexpected error getting microphone access");
+        throw new Error('Unexpected error getting microphone access');
       });
   }
 
@@ -153,10 +153,10 @@ async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
     .enumerateDevices()
     .then(async (devices: MediaDeviceInfo[]) => {
       const filtered = devices.filter((device: MediaDeviceInfo) => {
-        return device.kind == "audioinput";
+        return device.kind == 'audioinput';
       });
       // If labels are null, try opening streams to get labels
-      // This is only for firefox where the device label can only be read when permission 
+      // This is only for firefox where the device label can only be read when permission
       // has been given to access each device, not just audio devices in general
       if (!filtered[0].label) {
         return await getAudioInputsOpenStreams();
@@ -176,7 +176,7 @@ async function getAudioInputsOpenStreams() {
       return true;
     })
     .catch(() => {
-      throw new Error("Permissions denied");
+      throw new Error('Permissions denied');
     });
 
   // enumerate the devices and return them
@@ -184,7 +184,7 @@ async function getAudioInputsOpenStreams() {
     .enumerateDevices()
     .then((devices: MediaDeviceInfo[]) => {
       const filtered = devices.filter((device: MediaDeviceInfo) => {
-        return device.kind == "audioinput";
+        return device.kind == 'audioinput';
       });
       return filtered;
     });
@@ -205,12 +205,12 @@ async function getPermissions() {
     return (
       navigator.permissions
         // @ts-ignore - ignore because microphone is not in the enum of name for all browsers
-        ?.query({ name: "microphone" })
+        ?.query({ name: 'microphone' })
         .then((result) => result.state)
         .catch((err) => {
-          return "prompt";
+          return 'prompt';
         })
     );
   }
-  return "prompt";
+  return 'prompt';
 }

@@ -17,6 +17,6 @@
     "rules": {
       "recommended": true
     },
-    "ignore": ["./dist"]
+    "ignore": ["./dist", "*/**/.next"]
   }
 }

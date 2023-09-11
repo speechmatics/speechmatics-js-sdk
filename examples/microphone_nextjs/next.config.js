@@ -4,8 +4,8 @@ const nextConfig = {
     appDir: false,
   },
   env: {
-    MP_API_KEY: "INSERT_API_KEY",
-  }
-}
+    MP_API_KEY: 'INSERT_API_KEY',
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
