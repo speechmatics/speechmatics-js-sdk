@@ -1,10 +1,6 @@
-// import '../../styles/reset.css';
-import '../../styles/fonts.css';
 import '../../styles/main.css';
-import '../../styles/components-styles.css';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-
 
 interface CustomPageProps {
 }

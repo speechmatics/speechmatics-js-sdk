@@ -12,13 +12,10 @@ const port = 80;
 const app = next({ dev, port })
 const handle = app.getRequestHandler()
 
-const key = fs.readFileSync("./localhost-key.pem", "utf-8");
-const cert = fs.readFileSync("./localhost.pem", "utf-8");
-
 app
     .prepare()
     .then(() => {
-        http.createServer({ key, cert }, (req, res) => {
+        http.createServer({ }, (req, res) => {
             return handle(req, res)
         }).listen(port);
     })

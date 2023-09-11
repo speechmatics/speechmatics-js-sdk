@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First you will need to add you API key to the next.config.js file.
+First you will need to add you API key to the next.config.js file. If you don't have an API key, you can get one from our [Portal](https://portal.speechmatics.com).
 
 Then run the development server:
 
