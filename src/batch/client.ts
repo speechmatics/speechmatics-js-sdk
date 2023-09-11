@@ -110,7 +110,8 @@ export class BatchTranscription {
     translation_config,
     output_config,
     summarization_config,
-  }: TranscribeConfig): Promise<RetrieveTranscriptResponse> {
+    format = 'json-v2',
+  }: TranscribeConfig): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
@@ -145,12 +146,11 @@ export class BatchTranscription {
       throw error;
     });
 
-    const jobResult = await this.getJobResult(
-      submitResponse.id,
-      'json-v2',
-    ).catch((err) => {
-      throw err;
-    });
+    const jobResult = await this.getJobResult(submitResponse.id, format).catch(
+      (err) => {
+        throw err;
+      },
+    );
 
     return new Promise((resolve, reject) => {
       if (jobResult != null) resolve(jobResult);
@@ -202,7 +202,7 @@ export class BatchTranscription {
     return this.delete(`/v2/jobs/${id}`, params);
   }
 
-  async getJobResult<F extends 'text' | 'json-v2' | 'srt'>(
+  async getJobResult<F extends TranscriptionFormat>(
     jobId: string,
     format: F,
   ): Promise<F extends 'json-v2' ? RetrieveTranscriptResponse : string> {
@@ -221,9 +221,12 @@ export class BatchTranscription {
   }
 }
 
+export type TranscriptionFormat = 'json-v2' | 'text' | 'srt';
+
 export type TranscribeConfig = Omit<JobConfig, 'type'> & {
   input: Blob | { fetch: DataFetchConfig };
   language?: ISO639_1_Language;
+  format?: TranscriptionFormat;
 };
 
 export type CreateJobConfig = Omit<JobConfig, 'type'> & {
