@@ -19,27 +19,7 @@ export class AudioRecorder {
 
   async startRecording(deviceId: string) {
     const AudioContext = globalThis.window?.AudioContext;
-    const sampleRate =
-      globalThis.navigator?.userAgent.indexOf('Firefox') != -1
-        ? undefined
-        : SAMPLE_RATE_48K;
-
-    // We check browser compatibility here. There are edge cases where these APIs are not available so we throw an error
-    if (
-      !(
-        navigator.mediaDevices &&
-        navigator.mediaDevices.getUserMedia &&
-        AudioContext
-      )
-    ) {
-      return Promise.reject(
-        new Error(
-          'AudioContext, mediaDevices API or getUserMedia methods are not supported in this browser.',
-        ),
-      );
-    }
-
-    this.audioContext = new AudioContext({ sampleRate });
+    this.audioContext = new AudioContext({ sampleRate: SAMPLE_RATE_48K });
 
     // We first check mic permissions in case they are explicitly denied
     if ((await getPermissions()) === 'denied') {
@@ -47,7 +27,8 @@ export class AudioRecorder {
     }
 
     // Here we set the sample rate and the deviceId that the user has selected
-    let audio: MediaTrackConstraintSet = { sampleRate, deviceId };
+    // If deviceId isn't set, then we get a default device (which is expected behaviour)
+    let audio: MediaTrackConstraintSet = { sampleRate: SAMPLE_RATE_48K, deviceId };
 
     // Now we open the stream
     return navigator.mediaDevices
@@ -139,7 +120,6 @@ async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
     await navigator.mediaDevices
       .getUserMedia({ audio: true, video: false })
       .then((stream) => {
-        stream.getTracks().forEach((track) => track.stop());
         return true;
       })
       // If there is an error, we can't get access to the mic
@@ -167,7 +147,7 @@ async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
 
 // This function opens streams as Firefox only allows read access to open streams
 // We do this just to populate the streams list and then close them
-async function getAudioInputsOpenStreams() {
+async function getAudioInputsOpenStreams(): Promise<MediaDeviceInfo[]> {
   // get and open streams
   await navigator.mediaDevices
     .getUserMedia({ audio: true, video: false })
