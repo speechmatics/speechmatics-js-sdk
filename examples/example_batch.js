@@ -5,6 +5,8 @@ const { Speechmatics } = require('../dist');
 const fs = require('fs');
 const path = require('path');
 
+const fileName = 'example.wav';
+
 if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
   throw new Error(
     "Requires node 18 or higher. If this isn't possible, see our documentation about polyfilling",
@@ -13,11 +15,15 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
 
 const sm = new Speechmatics(process.env.API_KEY);
 const inputFile = new Blob([
-  fs.readFileSync(path.join(__dirname, 'example_files', 'example.wav')),
+  fs.readFileSync(path.join(__dirname, 'example_files', fileName)),
 ]);
 
 sm.batch
-  .transcribe({ input: inputFile, transcription_config: { language: 'en' } })
+  .transcribe({
+    input: inputFile,
+    fileName,
+    transcription_config: { language: 'en' },
+  })
   .then(({ results }) => {
     console.log(results.map((r) => r.alternatives[0].content).join(' '));
   })

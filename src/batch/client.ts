@@ -106,6 +106,7 @@ export class BatchTranscription {
    */
   async transcribe({
     input,
+    fileName,
     transcription_config,
     translation_config,
     output_config,
@@ -119,6 +120,7 @@ export class BatchTranscription {
 
     const submitResponse = await this.createJob({
       input: fileOrFetchConfig,
+      fileName,
       transcription_config,
       translation_config,
       output_config,
@@ -160,6 +162,7 @@ export class BatchTranscription {
 
   async createJob({
     input,
+    fileName,
     transcription_config,
     translation_config,
     output_config,
@@ -180,7 +183,7 @@ export class BatchTranscription {
     if ('url' in input) {
       config.fetch_data = input;
     } else {
-      formData.append('data_file', input);
+      formData.append('data_file', input, fileName);
     }
     formData.append('config', JSON.stringify(config));
 
@@ -225,10 +228,20 @@ export type TranscriptionFormat = 'json-v2' | 'text' | 'srt';
 
 export type TranscribeConfig = Omit<JobConfig, 'type'> & {
   input: Blob | { fetch: DataFetchConfig };
+  /**
+   * Optional file name when passing a raw Blob.
+   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
+   */
+  fileName?: string;
   language?: ISO639_1_Language;
   format?: TranscriptionFormat;
 };
 
 export type CreateJobConfig = Omit<JobConfig, 'type'> & {
   input: Blob | DataFetchConfig;
+  /**
+   * Optional file name when passing a raw Blob.
+   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
+   */
+  fileName?: string;
 };

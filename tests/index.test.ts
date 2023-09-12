@@ -1,4 +1,8 @@
-import { RealtimeSession, AddTranscript } from '../dist';
+import {
+  RealtimeSession,
+  AddTranscript,
+  RetrieveTranscriptResponse,
+} from '../dist';
 import { Speechmatics } from '../dist';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -6,9 +10,10 @@ import path from 'path';
 
 dotenv.config();
 
+const exampleFileName = 'example.wav';
 const EXAMPLE_FILE = new Blob([
   fs.readFileSync(
-    path.join(__dirname, '..', 'examples', 'example_files', 'example.wav'),
+    path.join(__dirname, '..', 'examples', 'example_files', exampleFileName),
   ),
 ]);
 
@@ -17,9 +22,14 @@ describe('Testing batch capabilities', () => {
     const speechmatics = new Speechmatics(process.env.API_KEY as string);
     const transcription = await speechmatics.batch.transcribe({
       input: EXAMPLE_FILE,
+      fileName: exampleFileName,
       transcription_config: { language: 'en' },
     });
     expect(transcription).toBeDefined();
+    expect(typeof transcription).toBe('object');
+    expect((transcription as RetrieveTranscriptResponse).job.data_name).toEqual(
+      exampleFileName,
+    );
   }, 30000);
 
   it('lists jobs', async () => {
