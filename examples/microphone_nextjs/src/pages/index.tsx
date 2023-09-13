@@ -73,14 +73,17 @@ export default function Main({ jwt }: MainProps) {
   // Call the start method on click to start the websocket
   const startTranscription = async () => {
     setSessionState("starting");
-    await audioRecorder.startRecording(audioDeviceId);
-    setTranscription([]);
-    await rtSessionRef.current.start({
-      transcription_config: { max_delay: 2, language: "en" },
-      audio_format: {
-        type: "file",
-      },
-    });
+    await audioRecorder.startRecording(audioDeviceId)
+    .then(async () => {
+      setTranscription([]);
+      await rtSessionRef.current.start({
+        transcription_config: { max_delay: 2, language: "en" },
+        audio_format: {
+          type: "file",
+        },
+      });
+
+    }).catch(err => setSessionState("blocked"))
   };
 
   // Stop the transcription on click to end the recording
