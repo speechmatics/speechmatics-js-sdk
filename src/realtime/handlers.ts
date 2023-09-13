@@ -67,7 +67,7 @@ export class RealtimeSocketHandler {
     return this.socketWrap.isOpen();
   }
 
-  sendAudioBuffer(data: ArrayBufferLike): void {
+  sendAudioBuffer(data: Blob | ArrayBufferLike): void {
     this.socketWrap.sendAudioBuffer(data);
   }
 
