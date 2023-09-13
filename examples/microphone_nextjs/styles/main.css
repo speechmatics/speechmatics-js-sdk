@@ -66,10 +66,6 @@ a {
 }
 
 select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAUEAIAAABFWcbQAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0T///////8JWPfcAAAAB3RJTUUH5wMCDhM78Ea2fQAAALhJREFUSMdj/P///////xmGFGAaaAeMOnowg1FHjzqaHEffb3q46Zl3enphYVvbtaM3O+6HEG8oRD1EL8QcOjkaGUxcNOPlciNinA5RA1FPXYcS5WjFOnk/qa35cRnikeeIcTqmcyF6IebQydEQoGWtXqG4Br/TcTkXopcWIc1IfDWOy3H0dC7JjsbldHo6Fwr+kwWuHrnRfi84La2goLUVwibPHPIAySE9GMDwqlwGMxh19Kij8QAAzQI4LCWL3iQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjMtMDMtMDJUMTQ6MTk6NTErMDA6MDCfqBJCAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIzLTAzLTAyVDE0OjE5OjUxKzAwOjAw7vWq/gAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyMy0wMy0wMlQxNDoxOTo1OSswMDowMIoPxUYAAAAASUVORK5CYII=);
   background-position: 100%;
   background-repeat: no-repeat;
   border: 1px solid #ccc;
@@ -85,7 +81,7 @@ select {
   padding-right: 36px;
   max-width: fit-content;
   min-width: 300px;
-  padding: 0.5em 0.875em;
+  padding: 0.8em 0.875em;
   margin-bottom: 1em;
 }
 

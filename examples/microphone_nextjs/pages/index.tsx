@@ -8,8 +8,9 @@ import React, {
 } from "react";
 import { RealtimeSession, RealtimeRecognitionResult } from "speechmatics";
 import { AudioRecorder, useAudioDevices } from "../utils/recorder";
+import { getJwt } from '../utils/auth';
 
-type MainProps = { jwt?: string; simplUI?: boolean };
+type MainProps = { jwt?: string };
 
 type SessionState = "configure" | "starting" | "blocked" | "error" | "running";
 
@@ -31,14 +32,14 @@ export default function Main({ jwt }: MainProps) {
   useEffect(() => {
     if (
       devices.length &&
-      !devices.some((item) => item.deviceId == audioDeviceId)
+      !devices.some((item) => item.deviceId === audioDeviceId)
     )
       setAudioDeviceId(devices[0].deviceId);
     if (denied) setSessionState("blocked");
   }, [devices, denied]);
 
   // sendAudio is used as a wrapper for the websocket to check the socket is finished init-ing before sending data
-  const sendAudio = (data: Float32Array | Buffer) => {
+  const sendAudio = (data: Blob) => {
     if (
       rtSessionRef.current.rtSocketHandler &&
       rtSessionRef.current.isConnected
@@ -96,7 +97,7 @@ export default function Main({ jwt }: MainProps) {
     <div>
       <div className="flex-row">
         <p>Select Microphone</p>
-        {sessionState == "blocked" && (
+        {sessionState === "blocked" && (
           <p className="warning-text">Microphone permission is blocked</p>
         )}
       </div>
@@ -115,7 +116,7 @@ export default function Main({ jwt }: MainProps) {
         stopTranscription={stopTranscription}
         startTranscription={startTranscription}
       />
-      {sessionState == "error" && (
+      {sessionState === "error" && (
         <p className="warning-text">Session encountered an error</p>
       )}
       {["starting", "running", "configure", "blocked"].includes(
@@ -124,7 +125,7 @@ export default function Main({ jwt }: MainProps) {
       <p>
         {transcription.map(
           (item, index) =>
-            (index != 0 && ![".", ","].includes(item.alternatives[0].content)
+            (index && ![".", ","].includes(item.alternatives[0].content)
               ? " "
               : "") + item.alternatives[0].content
         )}
@@ -138,26 +139,8 @@ export default function Main({ jwt }: MainProps) {
 // The short-lived JWT is then given to the client to connect to Speechmatics' service
 // This ensures the security of long-lived tokens and reduces the scope for abuse from end users
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Instantiate an RT session to get the default URLs. Should really be available in their own right
-  // This is a limitation of the SDK interface and will be fixed at some point
-  const rtSession = new RealtimeSession("");
-
-  const jwt = await fetch(
-    `${rtSession.connectionConfig.managementPlatformUrl}/api_keys?type=rt`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MP_API_KEY}`,
-      },
-      body: JSON.stringify({ ttl: 3600 }),
-    }
-  )
-    .then((res) => res.json())
-    .then((data) => data.key_value);
-
+  const jwt = await getJwt();
   if (jwt === undefined) throw new Error("JWT undefined");
-
   return {
     props: { jwt },
   };
@@ -182,6 +165,7 @@ function TranscriptionButton({
         sessionState
       ) && (
         <button
+          type="button"
           className="bottom-button start-button"
           disabled={["starting", "blocked"].includes(sessionState)}
           onClick={async () => {
@@ -195,6 +179,7 @@ function TranscriptionButton({
 
       {sessionState === "running" && (
         <button
+          type="button"
           className="bottom-button stop-button"
           onClick={() => stopTranscription()}
         >
@@ -217,6 +202,7 @@ function CircleIcon(props: React.SVGProps<SVGSVGElement> & CSSProperties) {
         xmlns="http://www.w3.org/2000/svg"
         {...props}
       >
+        <title>A Circle Icon</title>
         <circle cx={6} cy={6} r={4} fill="#C84031" />
         <path
           fillRule="evenodd"
@@ -239,6 +225,7 @@ function SquareIcon(props: React.SVGProps<SVGSVGElement> & CSSProperties) {
         xmlns="http://www.w3.org/2000/svg"
         {...props}
       >
+        <title>A Square Icon</title>
         <path fill="#fff" d="M0 0h6v6H0z" />
       </svg>
     </span>
@@ -268,12 +255,13 @@ const MicSelect: React.FunctionComponent<MicSelectProps> = ({
   return (
     <select
       onClick={onClick}
+      onKeyDown={onClick}
       value={value}
       onChange={onChange}
     >
       <option value="" disabled selected hidden>Default Audio Input</option>
-      {Object.entries(options).map(([key, value], i) => (
-        <option value={key} key={i}>
+      {Object.entries(options).map(([key, value]) => (
+        <option value={key} key={key}>
           {value.label}
         </option>
       ))}
