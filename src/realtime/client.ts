@@ -153,7 +153,7 @@ export class RealtimeSession {
    *
    * @param data - The audio data to send to the server. Should be a Float32Array. PCM audio.
    */
-  sendAudio(data: Float32Array | Buffer) {
+  sendAudio(data: Float32Array | Buffer | Blob) {
     this.rtSocketHandler.sendAudioBuffer(data);
   }
 
