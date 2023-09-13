@@ -9,11 +9,11 @@ export class AudioRecorder {
   recorder: MediaRecorder;
   audioContext: AudioContext;
   mediaStreamSource: MediaStreamAudioSourceNode;
-  dataHandlerCallback?: (data: Float32Array | Buffer) => void;
+  dataHandlerCallback?: (data: Blob) => void;
 
   // The data handler callback is called when audio data is available
   // It is used to send data to the websocket
-  constructor(dataHandlerCallback: (data: Float32Array | Buffer) => void) {
+  constructor(dataHandlerCallback: (data: Blob) => void) {
     this.dataHandlerCallback = dataHandlerCallback;
   }
 
@@ -28,25 +28,20 @@ export class AudioRecorder {
 
     // Here we set the sample rate and the deviceId that the user has selected
     // If deviceId isn't set, then we get a default device (which is expected behaviour)
-    let audio: MediaTrackConstraintSet = {
+    const audio: MediaTrackConstraintSet = {
       sampleRate: SAMPLE_RATE_48K,
       deviceId,
     };
 
-    // Now we open the stream
-    let stream = await navigator.mediaDevices.getUserMedia({ audio });
-
-    // Store the stream so we can close it on session end
-    this.stream = stream;
+    // Now we open and store the stream
+    this.stream = await navigator.mediaDevices.getUserMedia({ audio });
 
     // Instantiate the MediaRecorder instance
-    this.recorder = new MediaRecorder(stream);
+    this.recorder = new MediaRecorder(this.stream);
 
     // This is the event listening function that gets called when data is available
-    this.recorder.ondataavailable = (ev: BlobEvent) => {
-      ev.data
-        .arrayBuffer()
-        .then((data) => this.dataHandlerCallback?.(Buffer.from(data)));
+    this.recorder.ondataavailable = (event: BlobEvent) => {
+      this.dataHandlerCallback?.(event.data);
     };
 
     // Start recording from the device
@@ -119,10 +114,10 @@ async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
   }
 
   // now we have permissions, we attempt to get the audio devices
-  let devices: MediaDeviceInfo[] =
+  const devices: MediaDeviceInfo[] =
     await navigator.mediaDevices.enumerateDevices();
   const filtered = devices.filter((device: MediaDeviceInfo) => {
-    return device.kind == "audioinput";
+    return device.kind === "audioinput";
   });
   // If labels are null, try opening streams to get labels
   // This is only for firefox where the device label can only be read when permission
@@ -141,13 +136,15 @@ async function getAudioInputsOpenStreams(): Promise<MediaDeviceInfo[]> {
     audio: true,
     video: false,
   });
-  stream.getAudioTracks().forEach((track) => (track.enabled = true));
+  stream.getAudioTracks().forEach((track) => {
+    track.enabled = true
+  });
 
   // enumerate the devices and return them
-  let devices: MediaDeviceInfo[] =
+  const devices: MediaDeviceInfo[] =
     await navigator.mediaDevices.enumerateDevices();
   const filtered = devices.filter((device: MediaDeviceInfo) => {
-    return device.kind == "audioinput";
+    return device.kind === "audioinput";
   });
 
   // Close the audio streams
@@ -162,7 +159,7 @@ async function getAudioInputsOpenStreams(): Promise<MediaDeviceInfo[]> {
 // getPermissions is used to access the permissions API
 // This API is not fully supported in all browsers so we first check the availability of the API
 async function getPermissions() {
-  if (!!navigator?.permissions) {
+  if (navigator?.permissions) {
     return (
       navigator.permissions
         // @ts-ignore - ignore because microphone is not in the enum of name for all browsers
