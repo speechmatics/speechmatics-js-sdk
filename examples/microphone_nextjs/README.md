@@ -7,11 +7,11 @@ First you will need to add you API key to the next.config.js file. If you don't 
 Then run the development server:
 
 ```bash
-npm run start
+npm run dev
 # or
-yarn start
+yarn dev
 # or
-pnpm start
+pnpm dev
 ```
 
 Open [http://localhost](http://localhost) with your browser to see the result.
