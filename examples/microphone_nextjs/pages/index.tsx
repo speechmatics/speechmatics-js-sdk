@@ -261,7 +261,7 @@ const MicSelect: React.FunctionComponent<MicSelectProps> = ({
     >
       <option value="" disabled selected hidden>Default Audio Input</option>
       {Object.entries(options).map(([key, value]) => (
-        <option value={key} key={key}>
+        <option value={value.value} key={key}>
           {value.label}
         </option>
       ))}
