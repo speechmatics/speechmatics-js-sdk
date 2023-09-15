@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 const SAMPLE_RATE_48K = 48000;
 
@@ -34,7 +34,7 @@ export class AudioRecorder {
     };
 
     // Now we open and store the stream
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio });
+    this.stream = await audioDevices.getUserMedia({ audio });
 
     // Instantiate the MediaRecorder instance
     this.recorder = new MediaRecorder(this.stream);
@@ -73,86 +73,125 @@ export class AudioRecorder {
   }
 }
 
-// useAudioDevices is the hook we'll use to get a list of all the user's microphones
-// requested provides us with a convenient way to control whether we ask for permissions on load
-// or on a user action e.g. clicking the select menu drop down
-export function useAudioDevices(
-  requested = false,
-): [MediaDeviceInfo[], boolean] {
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [denied, setIsDenied] = useState<boolean>(false);
+// this is a Class so that we can use EventTarget, but a singleton, as in the browser the active devices are external to React and can be managed app-wide.
+class AudioDevices extends EventTarget {
+  private busy = false;
+  private _denied = false;
+  private _devices: MediaDeviceInfo[] = [];
 
-  // Create the async function to set devices
-  const getDevices = async () => {
+  get denied() {
+    return this._denied;
+  }
+  set denied(denied) {
+    if (denied !== this._denied) {
+      this._denied = denied;
+      this.dispatchEvent(new Event('changeDenied'));
+    }
+  }
+
+  get devices() {
+    return this._devices;
+  }
+  set devices(devices) {
+    if (devices !== this._devices) {
+      this._devices = devices;
+      this.dispatchEvent(new Event('changeDevices'));
+    }
+  }
+
+  constructor() {
+    super();
+    if (typeof window !== 'undefined') {
+      this.updateDeviceList();
+      // We don't need to unsubscribe as this class is a singleton
+      navigator.mediaDevices.addEventListener('devicechange', () => {
+        this.updateDeviceList();
+      });
+    }
+  }
+
+  // A wrapped getUserMedia that manages denied and device state
+  public getUserMedia = async (constraints: MediaStreamConstraints) => {
+    let stream: MediaStream;
     try {
-      const devs = await getAudioInputs();
-      setDevices(devs);
-    } catch (err) {
-      setIsDenied(true);
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.denied = false;
+    } catch (ex) {
+      this.denied = true;
+    }
+    this.updateDeviceList();
+    return stream;
+  };
+
+  public getDevices = async () => {
+    if (!this.busy) {
+      this.busy = true;
+      await this.promptAudioInputs();
+      this.busy = false;
+    } else {
+      console.warn('getDevices already in progress');
     }
   };
 
-  // Call the async method in useEffect
-  useEffect(() => {
-    if (requested) getDevices();
-  }, [requested]);
+  private updateDeviceList = async () => {
+    const devices: MediaDeviceInfo[] =
+      await navigator.mediaDevices.enumerateDevices();
+    const filtered = devices.filter((device: MediaDeviceInfo) => {
+      return (
+        device.kind === 'audioinput' &&
+        device.deviceId !== '' &&
+        device.label !== ''
+      );
+    });
+    this.devices = filtered;
+  };
 
-  return [devices, denied];
+  private promptAudioInputs = async () => {
+    const permissions = await getPermissions();
+    if (permissions === 'denied') {
+      this.denied = true;
+      return;
+    }
+
+    // If permissions are prompt, we need to call getUserMedia to ask the user for permission
+    if (permissions === 'prompt') {
+      await this.getUserMedia({
+        audio: true,
+        video: false,
+      });
+    } else {
+      this.updateDeviceList();
+    }
+  };
+}
+const audioDevices = new AudioDevices();
+
+// Devices state
+function subscribeDevices(callback) {
+  audioDevices.addEventListener('changeDevices', callback);
+  return () => {
+    audioDevices.removeEventListener('changeDevices', callback);
+  };
+}
+const getDevices = () => audioDevices.devices;
+export function useAudioDevices() {
+  return useSyncExternalStore(subscribeDevices, getDevices, getDevices);
 }
 
-// getAudioInputs enumerates all the available microphones
-async function getAudioInputs(): Promise<MediaDeviceInfo[]> {
-  // We start by checking permissions
-  // If permissions are denied, throw an error
-  if ((await getPermissions()) === 'denied')
-    throw new Error('Permissions denied');
-
-  // If permissions are prompt, we need to call getUserMedia to ask the user for permission
-  if ((await getPermissions()) === 'prompt') {
-    await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-  }
-
-  // now we have permissions, we attempt to get the audio devices
-  const devices: MediaDeviceInfo[] =
-    await navigator.mediaDevices.enumerateDevices();
-  const filtered = devices.filter((device: MediaDeviceInfo) => {
-    return device.kind === 'audioinput';
-  });
-  // If labels are null, try opening streams to get labels
-  // This is only for firefox where the device label can only be read when permission
-  // has been given to access each device, not just audio devices in general
-  if (!filtered[0].label) {
-    return await getAudioInputsOpenStreams();
-  }
-  return filtered;
+// Denied state
+function subscribeDenied(callback) {
+  audioDevices.addEventListener('changeDenied', callback);
+  return () => {
+    audioDevices.removeEventListener('changeDenied', callback);
+  };
+}
+const getDenied = () => audioDevices.denied;
+export function useAudioDenied() {
+  return useSyncExternalStore(subscribeDenied, getDenied, getDenied);
 }
 
-// This function opens streams as Firefox only allows read access to open streams
-// We do this just to populate the streams list and then close them
-async function getAudioInputsOpenStreams(): Promise<MediaDeviceInfo[]> {
-  // get and open streams
-  let stream: void | MediaStream = await navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: false,
-  });
-  stream.getAudioTracks().forEach((track) => {
-    track.enabled = true;
-  });
-
-  // enumerate the devices and return them
-  const devices: MediaDeviceInfo[] =
-    await navigator.mediaDevices.enumerateDevices();
-  const filtered = devices.filter((device: MediaDeviceInfo) => {
-    return device.kind === 'audioinput';
-  });
-
-  // Close the audio streams
-  stream = await navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: false,
-  });
-  stream.getTracks().forEach((track) => track.stop());
-  return filtered;
+export function useRequestDevices() {
+  return useCallback(() => audioDevices.getDevices(), []);
 }
 
 // getPermissions is used to access the permissions API

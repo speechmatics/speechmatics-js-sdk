@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import React, {
   useState,
   useMemo,
@@ -7,8 +8,18 @@ import React, {
   useEffect,
 } from 'react';
 import { RealtimeSession, RealtimeRecognitionResult } from 'speechmatics';
-import { AudioRecorder, useAudioDevices } from '../utils/recorder';
+import {
+  AudioRecorder,
+  useAudioDenied,
+  useAudioDevices,
+  useRequestDevices,
+} from '../utils/recorder';
 import { getJwt } from '../utils/auth';
+
+// The mic drop down can be populated with client state, so we don't server render it to prevent hydration errors
+const MicSelect = dynamic(() => import('../components/MicSelect'), {
+  ssr: false,
+});
 
 type MainProps = { jwt?: string };
 
@@ -24,8 +35,9 @@ export default function Main({ jwt }: MainProps) {
   const rtSessionRef = useRef(new RealtimeSession(jwt));
 
   // Get devices using our custom hook
-  const [requestDevices, setRequestDevices] = useState<boolean>(false);
-  const [devices, denied] = useAudioDevices(requestDevices);
+  const devices = useAudioDevices();
+  const denied = useAudioDenied();
+  const requestDevices = useRequestDevices();
 
   // useEffect listens for changes in devices
   // It sets a default deviceId if no valid deviceId is already set
@@ -103,14 +115,22 @@ export default function Main({ jwt }: MainProps) {
         )}
       </div>
       <MicSelect
-        onClick={() => {
-          setRequestDevices(true);
-        }}
+        disabled={!['configure', 'blocked'].includes(sessionState)}
+        onClick={requestDevices}
         value={audioDeviceId}
         options={devices.map((item) => {
           return { value: item.deviceId, label: item.label };
         })}
-        onChange={(e) => setAudioDeviceId(e.target.value)}
+        onChange={(e) => {
+          if (sessionState === 'configure') {
+            setAudioDeviceId(e.target.value);
+          } else if (sessionState === 'blocked') {
+            setSessionState('configure');
+            setAudioDeviceId(e.target.value);
+          } else {
+            console.warn('Unexpected mic change during state:', sessionState);
+          }
+        }}
       />
       <TranscriptionButton
         sessionState={sessionState}
@@ -168,7 +188,7 @@ function TranscriptionButton({
         <button
           type='button'
           className='bottom-button start-button'
-          disabled={['starting', 'blocked'].includes(sessionState)}
+          disabled={sessionState === 'starting'}
           onClick={async () => {
             startTranscription();
           }}
@@ -232,42 +252,3 @@ function SquareIcon(props: React.SVGProps<SVGSVGElement> & CSSProperties) {
     </span>
   );
 }
-
-// MicSelect - component with a select menu for choosing mic inputs
-
-type Option = {
-  value: string;
-  label: string;
-};
-
-interface MicSelectProps {
-  value: string;
-  onChange: (event) => void;
-  onClick: () => void;
-  options: Option[];
-}
-
-const MicSelect: React.FunctionComponent<MicSelectProps> = ({
-  onChange,
-  onClick,
-  options,
-  value,
-}) => {
-  return (
-    <select
-      onClick={onClick}
-      onKeyDown={onClick}
-      value={value}
-      onChange={onChange}
-    >
-      <option value='' disabled selected hidden>
-        Default Audio Input
-      </option>
-      {Object.entries(options).map(([key, value]) => (
-        <option value={value.value} key={key}>
-          {value.label}
-        </option>
-      ))}
-    </select>
-  );
-};
