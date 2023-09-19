@@ -29,7 +29,7 @@ export default function Main({ jwt }: MainProps) {
   const [transcription, setTranscription] = useState<
     RealtimeRecognitionResult[]
   >([]);
-  const [audioDeviceId, setAudioDeviceId] = useState<string>('');
+  const [audioDeviceIdState, setAudioDeviceId] = useState<string>('');
   const [sessionState, setSessionState] = useState<SessionState>('configure');
 
   const rtSessionRef = useRef(new RealtimeSession(jwt));
@@ -39,16 +39,11 @@ export default function Main({ jwt }: MainProps) {
   const denied = useAudioDenied();
   const requestDevices = useRequestDevices();
 
-  // useEffect listens for changes in devices
-  // It sets a default deviceId if no valid deviceId is already set
-  useEffect(() => {
-    if (
-      devices.length &&
-      !devices.some((item) => item.deviceId === audioDeviceId)
-    )
-      setAudioDeviceId(devices[0].deviceId);
-    if (denied) setSessionState('blocked');
-  }, [devices, denied]);
+  const audioDeviceIdComputed =
+    devices.length &&
+    !devices.some((item) => item.deviceId === audioDeviceIdState)
+      ? devices[0].deviceId
+      : audioDeviceIdState;
 
   // sendAudio is used as a wrapper for the websocket to check the socket is finished init-ing before sending data
   const sendAudio = (data: Blob) => {
@@ -87,7 +82,7 @@ export default function Main({ jwt }: MainProps) {
   const startTranscription = async () => {
     setSessionState('starting');
     await audioRecorder
-      .startRecording(audioDeviceId)
+      .startRecording(audioDeviceIdComputed)
       .then(async () => {
         setTranscription([]);
         await rtSessionRef.current.start({
@@ -110,14 +105,14 @@ export default function Main({ jwt }: MainProps) {
     <div>
       <div className='flex-row'>
         <p>Select Microphone</p>
-        {sessionState === 'blocked' && (
+        {(sessionState === 'blocked' || denied) && (
           <p className='warning-text'>Microphone permission is blocked</p>
         )}
       </div>
       <MicSelect
         disabled={!['configure', 'blocked'].includes(sessionState)}
         onClick={requestDevices}
-        value={audioDeviceId}
+        value={audioDeviceIdComputed}
         options={devices.map((item) => {
           return { value: item.deviceId, label: item.label };
         })}
