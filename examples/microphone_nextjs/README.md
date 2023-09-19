@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Microphone Demo Next.js App
+
+This is an app to demonstrate how the Speechmatics JavaScript SDK can be used along with the browser microphone APIs to record a user's voice input in realtime.
 
 ## Getting Started
 
