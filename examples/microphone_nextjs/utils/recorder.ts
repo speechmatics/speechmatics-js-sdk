@@ -123,7 +123,9 @@ class AudioDevices extends EventTarget {
     return stream;
   };
 
+  // getDevices is used to prompt the user to give permission to audio inputs
   public getDevices = async () => {
+    // We first check if the system is busy - we don't want to prompt for permissions if the user is already prompted for permissions
     if (!this.busy) {
       this.busy = true;
       await this.promptAudioInputs();
@@ -133,6 +135,7 @@ class AudioDevices extends EventTarget {
     }
   };
 
+  // updateDeviceList is used to handle device enumeration once permissions have been given
   private updateDeviceList = async () => {
     const devices: MediaDeviceInfo[] =
       await navigator.mediaDevices.enumerateDevices();
@@ -166,7 +169,8 @@ class AudioDevices extends EventTarget {
 }
 const audioDevices = new AudioDevices();
 
-// Devices state
+// Here we subscribe to the device state browser event
+// When devices change, the getDevices callback is invoked
 function subscribeDevices(callback) {
   audioDevices.addEventListener('changeDevices', callback);
   return () => {
@@ -178,7 +182,8 @@ export function useAudioDevices() {
   return useSyncExternalStore(subscribeDevices, getDevices, getDevices);
 }
 
-// Denied state
+// Here we subscribe to the user's provided permissions
+// When the permission state changes, the useAudioDevices hook is called
 function subscribeDenied(callback) {
   audioDevices.addEventListener('changeDenied', callback);
   return () => {
