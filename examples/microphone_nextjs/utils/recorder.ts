@@ -203,15 +203,14 @@ export function useRequestDevices() {
 // This API is not fully supported in all browsers so we first check the availability of the API
 async function getPermissions() {
   if (navigator?.permissions) {
-    return (
-      navigator.permissions
+    try {
+      let result = await navigator.permissions
         // @ts-ignore - ignore because microphone is not in the enum of name for all browsers
-        ?.query({ name: 'microphone' })
-        .then((result) => result.state)
-        .catch((err) => {
-          return 'prompt';
-        })
-    );
+        ?.query({ name: 'microphone' });
+      return result.state;
+    } catch (err) {
+      return 'prompt';
+    }
   }
   return 'prompt';
 }

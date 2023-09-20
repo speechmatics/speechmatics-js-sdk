@@ -5,7 +5,7 @@ type Option = {
 };
 interface MicSelectProps {
   value: string;
-  onChange: (event) => void;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
   onClick: () => void;
   options: Option[];
   disabled: boolean;
