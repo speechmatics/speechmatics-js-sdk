@@ -32,7 +32,7 @@ export default function Main({ jwt }: MainProps) {
   const [audioDeviceIdState, setAudioDeviceId] = useState<string>('');
   const [sessionState, setSessionState] = useState<SessionState>('configure');
 
-  const rtSessionRef = useRef(new RealtimeSession(jwt));
+  const rtSessionRef = useRef<RealtimeSession>(new RealtimeSession(jwt));
 
   // Get devices using our custom hook
   const devices = useAudioDevices();
@@ -49,7 +49,7 @@ export default function Main({ jwt }: MainProps) {
   const sendAudio = (data: Blob) => {
     if (
       rtSessionRef.current.rtSocketHandler &&
-      rtSessionRef.current.isConnected
+      rtSessionRef.current.isConnected()
     ) {
       rtSessionRef.current.sendAudio(data);
     }
@@ -146,9 +146,9 @@ export default function Main({ jwt }: MainProps) {
       <p>
         {transcription.map(
           (item, index) =>
-            (index && !['.', ','].includes(item.alternatives[0].content)
+            (index && !['.', ','].includes(item?.alternatives?.[0]?.content)
               ? ' '
-              : '') + item.alternatives[0].content,
+              : '') + item?.alternatives?.[0]?.content,
         )}
       </p>
     </div>
