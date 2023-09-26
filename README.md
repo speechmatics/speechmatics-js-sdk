@@ -227,8 +227,8 @@ const session = new RealtimeSession(YOUR_API_KEY);
 const transcription_config = {
   language: 'en',
   additional_vocab: [
-    { word: 'gnocchi', sounds_like: ['nyohki', 'nokey', 'nochi'] },
-    { word: 'CEO', sounds_like: ['C.E.O'] }
+    { content: 'gnocchi', sounds_like: ['nyohki', 'nokey', 'nochi'] },
+    { content: 'CEO', sounds_like: ['C.E.O'] }
   ],
   diarization: 'speaker_change',
   enable_partials: true,
