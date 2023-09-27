@@ -22,8 +22,10 @@ export class WebSocketWrapper implements ISocketWrapper {
   onError?: (event: ModelError) => void;
 
   constructor() {
-    if (typeof chrome.runtime === 'undefined' )
-      throw new Error('chrome is undefined - are you running in a background script?');
+    if (typeof chrome.runtime === 'undefined')
+      throw new Error(
+        'chrome is undefined - are you running in a background script?',
+      );
   }
 
   async connect(

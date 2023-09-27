@@ -9,8 +9,8 @@ export default function MyApp({ Component, pageProps }: AppProps<{}>) {
       <Head>
         <title>Speechmatics RT Demo</title>
         <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
       </Head>
       <Component {...pageProps} />
