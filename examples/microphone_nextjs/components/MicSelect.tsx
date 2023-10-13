@@ -22,9 +22,9 @@ const MicSelect: React.FunctionComponent<MicSelectProps> = ({
     <div
       onClick={onClick}
       onKeyUp={onClick}
-      role="button"
+      role='button'
       tabIndex={0}
-      aria-label="Grant audio access"
+      aria-label='Grant audio access'
     >
       <select disabled style={{ pointerEvents: 'none' }}>
         <option>Default</option>
