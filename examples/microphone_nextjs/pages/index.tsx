@@ -108,10 +108,10 @@ export default function Main({ jwt }: MainProps) {
 
   return (
     <div>
-      <div className="flex-row">
+      <div className='flex-row'>
         <p>Select Microphone</p>
         {(sessionState === 'blocked' || denied) && (
-          <p className="warning-text">Microphone permission is blocked</p>
+          <p className='warning-text'>Microphone permission is blocked</p>
         )}
       </div>
       <MicSelect
@@ -138,7 +138,7 @@ export default function Main({ jwt }: MainProps) {
         startTranscription={startTranscription}
       />
       {sessionState === 'error' && (
-        <p className="warning-text">Session encountered an error</p>
+        <p className='warning-text'>Session encountered an error</p>
       )}
       {['starting', 'running', 'configure', 'blocked'].includes(
         sessionState,
@@ -181,13 +181,13 @@ function TranscriptionButton({
   sessionState,
 }: TranscriptionButtonProps) {
   return (
-    <div className="bottom-button-status">
+    <div className='bottom-button-status'>
       {['configure', 'stopped', 'starting', 'error', 'blocked'].includes(
         sessionState,
       ) && (
         <button
-          type="button"
-          className="bottom-button start-button"
+          type='button'
+          className='bottom-button start-button'
           disabled={sessionState === 'starting'}
           onClick={async () => {
             startTranscription();
@@ -200,8 +200,8 @@ function TranscriptionButton({
 
       {sessionState === 'running' && (
         <button
-          type="button"
-          className="bottom-button stop-button"
+          type='button'
+          className='bottom-button stop-button'
           onClick={() => stopTranscription()}
         >
           <SquareIcon style={{ marginRight: '0.25em', marginBottom: '1px' }} />
@@ -216,20 +216,20 @@ function CircleIcon(props: React.SVGProps<SVGSVGElement> & CSSProperties) {
   return (
     <span style={{ ...props.style }}>
       <svg
-        width="1em"
-        height="1em"
-        viewBox="0 0 12 12"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+        width='1em'
+        height='1em'
+        viewBox='0 0 12 12'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
         {...props}
       >
         <title>A Circle Icon</title>
-        <circle cx={6} cy={6} r={4} fill="#C84031" />
+        <circle cx={6} cy={6} r={4} fill='#C84031' />
         <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M6 12A6 6 0 106 0a6 6 0 000 12zm0-.857A5.143 5.143 0 106 .857a5.143 5.143 0 000 10.286z"
-          fill="#C84031"
+          fillRule='evenodd'
+          clipRule='evenodd'
+          d='M6 12A6 6 0 106 0a6 6 0 000 12zm0-.857A5.143 5.143 0 106 .857a5.143 5.143 0 000 10.286z'
+          fill='#C84031'
         />
       </svg>
     </span>
@@ -242,12 +242,12 @@ function SquareIcon(props: React.SVGProps<SVGSVGElement> & CSSProperties) {
       <svg
         width={6}
         height={6}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
         {...props}
       >
         <title>A Square Icon</title>
-        <path fill="#fff" d="M0 0h6v6H0z" />
+        <path fill='#fff' d='M0 0h6v6H0z' />
       </svg>
     </span>
   );
