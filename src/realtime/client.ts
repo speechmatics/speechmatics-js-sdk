@@ -14,6 +14,7 @@ import {
 } from '../types';
 import * as nodeWrapper from '../realtime/node';
 import * as webWrapper from '../realtime/browser';
+import * as chromeWrapper from '../realtime/extension';
 
 import { EventMap } from '../types/event-map';
 
@@ -34,6 +35,8 @@ export class RealtimeSession {
     let socketImplementation: ISocketWrapper | null = null;
     if (typeof window !== 'undefined') {
       socketImplementation = new webWrapper.WebSocketWrapper();
+    } else if (typeof chrome !== 'undefined') {
+      socketImplementation = new chromeWrapper.WebSocketWrapper();
     } else if (typeof process !== 'undefined') {
       socketImplementation = new nodeWrapper.NodeWebSocketWrapper();
     } else {
