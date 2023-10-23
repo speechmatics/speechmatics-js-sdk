@@ -35,6 +35,7 @@ export class RealtimeSession {
     let socketImplementation: ISocketWrapper | null = null;
     if (typeof window !== 'undefined') {
       socketImplementation = new webWrapper.WebSocketWrapper();
+      // @ts-ignore
     } else if (typeof chrome !== 'undefined') {
       socketImplementation = new chromeWrapper.WebSocketWrapper();
     } else if (typeof process !== 'undefined') {

@@ -7,6 +7,7 @@ import { Speechmatics } from '../dist';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+import poll from '../src/utils/poll';
 
 dotenv.config();
 
@@ -47,25 +48,17 @@ describe('Testing batch capabilities', () => {
       },
     });
 
-    const result = await new Promise((resolve, reject) => {
-      const poll = setInterval(() => {
-        speechmatics.batch
-          .getJobResult(id, 'text')
-          .then((resp) => {
-            resolve(resp);
-            poll.unref();
-            clearInterval(poll);
-          })
-          .catch((err) => {
-            // Ignore errors since we're expecting 404s
-            if (!err.toString().includes('404')) {
-              console.log(err);
-              reject(err);
-              poll.unref();
-              clearInterval(poll);
-            }
-          });
-      }, 2000);
+    const result = await poll(async () => {
+      try {
+        const jobResult = await speechmatics.batch.getJobResult(id, 'text');
+        return { state: 'resolved', value: jobResult };
+      } catch (err) {
+        if (err instanceof Error && err.toString().includes('404')) {
+          return { state: 'pending' };
+        } else {
+          throw err;
+        }
+      }
     });
 
     expect(typeof result).toBe('string');

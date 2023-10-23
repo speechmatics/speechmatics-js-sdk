@@ -9,11 +9,10 @@ import {
 } from '../types';
 import { ConnectionConfig, ConnectionConfigFull } from '../config/connection';
 import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
-import waitUntilAvail from '../utils/wait-until-avail';
+import poll from '../utils/poll';
 import RetrieveJobsFilters from '../types/list-job-filters';
 import { BatchFeatureDiscovery } from '../types/batch-feature-discovery';
 import { ISO639_1_Language } from '../types/language-code';
-import { ReadStream } from 'fs';
 
 export class BatchTranscription {
   private config: ConnectionConfigFull;
@@ -131,33 +130,22 @@ export class BatchTranscription {
       throw 'Error: submitResponse is undefined';
     }
 
-    await waitUntilAvail(
+    await poll(
       async () => {
         const { job } = await this.getJob(submitResponse.id);
         if (job.status === 'rejected') {
           throw job.errors;
         } else if (job.status === 'done') {
-          return true;
+          return { state: 'resolved', value: job };
         } else {
-          return false;
+          return { state: 'pending' };
         }
       },
       3000, // repeat every 3 seconds
       15 * 60 * 1000, // 15 minutes timeout
-    ).catch((error) => {
-      throw error;
-    });
-
-    const jobResult = await this.getJobResult(submitResponse.id, format).catch(
-      (err) => {
-        throw err;
-      },
     );
 
-    return new Promise((resolve, reject) => {
-      if (jobResult != null) resolve(jobResult);
-      else reject('Error: jobResult is null');
-    });
+    return await this.getJobResult(submitResponse.id, format);
   }
 
   async createJob({
