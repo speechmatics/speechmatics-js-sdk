@@ -2,6 +2,13 @@ export type PollResult<T> =
   | { readonly state: 'pending' }
   | { readonly state: 'resolved'; readonly value: T };
 
+/**
+ *
+ * @param cb polling function retuning a `PollResult`. If this rejects, then polling will stop, and the return promise rejects as well
+ * @param interval number of milliseconds between each attempt, while still pending
+ * @param timeout number of milliseconds after which to reject unconditionally
+ * @returns a Promise which is fulfilled after a `resolved` state is returned from the function, or rejects if either the caller rejects, or timeout is exceeded
+ */
 export default function poll<T>(
   cb: () => Promise<PollResult<T>>,
   interval = 500,
