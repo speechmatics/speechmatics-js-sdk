@@ -22,7 +22,6 @@ export class WebSocketWrapper implements ISocketWrapper {
   onError?: (event: ModelError) => void;
 
   constructor() {
-    // @ts-ignore
     if (typeof chrome.runtime === 'undefined')
       throw new Error(
         'chrome is undefined - are you running in a background script?',
