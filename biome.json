@@ -6,7 +6,7 @@
   "formatter": {
     "indentStyle": "space",
     "indentSize": 2,
-    "ignore": ["./dist"]
+    "ignore": ["./dist", "*/**/.next", "./examples/microphone_nextjs"]
   },
   "javascript": {
     "formatter": {
