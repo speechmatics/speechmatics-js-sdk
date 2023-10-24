@@ -18,6 +18,7 @@ import {
   ISocketWrapper,
   SessionConfig,
 } from '../types';
+import { SpeechmaticsInternalError } from '../utils/errors';
 
 export const defaultLanguage = 'en';
 
@@ -28,6 +29,13 @@ const rtDefaultConfig: RealtimeTranscriptionConfig = {
 const defaultAudioFormat = {
   type: 'file',
 } as const;
+
+const expectUndefined = (u: undefined) => {
+  if (u) {
+    // If our TypeScript types are correct, we should never hit this
+    throw new SpeechmaticsInternalError('Unexpected type');
+  }
+};
 
 export class RealtimeSocketHandler {
   private socketWrap: ISocketWrapper;
@@ -156,8 +164,14 @@ export class RealtimeSocketHandler {
         this.sub?.onInfo?.(data as Info);
         break;
 
+      case MessagesEnum.StartRecognition:
+      case MessagesEnum.AddAudio:
+      case MessagesEnum.EndOfStream:
+      case MessagesEnum.SetRecognitionConfig:
+        // TODO: is this correct?
+        throw new SpeechmaticsInternalError('Unexpected message');
       default:
-        throw new Error('Unexpected message');
+        expectUndefined(data.message);
     }
   };
 
