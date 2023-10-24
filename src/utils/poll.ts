@@ -2,7 +2,7 @@ export type PollResult<T> =
   | { readonly state: 'pending' }
   | { readonly state: 'resolved'; readonly value: T };
 
-export default async function poll<T>(
+export default function poll<T>(
   cb: () => Promise<PollResult<T>>,
   interval = 500,
   timeout = 60 * 1000,
@@ -25,9 +25,9 @@ export default async function poll<T>(
           }
         })
         .catch((err) => {
-          console.debug(err);
           clearTimeout(errTimeout);
           clearInterval(pollInterval);
+          reject(err);
         });
     }, interval);
   });

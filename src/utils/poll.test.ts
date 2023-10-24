@@ -41,18 +41,19 @@ describe('poll', () => {
   });
 
   it('stops polling if the callback rejects', async () => {
-    // Pending for 3 calls, then rejection
+    // Pending for 1 call, then rejection
     const states = (function* () {
-      yield 'pending' as const;
-      yield 'pending' as const;
       yield 'pending' as const;
     })();
 
+    const err = new Error('explicit rejection');
+
     const cb = jest.fn(async () => {
       const state = states.next().value;
-      if (!state) throw new Error('rejection');
+      if (!state) throw err;
       return { state };
     });
-    await expect(poll(cb, 250, 1000)).rejects.toBeInstanceOf(Error);
+    await expect(poll(cb)).rejects.toBe(err);
+    expect(cb).toBeCalledTimes(2);
   });
 });
