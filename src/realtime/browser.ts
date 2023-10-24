@@ -6,6 +6,7 @@ import {
 } from '../utils/request';
 import { ISocketWrapper } from '../types';
 import { ModelError, RealtimeMessage } from '../types';
+import { SpeechmaticsInternalError } from '../utils/errors';
 
 /**
  * Wraps the socket api to be more useful in async/await kind of scenarios
@@ -23,7 +24,9 @@ export class WebSocketWrapper implements ISocketWrapper {
 
   constructor() {
     if (typeof window === 'undefined')
-      throw new Error('window is undefined - are you running in a browser?');
+      throw new SpeechmaticsInternalError(
+        'window is undefined - are you running in a browser?',
+      );
   }
 
   async connect(

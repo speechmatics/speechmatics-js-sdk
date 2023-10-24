@@ -13,6 +13,7 @@ import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
 import poll from '../utils/poll';
 import RetrieveJobsFilters from '../types/list-job-filters';
 import { BatchFeatureDiscovery } from '../types/batch-feature-discovery';
+import { SpeechmaticsInternalError } from '../utils/errors';
 
 export class BatchTranscription {
   private config: ConnectionConfigFull;
@@ -109,7 +110,7 @@ export class BatchTranscription {
     format?: TranscriptionFormat,
   ): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
-      throw new Error('Error: apiKey is undefined');
+      throw new SpeechmaticsInternalError('Error: apiKey is undefined');
 
     const submitResponse = await this.createTranscriptionJob(input, jobConfig);
 
@@ -142,7 +143,7 @@ export class BatchTranscription {
     },
   ): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
-      throw new Error('Error: apiKey is undefined');
+      throw new SpeechmaticsInternalError('Error: apiKey is undefined');
 
     const config = {
       ...jobConfig,

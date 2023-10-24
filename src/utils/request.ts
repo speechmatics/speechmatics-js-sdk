@@ -1,3 +1,5 @@
+import { SpeechmaticsResponseError } from './errors';
+
 export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
 export type QueryParams<K extends string = string> = Partial<
@@ -32,11 +34,8 @@ export async function request<T, K extends string = string>(
   const response = await fetch(fullUrl, requestOptions);
 
   if (!response.ok) {
-    throw new Error(
-      `SMjs error: ${response.statusText} ${
-        response.status
-      } ${await response.text()}`,
-    );
+    const responseJson = await response.json();
+    throw new SpeechmaticsResponseError(responseJson);
   }
 
   const isPlain = contentType === 'text/plain';
