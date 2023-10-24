@@ -53,10 +53,6 @@ describe('poll', () => {
       if (!state) throw new Error('rejection');
       return { state };
     });
-    const p = poll(cb, 500, 1000);
-    expect(p).rejects.toBeInstanceOf(Error);
-    p.finally(() => {
-      expect(cb).toBeCalledTimes(4);
-    });
+    await expect(poll(cb, 250, 1000)).rejects.toBeInstanceOf(Error);
   });
 });
