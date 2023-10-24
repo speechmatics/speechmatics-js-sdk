@@ -48,20 +48,21 @@ describe('Testing batch capabilities', () => {
       },
     });
 
-    const result = await poll(async () => {
+    let jobResult: string | undefined = undefined;
+    await poll(async () => {
       try {
-        const jobResult = await speechmatics.batch.getJobResult(id, 'text');
-        return { state: 'resolved', value: jobResult };
+        jobResult = await speechmatics.batch.getJobResult(id, 'text');
+        return true;
       } catch (err) {
         if (err instanceof Error && err.toString().includes('404')) {
-          return { state: 'pending' };
+          return false;
         } else {
           throw err;
         }
       }
     });
 
-    expect(typeof result).toBe('string');
+    expect(typeof jobResult).toBe('string');
   }, 60000);
 
   //add more tests here on multiple transcription in parallel

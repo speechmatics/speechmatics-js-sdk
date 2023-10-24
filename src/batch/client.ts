@@ -136,9 +136,9 @@ export class BatchTranscription {
         if (job.status === 'rejected') {
           throw job.errors;
         } else if (job.status === 'done') {
-          return { state: 'resolved', value: job };
+          return true;
         } else {
-          return { state: 'pending' };
+          return false;
         }
       },
       3000, // repeat every 3 seconds

@@ -1,19 +1,15 @@
-export type PollResult<T> =
-  | { readonly state: 'pending' }
-  | { readonly state: 'resolved'; readonly value: T };
-
 /**
  *
- * @param cb polling function retuning a `PollResult`. If this rejects, then polling will stop, and the return promise rejects as well
+ * @param cb polling function retuning a boolean (`false` if pending, `true` if resolved). If this rejects, then polling will stop, and the return promise rejects as well
  * @param interval number of milliseconds between each attempt, while still pending
  * @param timeout number of milliseconds after which to reject unconditionally
  * @returns a Promise which is fulfilled after a `resolved` state is returned from the function, or rejects if either the caller rejects, or timeout is exceeded
  */
-export default function poll<T>(
-  cb: () => Promise<PollResult<T>>,
+export default function poll(
+  cb: () => Promise<boolean>,
   interval = 500,
   timeout = 60 * 1000,
-): Promise<T> {
+): Promise<void> {
   return new Promise((resolve, reject) => {
     let pollInterval: ReturnType<typeof setInterval> | undefined = undefined;
 
@@ -24,11 +20,11 @@ export default function poll<T>(
 
     pollInterval = setInterval(() => {
       cb()
-        .then((result) => {
-          if (result.state === 'resolved') {
+        .then((resolved) => {
+          if (resolved) {
             clearTimeout(errTimeout);
             clearInterval(pollInterval);
-            resolve(result.value);
+            resolve();
           }
         })
         .catch((err) => {
