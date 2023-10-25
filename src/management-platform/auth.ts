@@ -1,4 +1,4 @@
-import { SpeechmaticsInternalError } from '../utils/errors';
+import { SpeechmaticsNetworkError } from '../utils/errors';
 import { request } from '../utils/request';
 
 export default async function getShortLivedToken(
@@ -24,11 +24,7 @@ export default async function getShortLivedToken(
     undefined,
     'application/json',
   ).catch((err) => {
-    throw new SpeechmaticsInternalError(
-      'Error fetching short lived token',
-      undefined,
-      err,
-    );
+    throw new SpeechmaticsNetworkError('Error fetching short lived token', err);
   });
   return jsonResponse.key_value;
 }
