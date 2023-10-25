@@ -8,44 +8,81 @@ const ErrorResponseSchema: z.ZodType<ErrorResponse> = z.object({
   error: z.nativeEnum(ErrorResponseErrorEnum),
 });
 
-export class SpeechmaticsResponseError extends Error {
-  response: ErrorResponse;
+type SpeechamticsErrorEnum = InternalErrorEnum | ErrorResponseErrorEnum;
+interface SpeechmaticsErrorInterface extends Error {
+  error: SpeechamticsErrorEnum;
+}
 
-  constructor(errorResponse: unknown) {
+export class SpeechmaticsResponseError
+  extends Error
+  implements SpeechmaticsErrorInterface
+{
+  response: ErrorResponse;
+  error: ErrorResponseErrorEnum;
+
+  constructor(errorResponse: ErrorResponse | unknown) {
     const parse = ErrorResponseSchema.safeParse(errorResponse);
     if (parse.success) {
       super(parse.data.error);
       this.response = parse.data;
+      this.error = parse.data.error;
     } else {
-      throw new SpeechmaticsInternalError('Unexpected response');
+      throw new SpeechmaticsUnexpectedResponse(undefined, errorResponse);
     }
   }
 }
 
 export const InternalErrorEnum = {
-  ProcessUndefined: 'process is undefined - are you running in node?',
-  WindowUndefined: 'window is undefined - are you running in a browser?',
-  ApiKeyUndefined: 'Error: apiKey is undefined',
-  FetchSLT: 'Error fetching short lived token',
+  ConfigurationError: 'Configuration error',
+  NetworkError: 'Network error',
   UnsuportedEnvironment: 'Unsupported environment',
   UnexpectedMessage: 'Unexpected message',
   UnexpectedResponse: 'Unexpected response',
-  TypeError: 'Unexpected type',
+  TypeError: 'Type error', // TODO: this is used when code that should be unreachable is executed, which signifies there may be an issue with our types. Is there a better name?
 } as const;
 
 export type InternalErrorEnum =
   typeof InternalErrorEnum[keyof typeof InternalErrorEnum];
 
-export class SpeechmaticsInternalError extends Error {
+class SpeechmaticsInternalError extends Error {
   error: InternalErrorEnum;
-  detail?: string;
-  cause?: unknown;
+  cause?: unknown; // e.g. a caught error or response
 
-  constructor(error: InternalErrorEnum, detail?: string, cause?: unknown) {
-    super();
+  constructor(error: InternalErrorEnum, message?: string, cause?: unknown) {
+    super(message ?? error);
     this.error = error;
-    this.detail = detail;
     this.cause = cause;
+  }
+}
+
+export class SpeechmaticsConfigurationError extends SpeechmaticsInternalError {
+  constructor(message?: string) {
+    super(InternalErrorEnum.ConfigurationError, message);
+  }
+}
+export class SpeechmaticsNetworkError extends SpeechmaticsInternalError {
+  constructor(message?: string, cause?: unknown) {
+    super(InternalErrorEnum.NetworkError, message, cause);
+  }
+}
+export class SpeechmaticsUnsuportedEnvironment extends SpeechmaticsInternalError {
+  constructor(message?: string) {
+    super(InternalErrorEnum.UnsuportedEnvironment, message);
+  }
+}
+export class SpeechmaticsUnexpectedMessage extends SpeechmaticsInternalError {
+  constructor(message?: string) {
+    super(InternalErrorEnum.UnexpectedMessage, message);
+  }
+}
+export class SpeechmaticsUnexpectedResponse extends SpeechmaticsInternalError {
+  constructor(message?: string, response?: unknown) {
+    super(InternalErrorEnum.UnexpectedResponse, message, response);
+  }
+}
+export class SpeechmaticsTypeError extends SpeechmaticsInternalError {
+  constructor(message?: string) {
+    super(InternalErrorEnum.TypeError, message);
   }
 }
 
