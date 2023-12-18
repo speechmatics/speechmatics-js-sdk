@@ -45,6 +45,9 @@ session
     //prepare file stream
     const fileStream = fs.createReadStream(
       path.join(__dirname, 'example_files/example.wav'),
+      {
+        highWaterMark: 4096, //avoid sending faster than realtime
+      },
     );
 
     //send it
