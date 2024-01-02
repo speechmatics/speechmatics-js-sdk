@@ -18,6 +18,7 @@ import {
   ISocketWrapper,
   SessionConfig,
 } from '../types';
+import { SpeechmaticsUnexpectedResponse } from '../utils/errors';
 
 export const defaultLanguage = 'en';
 
@@ -156,8 +157,20 @@ export class RealtimeSocketHandler {
         this.sub?.onInfo?.(data as Info);
         break;
 
+      case MessagesEnum.StartRecognition:
+      case MessagesEnum.AddAudio:
+      case MessagesEnum.EndOfStream:
+      case MessagesEnum.SetRecognitionConfig:
+      case undefined:
+        // TODO: is this correct?
+        throw new SpeechmaticsUnexpectedResponse(
+          `Unexpected RealtimeMessage during onSocketMessage: ${data.message}`,
+        );
       default:
-        throw new Error('Unexpected message');
+        data.message satisfies never;
+        throw new SpeechmaticsUnexpectedResponse(
+          `Unexpected RealtimeMessage during onSocketMessage: ${data.message}`,
+        );
     }
   };
 
