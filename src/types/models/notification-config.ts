@@ -55,6 +55,7 @@ export const NotificationConfigContentsEnum = {
   AlignmentOnePerLine: 'alignment.one_per_line',
   Data: 'data',
   Text: 'text',
+  Lattice: 'lattice',
 } as const;
 
 export type NotificationConfigContentsEnum =

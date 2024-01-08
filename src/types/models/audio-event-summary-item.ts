@@ -13,15 +13,21 @@
  */
 
 /**
- *
+ * Summary statistics for this audio event type
  * @export
- * @interface BatchTranslationConfig
+ * @interface AudioEventSummaryItem
  */
-export interface BatchTranslationConfig {
+export interface AudioEventSummaryItem {
   /**
-   *
-   * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * Number of events of this type
+   * @type {number}
+   * @memberof AudioEventSummaryItem
    */
-  target_languages: Array<string>;
+  count?: number;
+  /**
+   * Total duration (in seconds) of all audio events of this type
+   * @type {number}
+   * @memberof AudioEventSummaryItem
+   */
+  total_duration?: number;
 }

@@ -14,19 +14,31 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import { AudioEventItem } from './audio-event-item';
+// May contain unused imports in some cases
+// @ts-ignore
 import { BatchRecognitionMetadata } from './batch-recognition-metadata';
 // May contain unused imports in some cases
 // @ts-ignore
 import { BatchRecognitionResult } from './batch-recognition-result';
 // May contain unused imports in some cases
 // @ts-ignore
+import { Chapter } from './chapter';
+// May contain unused imports in some cases
+// @ts-ignore
 import { JobInfo } from './job-info';
+// May contain unused imports in some cases
+// @ts-ignore
+import { RetrieveTranscriptResponseAudioEventSummary } from './retrieve-transcript-response-audio-event-summary';
 // May contain unused imports in some cases
 // @ts-ignore
 import { SentimentAnalysisResult } from './sentiment-analysis-result';
 // May contain unused imports in some cases
 // @ts-ignore
 import { SummarizationResult } from './summarization-result';
+// May contain unused imports in some cases
+// @ts-ignore
+import { TopicDetectionResult } from './topic-detection-result';
 // May contain unused imports in some cases
 // @ts-ignore
 import { TranslationSentence } from './translation-sentence';
@@ -37,6 +49,24 @@ import { TranslationSentence } from './translation-sentence';
  * @interface RetrieveTranscriptResponse
  */
 export interface RetrieveTranscriptResponse {
+  /**
+   *
+   * @type {RetrieveTranscriptResponseAudioEventSummary}
+   * @memberof RetrieveTranscriptResponse
+   */
+  audio_event_summary?: RetrieveTranscriptResponseAudioEventSummary;
+  /**
+   *
+   * @type {AudioEventItem}
+   * @memberof RetrieveTranscriptResponse
+   */
+  audio_events?: AudioEventItem;
+  /**
+   * An array of objects that represent summarized chapters of the transcript
+   * @type {Array<Chapter>}
+   * @memberof RetrieveTranscriptResponse
+   */
+  chapters?: Array<Chapter>;
   /**
    * Speechmatics JSON transcript format version number.
    * @type {string}
@@ -73,6 +103,12 @@ export interface RetrieveTranscriptResponse {
    * @memberof RetrieveTranscriptResponse
    */
   summary?: SummarizationResult;
+  /**
+   *
+   * @type {TopicDetectionResult}
+   * @memberof RetrieveTranscriptResponse
+   */
+  topics?: TopicDetectionResult;
   /**
    * Translations of the transcript into other languages. It is a map of ISO language codes to arrays of translated sentences. Configured using `translation_config`.
    * @type {{ [key: string]: Array<TranslationSentence>; }}

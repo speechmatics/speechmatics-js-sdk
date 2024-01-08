@@ -26,7 +26,7 @@ import { JobType } from './job-type';
 import { OutputConfig } from './output-config';
 
 /**
- * Summary information about the output from an ASR job, comprising the job type and configuration parameters used when generating the output
+ * Summary information about the output from an ASR job, comprising the job type and configuration parameters used when generating the output.
  * @export
  * @interface BatchRecognitionMetadata
  */

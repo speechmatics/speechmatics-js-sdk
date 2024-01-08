@@ -17,6 +17,9 @@
 import { AlignmentConfig } from './alignment-config';
 // May contain unused imports in some cases
 // @ts-ignore
+import { AudioEventsConfig } from './audio-events-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import { BatchTranscriptionConfig } from './batch-transcription-config';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -41,10 +44,13 @@ import { OutputConfig } from './output-config';
 import { SummarizationConfig } from './summarization-config';
 // May contain unused imports in some cases
 // @ts-ignore
+import { TopicDetectionConfig } from './topic-detection-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import { TrackingData } from './tracking-data';
 
 /**
- * JSON object that contains various groups of job configuration parameters.  Based on the value of `type`, a type-specific object such as `transcription_config` is required to be present to specify all configuration settings or parameters needed to process the job inputs as expected.  If the results of the job are to be forwarded on completion, `notification_config` can be provided with a list of callbacks to be made; no assumptions should be made about the order in which they will occur.  Customer specific job details or metadata can be supplied in `tracking`, and this information will be available where possible in the job results and in callbacks.
+ * JSON object that contains various groups of job configuration parameters. Based on the value of `type`, a type-specific object such as `transcription_config` is required to be present to specify all configuration settings or parameters needed to process the job inputs as expected.  If the results of the job are to be forwarded on completion, `notification_config` can be provided with a list of callbacks to be made; no assumptions should be made about the order in which they will occur.  Customer specific job details or metadata can be supplied in `tracking`, and this information will be available where possible in the job results and in callbacks.
  * @export
  * @interface JobConfig
  */
@@ -55,6 +61,18 @@ export interface JobConfig {
    * @memberof JobConfig
    */
   alignment_config?: AlignmentConfig;
+  /**
+   *
+   * @type {AudioEventsConfig}
+   * @memberof JobConfig
+   */
+  audio_events_config?: AudioEventsConfig;
+  /**
+   *
+   * @type {object}
+   * @memberof JobConfig
+   */
+  auto_chapters_config?: object;
   /**
    *
    * @type {DataFetchConfig}
@@ -97,6 +115,12 @@ export interface JobConfig {
    * @memberof JobConfig
    */
   summarization_config?: SummarizationConfig;
+  /**
+   *
+   * @type {TopicDetectionConfig}
+   * @memberof JobConfig
+   */
+  topic_detection_config?: TopicDetectionConfig;
   /**
    *
    * @type {TrackingData}

@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @interface BatchTranslationConfig
+ * @interface AudioEventsConfig
  */
-export interface BatchTranslationConfig {
+export interface AudioEventsConfig {
   /**
    *
    * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * @memberof AudioEventsConfig
    */
-  target_languages: Array<string>;
+  types?: Array<string>;
 }

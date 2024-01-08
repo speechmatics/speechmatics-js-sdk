@@ -20,7 +20,7 @@ import { JobConfig } from './job-config';
 import { JobDetailError } from './job-detail-error';
 
 /**
- * Document describing a job, including the status and config used.  This model will be returned when you get job details or list all jobs.
+ * Document describing a job. JobConfig will be present in JobDetails returned for GET jobs/<id> request in SaaS and in Batch Appliance, but it will not be present in JobDetails returned as item in RetrieveJobsResponse in case of Batch Appliance.
  * @export
  * @interface JobDetails
  */
@@ -68,7 +68,7 @@ export interface JobDetails {
    */
   lang?: string;
   /**
-   * The status of the job.  - `running` - The job is actively running  - `done` - The job completed successfully.  - `rejected` - The job was accepted at first, but later could not be processed by the transcriber.  - `deleted` - The user deleted the job.  - `expired` - The system deleted the job. Usually because the job was in the `done` state for a very long time.
+   * The status of the job. * `running` - The job is actively running. * `done` - The job completed successfully. * `rejected` - The job was accepted at first, but later could not be processed by the transcriber. * `deleted` - The user deleted the job. * `expired` - The system deleted the job. Usually because the job was in the `done` state for a very long time.
    * @type {string}
    * @memberof JobDetails
    */

@@ -13,15 +13,15 @@
  */
 
 /**
- *
+ * Holds overall information on the topics detected.
  * @export
- * @interface BatchTranslationConfig
+ * @interface TopicDetectionSummary
  */
-export interface BatchTranslationConfig {
+export interface TopicDetectionSummary {
   /**
-   *
-   * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * Holds the count of topics detected.
+   * @type {{ [key: string]: number; }}
+   * @memberof TopicDetectionSummary
    */
-  target_languages: Array<string>;
+  overall?: { [key: string]: number };
 }
