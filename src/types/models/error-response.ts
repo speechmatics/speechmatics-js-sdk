@@ -44,6 +44,7 @@ export const ErrorResponseErrorEnum = {
   Forbidden: 'Forbidden',
   ResourceLocked: 'Resource Locked',
   FormatNotSupported: 'Format Not Supported',
+  InsufficientCredit: 'Insufficient Credit',
   InternalServerError: 'Internal Server Error',
   JobError: 'Job error',
   JobExpired: 'Job Expired',
@@ -63,6 +64,7 @@ export const ErrorResponseErrorEnum = {
   PermissionDenied: 'Permission Denied',
   RequestedProductNotAvailable: 'Requested product not available',
   TranscriptionNotReady: 'Transcription not ready',
+  LatticeNotGenerated: 'Lattice not generated',
   LogFileNotAvailable: 'Log file not available',
   RequestedEarlyAccessReleaseNotAvailable:
     'Requested Early Access Release not available',

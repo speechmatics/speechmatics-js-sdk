@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @interface BatchTranslationConfig
+ * @interface TopicDetectionConfig
  */
-export interface BatchTranslationConfig {
+export interface TopicDetectionConfig {
   /**
    *
    * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * @memberof TopicDetectionConfig
    */
-  target_languages: Array<string>;
+  topics?: Array<string>;
 }

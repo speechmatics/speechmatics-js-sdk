@@ -20,8 +20,29 @@
 export interface LanguageIdentificationConfig {
   /**
    *
+   * @type {string}
+   * @memberof LanguageIdentificationConfig
+   */
+  default_language?: string;
+  /**
+   *
    * @type {Array<string>}
    * @memberof LanguageIdentificationConfig
    */
   expected_languages?: Array<string>;
+  /**
+   * Action to take if all of the predicted languages are below the confidence threshold
+   * @type {string}
+   * @memberof LanguageIdentificationConfig
+   */
+  low_confidence_action?: LanguageIdentificationConfigLowConfidenceActionEnum;
 }
+
+export const LanguageIdentificationConfigLowConfidenceActionEnum = {
+  Allow: 'allow',
+  Reject: 'reject',
+  UseDefaultLanguage: 'use_default_language',
+} as const;
+
+export type LanguageIdentificationConfigLowConfidenceActionEnum =
+  typeof LanguageIdentificationConfigLowConfidenceActionEnum[keyof typeof LanguageIdentificationConfigLowConfidenceActionEnum];

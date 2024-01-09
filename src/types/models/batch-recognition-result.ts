@@ -63,6 +63,7 @@ export interface BatchRecognitionResult {
 export const BatchRecognitionResultTypeEnum = {
   Word: 'word',
   Punctuation: 'punctuation',
+  SpeakerChange: 'speaker_change',
 } as const;
 
 export type BatchRecognitionResultTypeEnum =

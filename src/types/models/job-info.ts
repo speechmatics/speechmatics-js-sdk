@@ -17,7 +17,7 @@
 import { TrackingData } from './tracking-data';
 
 /**
- * Summary information about an ASR job, to support identification and tracking
+ * Summary information about an ASR job, to support identification and tracking.
  * @export
  * @interface JobInfo
  */

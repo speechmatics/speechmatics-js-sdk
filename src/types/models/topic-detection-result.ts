@@ -14,18 +14,18 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { SentimentAnalysisResultSentimentAnalysis } from './sentiment-analysis-result-sentiment-analysis';
+import { TopicDetectionResultTopics } from './topic-detection-result-topics';
 
 /**
- * The main object that holds sentiment analysis data.
+ * Main object that holds topic detection results.
  * @export
- * @interface SentimentAnalysisResult
+ * @interface TopicDetectionResult
  */
-export interface SentimentAnalysisResult {
+export interface TopicDetectionResult {
   /**
    *
-   * @type {SentimentAnalysisResultSentimentAnalysis}
-   * @memberof SentimentAnalysisResult
+   * @type {TopicDetectionResultTopics}
+   * @memberof TopicDetectionResult
    */
-  sentiment_analysis?: SentimentAnalysisResultSentimentAnalysis;
+  topics?: TopicDetectionResultTopics;
 }
