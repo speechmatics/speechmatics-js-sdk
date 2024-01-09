@@ -1008,8 +1008,6 @@ definitions:
         $ref: "#/definitions/TopicDetectionConfig"
       auto_chapters_config:
         $ref: "#/definitions/AutoChaptersConfig"
-      audio_events_config:
-        $ref: "#/definitions/AudioEventsConfig"
   TranslationConfig:
     required:
       - target_languages
@@ -1066,13 +1064,6 @@ definitions:
     type: object
   AutoChaptersConfig:
     type: object
-  AudioEventsConfig:
-    type: object
-    properties:
-      types:
-        type: array
-        items:
-          type: string
   CreateJobResponse:
     required:
       - id
@@ -1483,27 +1474,6 @@ definitions:
         $ref: "#/definitions/TopicDetectionResult"
       chapters:
         $ref: "#/definitions/AutoChaptersResult"
-      audio_events:
-        type: array
-        description:
-          Timestamped audio events, only set if `audio_events_config` is in the
-          config
-        $ref: "#/definitions/AudioEventItem"
-      audio_event_summary:
-        type: object
-        description: Summary statistics per event type, keyed by `type`, e.g. music
-        properties:
-          overall:
-            type: object
-            description: Overall summary on all channels
-            $ref: "#/definitions/AudioEventSummary"
-          channels:
-            description: Summary keyed by channel, only set if channel diarization is enabled
-            type: object
-            additionalProperties:
-              type: object
-              items:
-                $ref: "#/definitions/AudioEventSummary"
   SummarizationResult:
     description: >-
       Summary of the transcript, configured using `summarization_config`.
@@ -1701,44 +1671,6 @@ definitions:
         type: number
       end_time:
         type: number
-  AudioEventItem:
-    type: object
-    properties:
-      type:
-        type: string
-        description: Kind of audio event. E.g. music
-      start_time:
-        type: number
-        description: Time (in seconds) at which the audio event starts
-        format: float
-      end_time:
-        type: number
-        description: Time (in seconds) at which the audio event ends
-        format: float
-      confidence:
-        type: number
-        format: float
-        description: Prediction confidence associated with this event
-      channel:
-        type: string
-        description: Input channel this event occurred on
-  AudioEventSummary:
-    type: object
-    additionalProperties:
-      type: object
-      items:
-        $ref: "#/definitions/AudioEventSummaryItem"
-  AudioEventSummaryItem:
-    type: object
-    description: Summary statistics for this audio event type
-    properties:
-      total_duration:
-        type: number
-        description: Total duration (in seconds) of all audio events of this type
-        format: float
-      count:
-        type: number
-        description: Number of events of this type
   TranslationSentence:
     type: object
     properties:
