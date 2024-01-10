@@ -48,7 +48,6 @@ export type AudioFormatRawEncodingEnum =
   typeof AudioFormatRawEncodingEnum[keyof typeof AudioFormatRawEncodingEnum];
 export const AudioFormatRawTypeEnum = {
   Raw: 'raw',
-  File: 'file',
 } as const;
 
 export type AudioFormatRawTypeEnum =

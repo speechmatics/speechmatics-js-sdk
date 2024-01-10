@@ -15,13 +15,31 @@
 /**
  *
  * @export
- * @interface BatchTranslationConfig
+ * @interface Chapter
  */
-export interface BatchTranslationConfig {
+export interface Chapter {
   /**
    *
-   * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * @type {number}
+   * @memberof Chapter
    */
-  target_languages: Array<string>;
+  end_time?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Chapter
+   */
+  start_time?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Chapter
+   */
+  summary?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Chapter
+   */
+  title?: string;
 }

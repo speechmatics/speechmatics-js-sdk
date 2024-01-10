@@ -13,15 +13,15 @@
  */
 
 /**
- *
+ * Represents a topic and its associated information.
  * @export
- * @interface BatchTranslationConfig
+ * @interface TopicDetectionSegmentTopic
  */
-export interface BatchTranslationConfig {
+export interface TopicDetectionSegmentTopic {
   /**
    *
-   * @type {Array<string>}
-   * @memberof BatchTranslationConfig
+   * @type {string}
+   * @memberof TopicDetectionSegmentTopic
    */
-  target_languages: Array<string>;
+  topic?: string;
 }
