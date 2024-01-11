@@ -110,6 +110,8 @@ export class BatchTranscription {
     translation_config,
     output_config,
     summarization_config,
+    auto_chapters_config,
+    topic_detection_config,
     format = 'json-v2',
   }: TranscribeConfig): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
@@ -124,6 +126,8 @@ export class BatchTranscription {
       translation_config,
       output_config,
       summarization_config,
+      auto_chapters_config,
+      topic_detection_config,
     });
 
     if (submitResponse === null || submitResponse === undefined) {
@@ -155,6 +159,8 @@ export class BatchTranscription {
     translation_config,
     output_config,
     summarization_config,
+    auto_chapters_config,
+    topic_detection_config,
   }: CreateJobConfig): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
@@ -165,6 +171,8 @@ export class BatchTranscription {
       translation_config,
       output_config,
       summarization_config,
+      auto_chapters_config,
+      topic_detection_config,
     };
 
     const formData = new FormData();
