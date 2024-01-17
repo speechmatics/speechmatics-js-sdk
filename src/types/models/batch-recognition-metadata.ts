@@ -17,13 +17,34 @@
 import { AlignmentConfig } from './alignment-config';
 // May contain unused imports in some cases
 // @ts-ignore
+import { AutoChaptersResultError } from './auto-chapters-result-error';
+// May contain unused imports in some cases
+// @ts-ignore
 import { BatchTranscriptionConfig } from './batch-transcription-config';
 // May contain unused imports in some cases
 // @ts-ignore
 import { JobType } from './job-type';
 // May contain unused imports in some cases
 // @ts-ignore
+import { LanguageIdentificationResult } from './language-identification-result';
+// May contain unused imports in some cases
+// @ts-ignore
+import { LanguagePackInfo } from './language-pack-info';
+// May contain unused imports in some cases
+// @ts-ignore
 import { OutputConfig } from './output-config';
+// May contain unused imports in some cases
+// @ts-ignore
+import { SentimentAnalysisError } from './sentiment-analysis-error';
+// May contain unused imports in some cases
+// @ts-ignore
+import { SummarizationError } from './summarization-error';
+// May contain unused imports in some cases
+// @ts-ignore
+import { TopicDetectionError } from './topic-detection-error';
+// May contain unused imports in some cases
+// @ts-ignore
+import { TranslationError } from './translation-error';
 
 /**
  * Summary information about the output from an ASR job, comprising the job type and configuration parameters used when generating the output.
@@ -38,11 +59,29 @@ export interface BatchRecognitionMetadata {
    */
   alignment_config?: AlignmentConfig;
   /**
+   *
+   * @type {AutoChaptersResultError}
+   * @memberof BatchRecognitionMetadata
+   */
+  auto_chapters_errors?: AutoChaptersResultError;
+  /**
    * The UTC date time the transcription output was created.
    * @type {string}
    * @memberof BatchRecognitionMetadata
    */
   created_at: string;
+  /**
+   *
+   * @type {LanguageIdentificationResult}
+   * @memberof BatchRecognitionMetadata
+   */
+  language_identification?: LanguageIdentificationResult;
+  /**
+   *
+   * @type {LanguagePackInfo}
+   * @memberof BatchRecognitionMetadata
+   */
+  language_pack_info?: LanguagePackInfo;
   /**
    *
    * @type {OutputConfig}
@@ -51,10 +90,34 @@ export interface BatchRecognitionMetadata {
   output_config?: OutputConfig;
   /**
    *
+   * @type {SentimentAnalysisError}
+   * @memberof BatchRecognitionMetadata
+   */
+  sentiment_analysis_errors?: SentimentAnalysisError;
+  /**
+   *
+   * @type {SummarizationError}
+   * @memberof BatchRecognitionMetadata
+   */
+  summarization_errors?: SummarizationError;
+  /**
+   *
+   * @type {TopicDetectionError}
+   * @memberof BatchRecognitionMetadata
+   */
+  topic_detection_errors?: TopicDetectionError;
+  /**
+   *
    * @type {BatchTranscriptionConfig}
    * @memberof BatchRecognitionMetadata
    */
   transcription_config?: BatchTranscriptionConfig;
+  /**
+   *
+   * @type {TranslationError}
+   * @memberof BatchRecognitionMetadata
+   */
+  translation_errors?: TranslationError;
   /**
    *
    * @type {JobType}
