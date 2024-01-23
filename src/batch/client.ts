@@ -12,7 +12,6 @@ import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
 import poll from '../utils/poll';
 import RetrieveJobsFilters from '../types/list-job-filters';
 import { BatchFeatureDiscovery } from '../types/batch-feature-discovery';
-import { ISO639_1_Language } from '../types/language-code';
 
 export class BatchTranscription {
   private config: ConnectionConfigFull;
@@ -103,32 +102,15 @@ export class BatchTranscription {
    * @param config TranscribeConfig
    * @returns Promise<RetrieveTranscriptResponse>. A promise that resolves to a transcript.
    */
-  async transcribe({
-    input,
-    fileName,
-    transcription_config,
-    translation_config,
-    output_config,
-    summarization_config,
-    auto_chapters_config,
-    topic_detection_config,
-    format = 'json-v2',
-  }: TranscribeConfig): Promise<RetrieveTranscriptResponse | string> {
+  async transcribe(
+    input: JobInput,
+    jobConfig: Omit<JobConfig, 'type'>,
+    format?: TranscriptionFormat,
+  ): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
-    const fileOrFetchConfig = 'fetch' in input ? input.fetch : input;
-
-    const submitResponse = await this.createJob({
-      input: fileOrFetchConfig,
-      fileName,
-      transcription_config,
-      translation_config,
-      output_config,
-      summarization_config,
-      auto_chapters_config,
-      topic_detection_config,
-    });
+    const submitResponse = await this.createJob(input, jobConfig);
 
     if (submitResponse === null || submitResponse === undefined) {
       throw 'Error: submitResponse is undefined';
@@ -149,37 +131,28 @@ export class BatchTranscription {
       15 * 60 * 1000, // 15 minutes timeout
     );
 
-    return await this.getJobResult(submitResponse.id, format);
+    return await this.getJobResult(submitResponse.id, format || 'json-v2');
   }
 
-  async createJob({
-    input,
-    fileName,
-    transcription_config,
-    translation_config,
-    output_config,
-    summarization_config,
-    auto_chapters_config,
-    topic_detection_config,
-  }: CreateJobConfig): Promise<CreateJobResponse> {
+  async createJob(
+    input: JobInput,
+    jobConfig: Omit<JobConfig, 'type'>,
+  ): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
-    const config: JobConfig = {
+    const config = {
       type: 'transcription',
-      transcription_config,
-      translation_config,
-      output_config,
-      summarization_config,
-      auto_chapters_config,
-      topic_detection_config,
+      ...jobConfig,
     };
 
     const formData = new FormData();
     if ('url' in input) {
       config.fetch_data = input;
+    } else if ('data' in input) {
+      formData.append('data_file', input.data, input.fileName);
     } else {
-      formData.append('data_file', input, fileName);
+      formData.append('data_file', input);
     }
     formData.append('config', JSON.stringify(config));
 
@@ -222,22 +195,7 @@ export class BatchTranscription {
 
 export type TranscriptionFormat = 'json-v2' | 'text' | 'srt';
 
-export type TranscribeConfig = Omit<JobConfig, 'type'> & {
-  input: Blob | { fetch: DataFetchConfig };
-  /**
-   * Optional file name when passing a raw Blob.
-   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
-   */
-  fileName?: string;
-  language?: ISO639_1_Language;
-  format?: TranscriptionFormat;
-};
-
-export type CreateJobConfig = Omit<JobConfig, 'type'> & {
-  input: Blob | DataFetchConfig;
-  /**
-   * Optional file name when passing a raw Blob.
-   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
-   */
-  fileName?: string;
-};
+export type JobInput =
+  | File
+  | { data: Blob; fileName: string }
+  | DataFetchConfig;
