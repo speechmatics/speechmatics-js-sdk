@@ -720,6 +720,62 @@ definitions:
         type: string
     example:
       language: en
+  TranslationError:
+    properties:
+      type:
+        type: string
+        enum:
+          - translation_failed
+          - unsupported_translation_pair
+      message:
+        type: string
+        description: >-
+          Human readable error message
+  SummarizationError:
+    properties:
+      type:
+        type: string
+        enum:
+          - summarization_failed
+          - unsupported_language
+      message:
+        type: string
+        description: >-
+          Human readable error message
+  SentimentAnalysisError:
+    properties:
+      type:
+        type: string
+        enum:
+          - sentiment_analysis_failed
+          - unsupported_language
+      message:
+        type: string
+        description: >-
+          Human readable error message
+  TopicDetectionError:
+    properties:
+      type:
+        type: string
+        enum:
+          - topic_detection_failed
+          - unsupported_list_of_topics
+          - unsupported_language
+      message:
+        type: string
+        description: >-
+          Human readable error message
+  AutoChaptersResultError:
+    properties:
+      type:
+        type: string
+        enum:
+          - auto_chapters_failed
+          - unsupported_language
+      message:
+        type: string
+        description: >-
+          Human readable error message
   TranscriptionConfig:
     required:
       - language
@@ -1344,10 +1400,32 @@ definitions:
         $ref: "#/definitions/JobType"
       transcription_config:
         $ref: "#/definitions/TranscriptionConfig"
+      translation_errors:
+        $ref: "#/definitions/TranslationError"
+        description: List of errors that occurred in the translation stage.
+      summarization_errors:
+        $ref: "#/definitions/SummarizationError"
+        description: List of errors that occurred in the summarization stage.
+      sentiment_analysis_errors:
+        $ref: "#/definitions/SentimentAnalysisError"
+        description: List of errors that occurred in the sentiment analysis stage.
+      topic_detection_errors:
+        $ref: "#/definitions/TopicDetectionError"
+        description: List of errors that occurred in the topic detection stage.
+      auto_chapters_errors:
+        $ref: "#/definitions/AutoChaptersResultError"
+        description: List of errors that occurred in the auto chapters stage.
       alignment_config:
         $ref: "#/definitions/AlignmentConfig"
       output_config:
         $ref: "#/definitions/OutputConfig"
+      language_pack_info:
+        $ref: "#/definitions/LanguagePackInfo"
+      language_identification:
+        $ref: "#/definitions/LanguageIdentificationResult"
+        description: >-
+          Result of the language identification of the audio, configured using `language_identification_config`, 
+          or setting the transcription language to `auto`.
   RecognitionDisplay:
     required:
       - direction
