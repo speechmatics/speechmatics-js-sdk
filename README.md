@@ -1,3 +1,5 @@
+[![npm](https://img.shields.io/npm/v/speechmatics)](https://www.npmjs.com/package/speechmatics)
+
 # Table of Contents
 
 1. [Introduction](#speechmatics-javascript-sdk)
