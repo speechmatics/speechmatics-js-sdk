@@ -1,6 +1,6 @@
-[![npm (scoped)](https://img.shields.io/npm/v/speechmatics)](https://www.npmjs.com/package/speechmatics)
-
 # Table of Contents
+
+[![npm (scoped)](https://img.shields.io/npm/v/speechmatics)](https://www.npmjs.com/package/speechmatics)
 
 1. [Introduction](#speechmatics-javascript-sdk)
 1. [Documentation](#documentation)
