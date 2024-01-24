@@ -1,7 +1,5 @@
 [![npm](https://img.shields.io/npm/v/speechmatics)](https://www.npmjs.com/package/speechmatics)
 
-Some content on the branch.
-
 # Table of Contents
 
 
