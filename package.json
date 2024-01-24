@@ -1,6 +1,6 @@
 {
   "name": "speechmatics",
-  "version": "4.0.0",
+  "version": "4.0.0-pre.0",
   "description": "Speechmatics Javascript Libraries",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
