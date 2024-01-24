@@ -2,7 +2,6 @@
 
 # Table of Contents
 
-
 1. [Introduction](#speechmatics-javascript-sdk)
 1. [Documentation](#documentation)
 1. [Installation](#installation)
