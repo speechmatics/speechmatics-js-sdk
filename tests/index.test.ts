@@ -40,7 +40,7 @@ describe('Testing batch capabilities', () => {
 
   it('can fetch plain text transcripts', async () => {
     const speechmatics = new Speechmatics(process.env.API_KEY as string);
-    const { id } = await speechmatics.batch.createJob(
+    const { id } = await speechmatics.batch.createTranscriptionJob(
       { data: EXAMPLE_FILE, fileName: exampleFileName },
       {
         transcription_config: {

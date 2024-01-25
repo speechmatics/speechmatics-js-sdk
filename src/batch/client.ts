@@ -6,6 +6,7 @@ import {
   RetrieveJobsResponse,
   JobConfig,
   DataFetchConfig,
+  BatchTranscriptionConfig,
 } from '../types';
 import { ConnectionConfig, ConnectionConfigFull } from '../config/connection';
 import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
@@ -104,13 +105,13 @@ export class BatchTranscription {
    */
   async transcribe(
     input: JobInput,
-    jobConfig: Omit<JobConfig, 'type'>,
+    jobConfig: Parameters<typeof this.createTranscriptionJob>[1],
     format?: TranscriptionFormat,
   ): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
-    const submitResponse = await this.createJob(input, jobConfig);
+    const submitResponse = await this.createTranscriptionJob(input, jobConfig);
 
     if (submitResponse === null || submitResponse === undefined) {
       throw 'Error: submitResponse is undefined';
@@ -134,9 +135,11 @@ export class BatchTranscription {
     return await this.getJobResult(submitResponse.id, format || 'json-v2');
   }
 
-  async createJob(
+  async createTranscriptionJob(
     input: JobInput,
-    jobConfig: Omit<JobConfig, 'type'>,
+    jobConfig: Omit<JobConfig, 'type'> & {
+      transcription_config: BatchTranscriptionConfig;
+    },
   ): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
