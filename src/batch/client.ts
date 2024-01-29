@@ -132,7 +132,7 @@ export class BatchTranscription {
       15 * 60 * 1000, // 15 minutes timeout
     );
 
-    return await this.getJobResult(submitResponse.id, format || 'json-v2');
+    return await this.getJobResult(submitResponse.id, format);
   }
 
   async createTranscriptionJob(
@@ -177,10 +177,23 @@ export class BatchTranscription {
     return this.delete(`/v2/jobs/${id}`, params);
   }
 
-  async getJobResult<F extends TranscriptionFormat>(
+  // No format, defaults to JSON-V2 with response body returned
+  async getJobResult(jobId: string): Promise<RetrieveTranscriptResponse>;
+  async getJobResult(
     jobId: string,
-    format: F,
-  ): Promise<F extends 'json-v2' ? RetrieveTranscriptResponse : string> {
+    format: 'json-v2',
+  ): Promise<RetrieveTranscriptResponse>;
+  // Text/SRT returns string
+  async getJobResult(jobId: string, format: 'text' | 'srt'): Promise<string>;
+  // If which precise format is unknown at compile time, could be either response body or string
+  async getJobResult(
+    jobId: string,
+    format?: TranscriptionFormat,
+  ): Promise<RetrieveTranscriptResponse | string>;
+  async getJobResult(
+    jobId: string,
+    format: TranscriptionFormat = 'json-v2',
+  ): Promise<RetrieveTranscriptResponse | string> {
     const params = { format: format === 'text' ? 'txt' : format };
     const contentType =
       format === 'json-v2' ? 'application/json' : 'text/plain';
