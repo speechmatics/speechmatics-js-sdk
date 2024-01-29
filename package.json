@@ -1,19 +1,20 @@
 {
   "name": "speechmatics",
-  "version": "3.1.7",
+  "version": "4.0.0-pre.0",
   "description": "Speechmatics Javascript Libraries",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "files": ["dist", "src"],
   "scripts": {
+    "format": "biome format --write .",
+    "format:types": "biome format --write dist/**/*.ts",
     "build:clean": "rm -rf dist",
     "build:cjs": "./build.js",
     "build:types": "tsc --emitDeclarationOnly",
-    "build": "npm run build:clean && npm-run-all --parallel build:cjs build:types",
+    "build": "npm run build:clean && (npm-run-all --parallel build:cjs build:types) && npm run format:types",
     "test": "jest",
     "prepare": "npm run build",
-    "check": "biome check .",
-    "format": "biome format --write ."
+    "check": "biome check ."
   },
   "precommit": ["check"],
   "repository": {

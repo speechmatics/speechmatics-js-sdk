@@ -6,13 +6,13 @@ import {
   RetrieveJobsResponse,
   JobConfig,
   DataFetchConfig,
+  BatchTranscriptionConfig,
 } from '../types';
 import { ConnectionConfig, ConnectionConfigFull } from '../config/connection';
 import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
 import poll from '../utils/poll';
 import RetrieveJobsFilters from '../types/list-job-filters';
 import { BatchFeatureDiscovery } from '../types/batch-feature-discovery';
-import { ISO639_1_Language } from '../types/language-code';
 
 export class BatchTranscription {
   private config: ConnectionConfigFull;
@@ -103,32 +103,15 @@ export class BatchTranscription {
    * @param config TranscribeConfig
    * @returns Promise<RetrieveTranscriptResponse>. A promise that resolves to a transcript.
    */
-  async transcribe({
-    input,
-    fileName,
-    transcription_config,
-    translation_config,
-    output_config,
-    summarization_config,
-    auto_chapters_config,
-    topic_detection_config,
-    format = 'json-v2',
-  }: TranscribeConfig): Promise<RetrieveTranscriptResponse | string> {
+  async transcribe(
+    input: JobInput,
+    jobConfig: Parameters<typeof this.createTranscriptionJob>[1],
+    format?: TranscriptionFormat,
+  ): Promise<RetrieveTranscriptResponse | string> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
-    const fileOrFetchConfig = 'fetch' in input ? input.fetch : input;
-
-    const submitResponse = await this.createJob({
-      input: fileOrFetchConfig,
-      fileName,
-      transcription_config,
-      translation_config,
-      output_config,
-      summarization_config,
-      auto_chapters_config,
-      topic_detection_config,
-    });
+    const submitResponse = await this.createTranscriptionJob(input, jobConfig);
 
     if (submitResponse === null || submitResponse === undefined) {
       throw 'Error: submitResponse is undefined';
@@ -152,34 +135,27 @@ export class BatchTranscription {
     return await this.getJobResult(submitResponse.id, format);
   }
 
-  async createJob({
-    input,
-    fileName,
-    transcription_config,
-    translation_config,
-    output_config,
-    summarization_config,
-    auto_chapters_config,
-    topic_detection_config,
-  }: CreateJobConfig): Promise<CreateJobResponse> {
+  async createTranscriptionJob(
+    input: JobInput,
+    jobConfig: Omit<JobConfig, 'type'> & {
+      transcription_config: BatchTranscriptionConfig;
+    },
+  ): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
       throw new Error('Error: apiKey is undefined');
 
-    const config: JobConfig = {
+    const config = {
+      ...jobConfig,
       type: 'transcription',
-      transcription_config,
-      translation_config,
-      output_config,
-      summarization_config,
-      auto_chapters_config,
-      topic_detection_config,
     };
 
     const formData = new FormData();
     if ('url' in input) {
       config.fetch_data = input;
+    } else if ('data' in input) {
+      formData.append('data_file', input.data, input.fileName);
     } else {
-      formData.append('data_file', input, fileName);
+      formData.append('data_file', input);
     }
     formData.append('config', JSON.stringify(config));
 
@@ -201,10 +177,23 @@ export class BatchTranscription {
     return this.delete(`/v2/jobs/${id}`, params);
   }
 
-  async getJobResult<F extends TranscriptionFormat>(
+  // No format, defaults to JSON-V2 with response body returned
+  async getJobResult(jobId: string): Promise<RetrieveTranscriptResponse>;
+  async getJobResult(
     jobId: string,
-    format: F,
-  ): Promise<F extends 'json-v2' ? RetrieveTranscriptResponse : string> {
+    format: 'json-v2',
+  ): Promise<RetrieveTranscriptResponse>;
+  // Text/SRT returns string
+  async getJobResult(jobId: string, format: 'text' | 'srt'): Promise<string>;
+  // If which precise format is unknown at compile time, could be either response body or string
+  async getJobResult(
+    jobId: string,
+    format?: TranscriptionFormat,
+  ): Promise<RetrieveTranscriptResponse | string>;
+  async getJobResult(
+    jobId: string,
+    format: TranscriptionFormat = 'json-v2',
+  ): Promise<RetrieveTranscriptResponse | string> {
     const params = { format: format === 'text' ? 'txt' : format };
     const contentType =
       format === 'json-v2' ? 'application/json' : 'text/plain';
@@ -222,22 +211,7 @@ export class BatchTranscription {
 
 export type TranscriptionFormat = 'json-v2' | 'text' | 'srt';
 
-export type TranscribeConfig = Omit<JobConfig, 'type'> & {
-  input: Blob | { fetch: DataFetchConfig };
-  /**
-   * Optional file name when passing a raw Blob.
-   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
-   */
-  fileName?: string;
-  language?: ISO639_1_Language;
-  format?: TranscriptionFormat;
-};
-
-export type CreateJobConfig = Omit<JobConfig, 'type'> & {
-  input: Blob | DataFetchConfig;
-  /**
-   * Optional file name when passing a raw Blob.
-   * Note that when passing a `File` object, this is not necessary, as the File's name will be used.
-   */
-  fileName?: string;
-};
+export type JobInput =
+  | File
+  | { data: Blob; fileName: string }
+  | DataFetchConfig;

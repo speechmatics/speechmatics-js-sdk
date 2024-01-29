@@ -21,9 +21,8 @@ const EXAMPLE_FILE = new Blob([
 describe('Testing batch capabilities', () => {
   it('attempting to send file and receive transcription through batch', async () => {
     const speechmatics = new Speechmatics(process.env.API_KEY as string);
-    const transcription = await speechmatics.batch.transcribe({
-      input: EXAMPLE_FILE,
-      fileName: exampleFileName,
+    const input = { data: EXAMPLE_FILE, fileName: exampleFileName };
+    const transcription = await speechmatics.batch.transcribe(input, {
       transcription_config: { language: 'en' },
     });
     expect(transcription).toBeDefined();
@@ -41,12 +40,14 @@ describe('Testing batch capabilities', () => {
 
   it('can fetch plain text transcripts', async () => {
     const speechmatics = new Speechmatics(process.env.API_KEY as string);
-    const { id } = await speechmatics.batch.createJob({
-      input: EXAMPLE_FILE,
-      transcription_config: {
-        language: 'en',
+    const { id } = await speechmatics.batch.createTranscriptionJob(
+      { data: EXAMPLE_FILE, fileName: exampleFileName },
+      {
+        transcription_config: {
+          language: 'en',
+        },
       },
-    });
+    );
 
     let jobResult: string | undefined = undefined;
     await poll(async () => {
