@@ -145,8 +145,8 @@ export class BatchTranscription {
       throw new Error('Error: apiKey is undefined');
 
     const config = {
-      type: 'transcription',
       ...jobConfig,
+      type: 'transcription',
     };
 
     const formData = new FormData();
