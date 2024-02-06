@@ -1,4 +1,7 @@
-import { SpeechmaticsResponseError } from './errors';
+import {
+  SpeechmaticsInvalidTypeError,
+  SpeechmaticsResponseError,
+} from './errors';
 
 export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
@@ -48,7 +51,7 @@ export async function request<T, K extends string = string>(
       result = (await response.json()) as T;
     }
   } catch (error) {
-    throw new Error(`SMjs error, can't parse json: ${error}`);
+    throw new SpeechmaticsInvalidTypeError(`Cannot parse error:\n\n${error}`);
   }
 
   return result;

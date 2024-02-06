@@ -36,11 +36,12 @@ describe('BatchTranscription', () => {
   });
 
   it('refreshes the API key on error and retries', async () => {
-    const keys = (function* () {
-      yield 'firstKey';
-      yield 'secondKey';
-    })();
-    const apiKey = jest.fn(async () => keys.next().value as string);
+    const keys: IterableIterator<string> = ['firstKey', 'secondKey'][
+      Symbol.iterator
+    ]();
+    const apiKey: () => Promise<string> = jest.fn(
+      async () => keys.next().value,
+    );
 
     const batch = new BatchTranscription({ apiKey });
 
@@ -56,4 +57,13 @@ describe('BatchTranscription', () => {
     expect(apiKey).toBeCalledTimes(2);
     expect(result.jobs).toBeInstanceOf(Array);
   });
+
+  // it('returns a descriptive error when the given API key is invalid', async () => {
+  //   mockedRequest.mockImplementation(async () => {
+  //     throw new Error('401 Unauthorized (mock)');
+  //   });
+
+  //   const batch = new BatchTranscription({ apiKey: 'some-invalid-key' });
+  //   expect(batch.listJobs()).rejects;
+  // });
 });

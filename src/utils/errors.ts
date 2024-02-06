@@ -38,7 +38,7 @@ export const InternalErrorEnum = {
   UnsuportedEnvironment: 'Unsupported environment',
   UnexpectedMessage: 'Unexpected message',
   UnexpectedResponse: 'Unexpected response',
-  TypeError: 'Type error', // TODO: this is used when code that should be unreachable is executed, which signifies there may be an issue with our types. Is there a better name?
+  InvalidTypeError: 'Invalid type error',
 } as const;
 
 export type InternalErrorEnum =
@@ -80,9 +80,9 @@ export class SpeechmaticsUnexpectedResponse extends SpeechmaticsInternalError {
     super(InternalErrorEnum.UnexpectedResponse, message, response);
   }
 }
-export class SpeechmaticsTypeError extends SpeechmaticsInternalError {
+export class SpeechmaticsInvalidTypeError extends SpeechmaticsInternalError {
   constructor(message?: string) {
-    super(InternalErrorEnum.TypeError, message);
+    super(InternalErrorEnum.InvalidTypeError, message);
   }
 }
 
