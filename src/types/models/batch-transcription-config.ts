@@ -44,7 +44,7 @@ export interface BatchTranscriptionConfig {
    */
   channel_diarization_labels?: Array<string>;
   /**
-   * Specify whether speaker or channel labels are added to the transcript. The default is `none`.   - **none**: no speaker or channel labels are added.   - **speaker**: speaker attribution is performed based on acoustic matching;              all input channels are mixed into a single stream for processing.   - **channel**: multiple input channels are processed individually and collated             into a single transcript.
+   * Specify whether speaker or channel labels are added to the transcript. The default is `none`.   - **none**: no speaker or channel labels are added.   - **speaker**: speaker attribution is performed based on acoustic matching;              all input channels are mixed into a single stream for processing.   - **channel**: multiple input channels are processed individually and collated             into a single transcript.   - **speaker_change**: the output indicates when the speaker in the audio changes.                     No speaker attribution is performed. This is a faster method                     than speaker. The reported speaker changes may not agree with speaker.   - **channel_and_speaker_change**: both channel and speaker_change are switched on.                                 The speaker change is indicated if more than one speaker                                 are recorded in one channel.
    * @type {string}
    * @memberof BatchTranscriptionConfig
    */
@@ -92,6 +92,12 @@ export interface BatchTranscriptionConfig {
    */
   punctuation_overrides?: BatchTranscriptionConfigPunctuationOverrides;
   /**
+   * Ranges between zero and one. Controls how responsive the system is for potential speaker changes. High value indicates high sensitivity. Defaults to 0.4.
+   * @type {number}
+   * @memberof BatchTranscriptionConfig
+   */
+  speaker_change_sensitivity?: number;
+  /**
    *
    * @type {BatchTranscriptionConfigSpeakerDiarizationConfig}
    * @memberof BatchTranscriptionConfig
@@ -103,6 +109,8 @@ export const BatchTranscriptionConfigDiarizationEnum = {
   None: 'none',
   Speaker: 'speaker',
   Channel: 'channel',
+  SpeakerChange: 'speaker_change',
+  ChannelAndSpeakerChange: 'channel_and_speaker_change',
 } as const;
 
 export type BatchTranscriptionConfigDiarizationEnum =

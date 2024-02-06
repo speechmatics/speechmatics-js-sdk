@@ -6,6 +6,7 @@
   "main": "./dist/index.js",
   "files": ["dist", "src"],
   "scripts": {
+    "refresh-schema": "./scripts/generate-models/generate-models.sh && npm run format",
     "format": "biome format --write .",
     "format:types": "biome format --write dist/**/*.ts",
     "build:clean": "rm -rf dist",
