@@ -1,12 +1,20 @@
 import { BatchTranscription } from './';
-import { request } from '../utils/request';
+import { SpeechmaticsResponseError } from '../utils/errors';
 
-jest.mock('../utils/request');
-const mockedRequest = jest.mocked(request);
+const originalFetch = global.fetch;
+const mockedFetch: jest.Mock<
+  ReturnType<typeof global.fetch>,
+  Parameters<typeof global.fetch>
+> = jest.fn();
+global.fetch = mockedFetch;
 
 describe('BatchTranscription', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    mockedFetch.mockReset();
+  });
+
+  afterAll(() => {
+    global.fetch = originalFetch;
   });
 
   it('can be initialized with just an API key string', async () => {
@@ -28,7 +36,9 @@ describe('BatchTranscription', () => {
     const apiKey = jest.fn(async () => 'asyncApiKey');
     const batch = new BatchTranscription({ apiKey });
 
-    mockedRequest.mockImplementation(async () => ({ jobs: [] }));
+    mockedFetch.mockImplementation(
+      async () => new Response(JSON.stringify({ jobs: [] }), { status: 200 }),
+    );
     await batch.listJobs();
     await batch.listJobs();
 
@@ -45,25 +55,36 @@ describe('BatchTranscription', () => {
 
     const batch = new BatchTranscription({ apiKey });
 
-    mockedRequest.mockImplementation(async (apiKey: string) => {
+    mockedFetch.mockImplementation(async (_url, requestOpts) => {
+      const apiKey = JSON.parse(
+        JSON.stringify(requestOpts?.headers) ?? '{}',
+      ).Authorization?.split('Bearer ')[1];
+
       if (apiKey === 'firstKey') {
-        throw new Error('401 Unauthorized (mock)');
+        return new Response('401 unauthorized (mock)', { status: 401 });
       } else {
-        return { jobs: [] };
+        return new Response(JSON.stringify({ jobs: [] }), { status: 200 });
       }
     });
 
     const result = await batch.listJobs();
     expect(apiKey).toBeCalledTimes(2);
-    expect(result.jobs).toBeInstanceOf(Array);
+    expect(Array.isArray(result.jobs)).toBe(true);
   });
 
-  // it('returns a descriptive error when the given API key is invalid', async () => {
-  //   mockedRequest.mockImplementation(async () => {
-  //     throw new Error('401 Unauthorized (mock)');
-  //   });
+  it('returns a descriptive error when the given API key is invalid', async () => {
+    mockedFetch.mockImplementation(async () => {
+      return new Response(
+        '{"code": 401, "error": "Permission Denied", "mock": true}',
+        { status: 401 },
+      );
+    });
 
-  //   const batch = new BatchTranscription({ apiKey: 'some-invalid-key' });
-  //   expect(batch.listJobs()).rejects;
-  // });
+    const batch = new BatchTranscription({ apiKey: 'some-invalid-key' });
+    const listJobs = batch.listJobs();
+    await expect(listJobs).rejects.toBeInstanceOf(SpeechmaticsResponseError);
+    await expect(listJobs).rejects.toMatchInlineSnapshot(
+      '[Error: Permission Denied]',
+    );
+  });
 });

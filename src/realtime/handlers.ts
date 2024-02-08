@@ -157,12 +157,13 @@ export class RealtimeSocketHandler {
         this.sub?.onInfo?.(data as Info);
         break;
 
+      // We don't expect these messages to be sent (only received)
       case MessagesEnum.StartRecognition:
       case MessagesEnum.AddAudio:
       case MessagesEnum.EndOfStream:
       case MessagesEnum.SetRecognitionConfig:
+      // We also don't expect undefined
       case undefined:
-        // TODO: is this correct?
         throw new SpeechmaticsUnexpectedResponse(
           `Unexpected RealtimeMessage during onSocketMessage: ${data.message}`,
         );
