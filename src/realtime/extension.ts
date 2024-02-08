@@ -6,7 +6,7 @@ import {
 } from '../utils/request';
 import { ISocketWrapper } from '../types';
 import { ModelError, RealtimeMessage } from '../types';
-import { SpeechmaticsUnsuportedEnvironment } from '../utils/errors';
+import { SpeechmaticsUnsupportedEnvironment } from '../utils/errors';
 
 /**
  * Wraps the socket api to be more useful in async/await kind of scenarios
@@ -24,7 +24,7 @@ export class WebSocketWrapper implements ISocketWrapper {
 
   constructor() {
     if (typeof chrome.runtime === 'undefined')
-      throw new SpeechmaticsUnsuportedEnvironment(
+      throw new SpeechmaticsUnsupportedEnvironment(
         'chrome is undefined - are you running in a background script?',
       );
   }

@@ -26,6 +26,7 @@ export class SpeechmaticsResponseError
       super(parse.data.error);
       this.response = parse.data;
       this.error = parse.data.error;
+      this.name = 'SpeechmaticsResponseError';
     } else {
       throw new SpeechmaticsUnexpectedResponse(undefined, errorResponse);
     }
@@ -35,7 +36,7 @@ export class SpeechmaticsResponseError
 export const InternalErrorEnum = {
   ConfigurationError: 'Configuration error',
   NetworkError: 'Network error',
-  UnsuportedEnvironment: 'Unsupported environment',
+  UnsupportedEnvironment: 'Unsupported environment',
   UnexpectedMessage: 'Unexpected message',
   UnexpectedResponse: 'Unexpected response',
   InvalidTypeError: 'Invalid type error',
@@ -50,6 +51,7 @@ class SpeechmaticsInternalError extends Error {
 
   constructor(error: InternalErrorEnum, message?: string, cause?: unknown) {
     super(message ?? error);
+    this.name = 'SpeechmaticsInternalError';
     this.error = error;
     this.cause = cause;
   }
@@ -58,31 +60,37 @@ class SpeechmaticsInternalError extends Error {
 export class SpeechmaticsConfigurationError extends SpeechmaticsInternalError {
   constructor(message?: string) {
     super(InternalErrorEnum.ConfigurationError, message);
+    this.name = 'SpeechmaticsConfigurationError';
   }
 }
 export class SpeechmaticsNetworkError extends SpeechmaticsInternalError {
   constructor(message?: string, cause?: unknown) {
     super(InternalErrorEnum.NetworkError, message, cause);
+    this.name = 'SpeechmaticsNetworkError';
   }
 }
-export class SpeechmaticsUnsuportedEnvironment extends SpeechmaticsInternalError {
+export class SpeechmaticsUnsupportedEnvironment extends SpeechmaticsInternalError {
   constructor(message?: string) {
-    super(InternalErrorEnum.UnsuportedEnvironment, message);
+    super(InternalErrorEnum.UnsupportedEnvironment, message);
+    this.name = 'SpeechmaticsUnsupp';
   }
 }
 export class SpeechmaticsUnexpectedMessage extends SpeechmaticsInternalError {
   constructor(message?: string) {
     super(InternalErrorEnum.UnexpectedMessage, message);
+    this.name = 'SpeechmaticsUnexpectedMessage';
   }
 }
 export class SpeechmaticsUnexpectedResponse extends SpeechmaticsInternalError {
   constructor(message?: string, response?: unknown) {
     super(InternalErrorEnum.UnexpectedResponse, message, response);
+    this.name = 'SpeechmaticsUnexpectedResponse';
   }
 }
 export class SpeechmaticsInvalidTypeError extends SpeechmaticsInternalError {
   constructor(message?: string) {
     super(InternalErrorEnum.InvalidTypeError, message);
+    this.name = 'SpeechmaticsInvalidTypeError';
   }
 }
 

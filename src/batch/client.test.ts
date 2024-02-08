@@ -84,7 +84,7 @@ describe('BatchTranscription', () => {
     const listJobs = batch.listJobs();
     await expect(listJobs).rejects.toBeInstanceOf(SpeechmaticsResponseError);
     await expect(listJobs).rejects.toMatchInlineSnapshot(
-      '[Error: Permission Denied]',
+      '[SpeechmaticsResponseError: Permission Denied]',
     );
   });
 });
