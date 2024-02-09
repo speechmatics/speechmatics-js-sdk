@@ -13,7 +13,10 @@ import { QueryParams, request, SM_APP_PARAM_NAME } from '../utils/request';
 import poll from '../utils/poll';
 import RetrieveJobsFilters from '../types/list-job-filters';
 import { BatchFeatureDiscovery } from '../types/batch-feature-discovery';
-import { SpeechmaticsConfigurationError } from '../utils/errors';
+import {
+  SpeechmaticsConfigurationError,
+  SpeechmaticsResponseError,
+} from '../utils/errors';
 
 export class BatchTranscription {
   private config: ConnectionConfigFull;
@@ -38,23 +41,26 @@ export class BatchTranscription {
     this.config = new ConnectionConfigFull(config);
   }
 
-  private async refreshOnFail<T>(
+  private async refreshOnAuthFail<T>(
     doRequest: (key: string) => Promise<T>,
   ): Promise<T> {
     try {
       return await doRequest(this.apiKey ?? (await this.refreshApiKey()));
     } catch (e) {
-      console.info('Retrying due to error:', e);
-      return await doRequest(await this.refreshApiKey());
+      if (e instanceof SpeechmaticsResponseError && e.response.code === 401) {
+        return await doRequest(await this.refreshApiKey());
+      } else {
+        throw e;
+      }
     }
   }
 
-  private async get<T, K extends string>(
+  private async get<T>(
     endpoint: string,
     contentType?: string,
-    queryParams?: QueryParams<K>,
+    queryParams?: QueryParams,
   ): Promise<T> {
-    return await this.refreshOnFail((key: string) =>
+    return await this.refreshOnAuthFail((key: string) =>
       request(
         key,
         this.config.batchUrl,
@@ -72,7 +78,7 @@ export class BatchTranscription {
     body: FormData | null = null,
     contentType?: string,
   ): Promise<T> {
-    return await this.refreshOnFail((key: string) =>
+    return await this.refreshOnAuthFail((key: string) =>
       request(
         key,
         this.config.batchUrl,
@@ -85,11 +91,8 @@ export class BatchTranscription {
     );
   }
 
-  private async delete<T, K extends string = string>(
-    endpoint: string,
-    params?: QueryParams<K>,
-  ): Promise<T> {
-    return this.refreshOnFail((key: string) =>
+  private async delete<T>(endpoint: string, params?: QueryParams): Promise<T> {
+    return this.refreshOnAuthFail((key: string) =>
       request(key, this.config.batchUrl, endpoint, 'DELETE', null, {
         ...params,
         [SM_APP_PARAM_NAME]: this.config.appId,
@@ -170,14 +173,26 @@ export class BatchTranscription {
   async listJobs(
     filters: RetrieveJobsFilters = {},
   ): Promise<RetrieveJobsResponse> {
-    return this.get('/v2/jobs', 'application/json', filters);
+    if (this.config.apiKey === undefined)
+      throw new SpeechmaticsConfigurationError(
+        'Missing apiKey in configuration',
+      );
+    return this.get('/v2/jobs', 'application/json', { ...filters });
   }
 
   async getJob(id: string): Promise<RetrieveJobResponse> {
+    if (this.config.apiKey === undefined)
+      throw new SpeechmaticsConfigurationError(
+        'Missing apiKey in configuration',
+      );
     return this.get(`/v2/jobs/${id}`, 'application/json');
   }
 
   async deleteJob(id: string, force = false): Promise<DeleteJobResponse> {
+    if (this.config.apiKey === undefined)
+      throw new SpeechmaticsConfigurationError(
+        'Missing apiKey in configuration',
+      );
     const params = force ? { force } : undefined;
     return this.delete(`/v2/jobs/${id}`, params);
   }
@@ -199,6 +214,10 @@ export class BatchTranscription {
     jobId: string,
     format: TranscriptionFormat = 'json-v2',
   ): Promise<RetrieveTranscriptResponse | string> {
+    if (this.config.apiKey === undefined)
+      throw new SpeechmaticsConfigurationError(
+        'Missing apiKey in configuration',
+      );
     const params = { format: format === 'text' ? 'txt' : format };
     const contentType =
       format === 'json-v2' ? 'application/json' : 'text/plain';
@@ -206,6 +225,10 @@ export class BatchTranscription {
   }
 
   async getDataFile(jobId: string) {
+    if (this.config.apiKey === undefined)
+      throw new SpeechmaticsConfigurationError(
+        'Missing apiKey in configuration',
+      );
     return this.get(`/v2/jobs/${jobId}/data`, 'application/json');
   }
 

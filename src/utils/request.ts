@@ -1,21 +1,22 @@
 import {
   SpeechmaticsInvalidTypeError,
+  SpeechmaticsNetworkError,
   SpeechmaticsResponseError,
 } from './errors';
 
 export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
-export type QueryParams<K extends string = string> = Partial<
-  Record<K, string | number | boolean>
+export type QueryParams = Readonly<
+  Record<string, string | number | boolean | undefined>
 >;
 
-export async function request<T, K extends string = string>(
+export async function request<T>(
   apiKey: string,
   url: string,
   path: string,
   method: HttpMethod = 'POST',
   payload?: BodyInit | null | undefined,
-  params?: QueryParams<K>,
+  params?: QueryParams,
   contentType?: string,
 ): Promise<T> {
   const requestOptions: RequestInit = {
@@ -34,7 +35,12 @@ export async function request<T, K extends string = string>(
     fullUrl = addQueryParamsToUrl(fullUrl, params);
   }
 
-  const response = await fetch(fullUrl, requestOptions);
+  let response: Response;
+  try {
+    response = await fetch(fullUrl, requestOptions);
+  } catch (err) {
+    throw new SpeechmaticsNetworkError(`Error fetching from ${path}`, err);
+  }
 
   if (!response.ok) {
     const responseJson = await response.json();
@@ -44,14 +50,25 @@ export async function request<T, K extends string = string>(
   const isPlain = contentType === 'text/plain';
 
   let result: T;
-  try {
-    if (isPlain) {
+
+  if (isPlain) {
+    try {
       result = (await response.text()) as T;
-    } else {
-      result = (await response.json()) as T;
+    } catch (err) {
+      throw new SpeechmaticsInvalidTypeError(
+        'Failed to parse response text',
+        err,
+      );
     }
-  } catch (error) {
-    throw new SpeechmaticsInvalidTypeError(`Cannot parse error:\n\n${error}`);
+  } else {
+    try {
+      result = (await response.json()) as T;
+    } catch (err) {
+      throw new SpeechmaticsInvalidTypeError(
+        'Failed to parse response JSON',
+        err,
+      );
+    }
   }
 
   return result;
@@ -64,14 +81,14 @@ export function getSmSDKVersion(): string {
   return `js-${SDK_VERSION}`;
 }
 
-export function addQueryParamsToUrl<K extends string>(
+export function addQueryParamsToUrl(
   url: string,
-  queryParams: QueryParams<K>,
+  queryParams: QueryParams,
 ): string {
   const parsedUrl = new URL(url);
   const params = new URLSearchParams(parsedUrl.search);
   Object.keys(queryParams).forEach((key) => {
-    const value = queryParams[key as K];
+    const value = queryParams[key];
     if (value !== undefined) params.append(key, `${value}`);
   });
   parsedUrl.search = params.toString();

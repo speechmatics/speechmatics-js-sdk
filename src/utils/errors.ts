@@ -72,7 +72,7 @@ export class SpeechmaticsNetworkError extends SpeechmaticsInternalError {
 export class SpeechmaticsUnsupportedEnvironment extends SpeechmaticsInternalError {
   constructor(message?: string) {
     super(InternalErrorEnum.UnsupportedEnvironment, message);
-    this.name = 'SpeechmaticsUnsupp';
+    this.name = 'SpeechmaticsUnsupportedEnvironment';
   }
 }
 export class SpeechmaticsUnexpectedMessage extends SpeechmaticsInternalError {
@@ -88,8 +88,8 @@ export class SpeechmaticsUnexpectedResponse extends SpeechmaticsInternalError {
   }
 }
 export class SpeechmaticsInvalidTypeError extends SpeechmaticsInternalError {
-  constructor(message?: string) {
-    super(InternalErrorEnum.InvalidTypeError, message);
+  constructor(message?: string, cause?: unknown) {
+    super(InternalErrorEnum.InvalidTypeError, message, cause);
     this.name = 'SpeechmaticsInvalidTypeError';
   }
 }
