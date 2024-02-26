@@ -17,6 +17,7 @@ import * as webWrapper from '../realtime/browser';
 import * as chromeWrapper from '../realtime/extension';
 
 import { EventMap } from '../types/event-map';
+import { SpeechmaticsUnsupportedEnvironment } from '../utils/errors';
 
 /**
  * A class that represents a single realtime session. It's responsible for handling the connection and the messages.
@@ -40,7 +41,7 @@ export class RealtimeSession {
     } else if (typeof process !== 'undefined') {
       socketImplementation = new nodeWrapper.NodeWebSocketWrapper();
     } else {
-      throw new Error('Unsupported environment');
+      throw new SpeechmaticsUnsupportedEnvironment();
     }
 
     this.rtSocketHandler = new RealtimeSocketHandler(

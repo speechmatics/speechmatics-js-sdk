@@ -8,6 +8,7 @@ import {
   SM_SDK_PARAM_NAME,
   getSmSDKVersion,
 } from '../utils/request';
+import { SpeechmaticsUnsupportedEnvironment } from '../utils/errors';
 
 /**
  * Wraps the socket api to be more useful in async/await kind of scenarios
@@ -24,7 +25,9 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
 
   constructor() {
     if (typeof process === 'undefined')
-      throw new Error('process is undefined - are you running in node?');
+      throw new SpeechmaticsUnsupportedEnvironment(
+        'process is undefined - are you running in node?',
+      );
   }
 
   async connect(
