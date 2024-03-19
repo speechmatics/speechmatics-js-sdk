@@ -3,7 +3,7 @@ import {
   AddTranscript,
   RetrieveTranscriptResponse,
 } from '../dist';
-import { Speechmatics } from '../dist';
+import { Speechmatics, SpeechmaticsResponseError } from '../dist';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
@@ -55,7 +55,10 @@ describe('Testing batch capabilities', () => {
         jobResult = await speechmatics.batch.getJobResult(id, 'text');
         return true;
       } catch (err) {
-        if (err instanceof Error && err.toString().includes('404')) {
+        if (
+          err instanceof SpeechmaticsResponseError &&
+          err.response.code === 404
+        ) {
           return false;
         } else {
           throw err;
