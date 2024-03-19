@@ -17,6 +17,9 @@
 import { AlignmentConfig } from './alignment-config';
 // May contain unused imports in some cases
 // @ts-ignore
+import { AudioEventsConfig } from './audio-events-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import { BatchTranscriptionConfig } from './batch-transcription-config';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -58,6 +61,12 @@ export interface JobConfig {
    * @memberof JobConfig
    */
   alignment_config?: AlignmentConfig;
+  /**
+   *
+   * @type {AudioEventsConfig}
+   * @memberof JobConfig
+   */
+  audio_events_config?: AudioEventsConfig;
   /**
    *
    * @type {object}
