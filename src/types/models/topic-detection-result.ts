@@ -14,7 +14,10 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { TopicDetectionResultTopics } from './topic-detection-result-topics';
+import { TopicDetectionSegment } from './topic-detection-segment';
+// May contain unused imports in some cases
+// @ts-ignore
+import { TopicDetectionSummary } from './topic-detection-summary';
 
 /**
  * Main object that holds topic detection results.
@@ -23,9 +26,15 @@ import { TopicDetectionResultTopics } from './topic-detection-result-topics';
  */
 export interface TopicDetectionResult {
   /**
-   *
-   * @type {TopicDetectionResultTopics}
+   * An array of objects that represent a segment of text and its associated topic information.
+   * @type {Array<TopicDetectionSegment>}
    * @memberof TopicDetectionResult
    */
-  topics?: TopicDetectionResultTopics;
+  segments?: Array<TopicDetectionSegment>;
+  /**
+   *
+   * @type {TopicDetectionSummary}
+   * @memberof TopicDetectionResult
+   */
+  summary?: TopicDetectionSummary;
 }

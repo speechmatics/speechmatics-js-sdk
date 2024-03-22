@@ -1,6 +1,8 @@
-import sys
 import yaml
 import re
+import os 
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Add RT prefix to some names to dedupe from batch
 map_names = [
@@ -16,7 +18,7 @@ map_names = [
 ]
 
 # Open the async spec
-with open("../../schemas/realtime.yml", 'r') as stream:
+with open(f"{dir_path}/../../schemas/realtime.yml", 'r') as stream:
     try:
         spec = stream.read()
         for item in map_names:
@@ -27,7 +29,7 @@ with open("../../schemas/realtime.yml", 'r') as stream:
         print(exc)
 
 # Open a basic openapi template as starting document
-with open("../../schemas/batch.yml", 'r') as stream:
+with open(f"{dir_path}/../../schemas/batch.yml", 'r') as stream:
     try:
         spec = stream.read()
         for item in map_names:
@@ -38,7 +40,7 @@ with open("../../schemas/batch.yml", 'r') as stream:
         print(exc)
 
 # Open a basic openapi template as starting document
-with open("template-openapi.yaml", 'r') as stream:
+with open(f"{dir_path}/template-openapi.yaml", 'r') as stream:
     try:
         template = yaml.safe_load(stream)
     except yaml.YAMLError as exc:
@@ -72,5 +74,5 @@ template['components']['schemas'].update(async_spec['components']['schemas'])
 template['components']['schemas'].update(batch_spec['definitions'])
 
 # Save the generated openapi spec
-with open('openapi-transformed.yaml', 'w') as outfile:
+with open(f"{dir_path}/openapi-transformed.yaml", 'w') as outfile:
     yaml.dump(template, outfile)

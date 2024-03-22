@@ -15,6 +15,12 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import { BatchRecognitionAlternative } from './batch-recognition-alternative';
+// May contain unused imports in some cases
+// @ts-ignore
+import { SpokenFormRecognitionResult } from './spoken-form-recognition-result';
+// May contain unused imports in some cases
+// @ts-ignore
+import { WrittenFormRecognitionResult } from './written-form-recognition-result';
 
 /**
  * An ASR job output item. The primary item types are `word` and `punctuation`. Other item types may be present, for example to provide semantic information of different forms.
@@ -48,6 +54,12 @@ export interface BatchRecognitionResult {
   is_eos?: boolean;
   /**
    *
+   * @type {SpokenFormRecognitionResult}
+   * @memberof BatchRecognitionResult
+   */
+  spoken_form?: SpokenFormRecognitionResult;
+  /**
+   *
    * @type {number}
    * @memberof BatchRecognitionResult
    */
@@ -58,12 +70,25 @@ export interface BatchRecognitionResult {
    * @memberof BatchRecognitionResult
    */
   type: BatchRecognitionResultTypeEnum;
+  /**
+   * An indication of the volume of audio across the time period the word was spoken.
+   * @type {number}
+   * @memberof BatchRecognitionResult
+   */
+  volume?: number;
+  /**
+   *
+   * @type {WrittenFormRecognitionResult}
+   * @memberof BatchRecognitionResult
+   */
+  written_form?: WrittenFormRecognitionResult;
 }
 
 export const BatchRecognitionResultTypeEnum = {
   Word: 'word',
   Punctuation: 'punctuation',
   SpeakerChange: 'speaker_change',
+  Entity: 'entity',
 } as const;
 
 export type BatchRecognitionResultTypeEnum =
