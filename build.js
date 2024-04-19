@@ -6,18 +6,24 @@ const packageInfo = require('./package.json');
 
 const testFiles = globSync('./src/**/*.test.ts');
 
+const config = {
+  define: {
+    SDK_VERSION: `'${packageInfo.version}'`,
+  },
+  platform: 'neutral',
+  mainFields: ['main'],
+  entryPoints: globSync(['./src/**/*ts'], {
+    ignore: testFiles,
+  }),
+  sourcemap: 'linked',
+};
+
+// Build CJS
 esbuild
-  .build({
-    define: {
-      SDK_VERSION: `'${packageInfo.version}'`,
-    },
-    format: 'cjs',
-    platform: 'neutral',
-    mainFields: ['main'],
-    entryPoints: globSync(['./src/**/*ts'], {
-      ignore: testFiles,
-    }),
-    outdir: './dist',
-    sourcemap: 'linked',
-  })
+  .build({ ...config, format: 'cjs', outdir: './dist/cjs' })
+  .catch(() => process.exit(1));
+
+// Build ESM
+esbuild
+  .build({ ...config, format: 'esm', outdir: './dist/esm' })
   .catch(() => process.exit(1));
