@@ -20,10 +20,20 @@ const config = {
 
 // Build CJS
 esbuild
-  .build({ ...config, format: 'cjs', outdir: './dist/cjs' })
+  .build({
+    ...config,
+    format: 'cjs',
+    outdir: './dist',
+    outExtension: { '.js': '.cjs' },
+  })
   .catch(() => process.exit(1));
 
 // Build ESM
 esbuild
-  .build({ ...config, format: 'esm', outdir: './dist/esm' })
+  .build({
+    ...config,
+    format: 'esm',
+    outdir: './dist',
+    outExtension: { '.js': '.mjs' },
+  })
   .catch(() => process.exit(1));
