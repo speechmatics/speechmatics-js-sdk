@@ -38,6 +38,8 @@ channels:
           - $ref: "#/components/messages/AddPartialTranslation"
           - $ref: "#/components/messages/AddTranslation"
           - $ref: "#/components/messages/EndOfTranscript"
+          - $ref: "#/components/messages/AudioEventStarted"
+          - $ref: "#/components/messages/AudioEventEnded"
           - $ref: "#/components/messages/Error"
           - $ref: "#/components/messages/Warning"
           - $ref: "#/components/messages/Info"
@@ -59,6 +61,8 @@ components:
             "$ref": "#/components/schemas/TranscriptionConfig"
           translation_config:
             "$ref": "#/components/schemas/TranslationConfig"
+          audio_events_config:
+            "$ref": "#/components/schemas/AudioEventsConfig"
         required:
           - message
           - audio_format
@@ -230,6 +234,36 @@ components:
         required:
           - message
 
+    AudioEventStarted:
+      summary: Start of an audio event detected.
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+          start_time:
+            type: number
+            format: float
+          confidence:
+            type: number
+            format: float
+      required:
+        - type
+        - start_time
+        - confidence
+    AudioEventEnded:
+      summary: End of an audio event detected.
+      payload:
+        type: object
+        properties:
+          type:
+            type: string
+          end_time:
+            type: number
+            format: float
+      required:
+        - type
+        - end_time
     Info:
       summary: Additional information sent from the server to the client.
       payload:
@@ -418,6 +452,14 @@ components:
           default: false
       required:
         - target_languages
+
+    AudioEventsConfig:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
 
     VocabList:
       type: array

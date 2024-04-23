@@ -38,6 +38,8 @@ export const RealtimeMessageMessageEnum = {
   AddPartialTranslation: 'AddPartialTranslation',
   AddTranslation: 'AddTranslation',
   EndOfTranscript: 'EndOfTranscript',
+  AudioEventStarted: 'AudioEventStarted',
+  AudioEventEnded: 'AudioEventEnded',
   Info: 'Info',
   Warning: 'Warning',
   Error: 'Error',
