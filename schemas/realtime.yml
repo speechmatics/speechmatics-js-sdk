@@ -601,6 +601,10 @@ components:
           "$ref": "#/components/schemas/RecognitionDisplay"
         speaker:
           type: string
+        tags:
+          type: array
+          items:
+            type: string
       required:
         - content
         - confidence
