@@ -162,6 +162,8 @@ export class RealtimeSocketHandler {
       case MessagesEnum.AddAudio:
       case MessagesEnum.EndOfStream:
       case MessagesEnum.SetRecognitionConfig:
+      case MessagesEnum.AudioEventStarted:
+      case MessagesEnum.AudioEventEnded:
       // We also don't expect undefined
       case undefined:
         throw new SpeechmaticsUnexpectedResponse(
