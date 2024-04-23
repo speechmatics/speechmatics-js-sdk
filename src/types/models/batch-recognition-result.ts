@@ -71,6 +71,12 @@ export interface BatchRecognitionResult {
    */
   type: BatchRecognitionResultTypeEnum;
   /**
+   * An indication of the volume of audio across the time period the word was spoken.
+   * @type {number}
+   * @memberof BatchRecognitionResult
+   */
+  volume?: number;
+  /**
    *
    * @type {WrittenFormRecognitionResult}
    * @memberof BatchRecognitionResult
