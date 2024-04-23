@@ -52,4 +52,10 @@ export interface RealtimeRecognitionAlternative {
    * @memberof RealtimeRecognitionAlternative
    */
   speaker?: string;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RealtimeRecognitionAlternative
+   */
+  tags?: Array<string>;
 }
