@@ -13,21 +13,21 @@
  */
 
 /**
- * Summary statistics for this audio event type
+ *
  * @export
- * @interface AudioEventSummaryItem
+ * @interface AudioEventEnded
  */
-export interface AudioEventSummaryItem {
+export interface AudioEventEnded {
   /**
-   * Number of events of this type
+   *
    * @type {number}
-   * @memberof AudioEventSummaryItem
+   * @memberof AudioEventEnded
    */
-  count?: number;
+  end_time?: number;
   /**
-   * Total duration (in seconds) of all audio events of this type
-   * @type {number}
-   * @memberof AudioEventSummaryItem
+   *
+   * @type {string}
+   * @memberof AudioEventEnded
    */
-  total_duration?: number;
+  type?: string;
 }

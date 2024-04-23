@@ -15,37 +15,25 @@
 /**
  *
  * @export
- * @interface AudioEventItem
+ * @interface AudioEventStarted
  */
-export interface AudioEventItem {
+export interface AudioEventStarted {
   /**
-   * Input channel this event occurred on
-   * @type {string}
-   * @memberof AudioEventItem
-   */
-  channel?: string;
-  /**
-   * Prediction confidence associated with this event
+   *
    * @type {number}
-   * @memberof AudioEventItem
+   * @memberof AudioEventStarted
    */
   confidence?: number;
   /**
-   * Time (in seconds) at which the audio event ends
+   *
    * @type {number}
-   * @memberof AudioEventItem
-   */
-  end_time?: number;
-  /**
-   * Time (in seconds) at which the audio event starts
-   * @type {number}
-   * @memberof AudioEventItem
+   * @memberof AudioEventStarted
    */
   start_time?: number;
   /**
-   * Kind of audio event. E.g. music
+   *
    * @type {string}
-   * @memberof AudioEventItem
+   * @memberof AudioEventStarted
    */
   type?: string;
 }

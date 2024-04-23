@@ -14,6 +14,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import { AudioEventsConfig } from './audio-events-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import { AudioFormat } from './audio-format';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -28,6 +31,12 @@ import { RealtimeTranslationConfig } from './realtime-translation-config';
  * @interface StartRecognition
  */
 export interface StartRecognition {
+  /**
+   *
+   * @type {AudioEventsConfig}
+   * @memberof StartRecognition
+   */
+  audio_events_config?: AudioEventsConfig;
   /**
    *
    * @type {AudioFormat}

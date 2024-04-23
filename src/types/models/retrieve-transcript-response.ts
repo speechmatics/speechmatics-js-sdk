@@ -14,9 +14,6 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { AudioEventItem } from './audio-event-item';
-// May contain unused imports in some cases
-// @ts-ignore
 import { BatchRecognitionMetadata } from './batch-recognition-metadata';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -27,9 +24,6 @@ import { Chapter } from './chapter';
 // May contain unused imports in some cases
 // @ts-ignore
 import { JobInfo } from './job-info';
-// May contain unused imports in some cases
-// @ts-ignore
-import { RetrieveTranscriptResponseAudioEventSummary } from './retrieve-transcript-response-audio-event-summary';
 // May contain unused imports in some cases
 // @ts-ignore
 import { SentimentAnalysisResult } from './sentiment-analysis-result';
@@ -49,18 +43,6 @@ import { TranslationSentence } from './translation-sentence';
  * @interface RetrieveTranscriptResponse
  */
 export interface RetrieveTranscriptResponse {
-  /**
-   *
-   * @type {RetrieveTranscriptResponseAudioEventSummary}
-   * @memberof RetrieveTranscriptResponse
-   */
-  audio_event_summary?: RetrieveTranscriptResponseAudioEventSummary;
-  /**
-   * Timestamped audio events, only set if `audio_events_config` is in the config
-   * @type {Array<AudioEventItem>}
-   * @memberof RetrieveTranscriptResponse
-   */
-  audio_events?: Array<AudioEventItem>;
   /**
    * An array of objects that represent summarized chapters of the transcript
    * @type {Array<Chapter>}
