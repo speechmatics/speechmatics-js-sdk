@@ -161,11 +161,11 @@ export class RealtimeSocketHandler {
         break;
 
       case MessagesEnum.AudioEventStarted:
-        this.sub.onAudioEventStarted?.(data as AudioEventStarted);
+        this.sub?.onAudioEventStarted?.(data as AudioEventStarted);
         break;
 
       case MessagesEnum.AudioEventEnded:
-        this.sub.onAudioEventEnded?.(data as AudioEventEnded);
+        this.sub?.onAudioEventEnded?.(data as AudioEventEnded);
         break;
 
       // We don't expect these messages to be sent (only received)
