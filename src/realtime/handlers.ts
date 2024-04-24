@@ -17,6 +17,8 @@ import {
   RealtimeTranscriptionConfig,
   ISocketWrapper,
   SessionConfig,
+  AudioEventEnded,
+  AudioEventStarted,
 } from '../types';
 import { SpeechmaticsUnexpectedResponse } from '../utils/errors';
 
@@ -158,13 +160,20 @@ export class RealtimeSocketHandler {
         this.sub?.onInfo?.(data as Info);
         break;
 
+      case MessagesEnum.AudioEventStarted:
+        this.sub.onAudioEventStarted?.(data as AudioEventStarted);
+        break;
+
+      case MessagesEnum.AudioEventEnded:
+        this.sub.onAudioEventEnded?.(data as AudioEventEnded);
+        break;
+
       // We don't expect these messages to be sent (only received)
       case MessagesEnum.StartRecognition:
       case MessagesEnum.AddAudio:
       case MessagesEnum.EndOfStream:
       case MessagesEnum.SetRecognitionConfig:
-      case MessagesEnum.AudioEventStarted:
-      case MessagesEnum.AudioEventEnded:
+
       // We also don't expect undefined
       case undefined:
         throw new SpeechmaticsUnexpectedResponse(
@@ -199,4 +208,6 @@ export type Subscriber = {
   onError?: (data: ModelError) => void;
   onInfo?: (data: Info) => void;
   onDisconnect?: () => void;
+  onAudioEventStarted?: (data: AudioEventStarted) => void;
+  onAudioEventEnded?: (data: AudioEventEnded) => void;
 };
