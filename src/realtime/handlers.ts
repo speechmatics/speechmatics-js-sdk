@@ -77,6 +77,7 @@ export class RealtimeSocketHandler {
       transcription_config: config?.transcription_config || rtDefaultConfig,
       audio_format: config?.audio_format || defaultAudioFormat,
       translation_config: config?.translation_config,
+      audio_events_config: config?.audio_events_config,
       message: 'StartRecognition',
     };
 
