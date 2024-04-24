@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @interface AudioEventsConfig
+ * @interface RealtimeAudioEventsConfig
  */
-export interface AudioEventsConfig {
+export interface RealtimeAudioEventsConfig {
   /**
    *
    * @type {Array<string>}
-   * @memberof AudioEventsConfig
+   * @memberof RealtimeAudioEventsConfig
    */
   types?: Array<string>;
 }

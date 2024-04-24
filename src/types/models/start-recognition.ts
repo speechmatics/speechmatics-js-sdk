@@ -14,10 +14,10 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import { AudioEventsConfig } from './audio-events-config';
+import { AudioFormat } from './audio-format';
 // May contain unused imports in some cases
 // @ts-ignore
-import { AudioFormat } from './audio-format';
+import { RealtimeAudioEventsConfig } from './realtime-audio-events-config';
 // May contain unused imports in some cases
 // @ts-ignore
 import { RealtimeTranscriptionConfig } from './realtime-transcription-config';
@@ -33,10 +33,10 @@ import { RealtimeTranslationConfig } from './realtime-translation-config';
 export interface StartRecognition {
   /**
    *
-   * @type {AudioEventsConfig}
+   * @type {RealtimeAudioEventsConfig}
    * @memberof StartRecognition
    */
-  audio_events_config?: AudioEventsConfig;
+  audio_events_config?: RealtimeAudioEventsConfig;
   /**
    *
    * @type {AudioFormat}

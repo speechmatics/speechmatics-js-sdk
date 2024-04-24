@@ -8,6 +8,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 map_names = [
     "TranscriptionConfig",
     "TranslationConfig",
+    "AudioEventsConfig",
     "SpeakerChangeSensitivity",
     "DiarizationConfig",
     "SpeakerDiarizationConfig",
