@@ -72,10 +72,10 @@ export class RealtimeSession {
       onPartialTranslationReceived: (data: AddPartialTranslation) => {
         this.emitter.emit(MessagesEnum.AddPartialTranslation, data);
       },
-      onAudioEventStarted: (data: AudioEventStarted) => {
+      onAudioEventStartedReceived: (data: AudioEventStarted) => {
         this.emitter.emit(MessagesEnum.AudioEventStarted, data);
       },
-      onAudioEventEnded: (data: AudioEventEnded) => {
+      onAudioEventEndedReceived: (data: AudioEventEnded) => {
         this.emitter.emit(MessagesEnum.AudioEventEnded, data);
       },
       onError: (data: ModelError) => {
