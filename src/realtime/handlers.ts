@@ -161,11 +161,11 @@ export class RealtimeSocketHandler {
         break;
 
       case MessagesEnum.AudioEventStarted:
-        this.sub?.onAudioEventStarted?.(data as AudioEventStarted);
+        this.sub?.onAudioEventStartedReceived?.(data as AudioEventStarted);
         break;
 
       case MessagesEnum.AudioEventEnded:
-        this.sub?.onAudioEventEnded?.(data as AudioEventEnded);
+        this.sub?.onAudioEventEndedReceived?.(data as AudioEventEnded);
         break;
 
       // We don't expect these messages to be sent (only received)
@@ -208,6 +208,6 @@ export type Subscriber = {
   onError?: (data: ModelError) => void;
   onInfo?: (data: Info) => void;
   onDisconnect?: () => void;
-  onAudioEventStarted?: (data: AudioEventStarted) => void;
-  onAudioEventEnded?: (data: AudioEventEnded) => void;
+  onAudioEventStarteReceived?: (data: AudioEventStarted) => void;
+  onAudioEventEndedReceived?: (data: AudioEventEnded) => void;
 };
