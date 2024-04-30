@@ -208,6 +208,6 @@ export type Subscriber = {
   onError?: (data: ModelError) => void;
   onInfo?: (data: Info) => void;
   onDisconnect?: () => void;
-  onAudioEventStarteReceived?: (data: AudioEventStarted) => void;
+  onAudioEventStartedReceived?: (data: AudioEventStarted) => void;
   onAudioEventEndedReceived?: (data: AudioEventEnded) => void;
 };
