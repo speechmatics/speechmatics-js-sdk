@@ -27,13 +27,13 @@ export interface AudioEventEnded {
    * @type {AudioEventEndedEvent}
    * @memberof AudioEventEnded
    */
-  event?: AudioEventEndedEvent;
+  event: AudioEventEndedEvent;
   /**
    *
    * @type {string}
    * @memberof AudioEventEnded
    */
-  message?: AudioEventEndedMessageEnum;
+  message: AudioEventEndedMessageEnum;
 }
 
 export const AudioEventEndedMessageEnum = {
