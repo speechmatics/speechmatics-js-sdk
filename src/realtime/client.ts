@@ -52,7 +52,7 @@ export class RealtimeSession {
     );
   }
 
-  private bindHandlers() {
+  private bindHandlers<Subscriber>() {
     return {
       onRecognitionStart: (data: RecognitionStarted) => {
         this.emitter.emit(MessagesEnum.RecognitionStarted, data);

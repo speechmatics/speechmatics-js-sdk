@@ -239,31 +239,50 @@ components:
       payload:
         type: object
         properties:
-          type:
-            type: string
-          start_time:
-            type: number
-            format: float
-          confidence:
-            type: number
-            format: float
+          message:
+            enum:
+              - AudioEventStarted
+          event:
+            type: object
+            properties: 
+              type:
+                type: string
+              start_time:
+                type: number
+                format: float
+              confidence:
+                type: number
+                format: float
+            required:
+              - type
+              - start_time
+              - confidence
       required:
-        - type
-        - start_time
-        - confidence
+        - message
+        - event
     AudioEventEnded:
       summary: End of an audio event detected.
       payload:
         type: object
         properties:
-          type:
-            type: string
-          end_time:
-            type: number
-            format: float
+          message:
+            enum:
+              - AudioEventEnded
+          event:
+            type: object
+            properties: 
+              type:
+                type: string
+              end_time:
+                type: number
+                format: float
+            required:
+              - type
+              - end_time
       required:
-        - type
-        - end_time
+        - message
+        - event
+    
     Info:
       summary: Additional information sent from the server to the client.
       payload:
