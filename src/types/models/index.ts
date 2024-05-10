@@ -21,6 +21,7 @@ export * from './batch-recognition-metadata';
 export * from './batch-recognition-result';
 export * from './batch-transcription-config';
 export * from './batch-transcription-config-additional-vocab-inner';
+export * from './batch-transcription-config-audio-filtering-config';
 export * from './batch-transcription-config-punctuation-overrides';
 export * from './batch-transcription-config-speaker-diarization-config';
 export * from './batch-translation-config';
