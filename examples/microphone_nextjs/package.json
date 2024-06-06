@@ -2,7 +2,7 @@
   "name": "speechmatics-mic-demo",
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev --port 80",
+    "dev": "next dev --port 85",
     "build": "next build",
     "lint": "next lint",
     "format": "npx biome format .",
@@ -12,7 +12,7 @@
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
-    "next": "13.4.19",
+    "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "speechmatics": "^3.1.1",

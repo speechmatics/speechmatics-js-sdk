@@ -29,6 +29,7 @@ export default function Main({ jwt }: MainProps) {
   const [transcription, setTranscription] = useState<
     RealtimeRecognitionResult[]
   >([]);
+  const [partial, setPartial] = useState<string>('');
   const [audioDeviceIdState, setAudioDeviceId] = useState<string>('');
   const [sessionState, setSessionState] = useState<SessionState>('configure');
 
@@ -61,6 +62,15 @@ export default function Main({ jwt }: MainProps) {
   // Attach our event listeners to the realtime session
   rtSessionRef.current.addListener('AddTranscript', (res) => {
     setTranscription([...transcription, ...res.results]);
+    setPartial('');
+  });
+
+  rtSessionRef.current.addListener('AddPartialTranscript',(res) => {
+    let temp = "";
+    if (transcription.length) {
+      temp += " ";
+    }
+    setPartial(`${temp}${res.metadata.transcript}`);
   });
 
   // start audio recording once the websocket is connected
@@ -90,7 +100,12 @@ export default function Main({ jwt }: MainProps) {
     }
     try {
       await rtSessionRef.current.start({
-        transcription_config: { max_delay: 2, language: 'en' },
+        transcription_config: { 
+          max_delay: 2, 
+          language: 'en', 
+          operating_point:"enhanced",
+          enable_partials: true
+        },
         audio_format: {
           type: 'file',
         },
@@ -150,6 +165,7 @@ export default function Main({ jwt }: MainProps) {
               ? ' '
               : '') + item?.alternatives?.[0]?.content,
         )}
+        <em>{partial}</em>
       </p>
     </div>
   );
