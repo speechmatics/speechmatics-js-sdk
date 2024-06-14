@@ -1,5 +1,5 @@
 import { RealtimeSocketHandler, Subscriber } from './handlers';
-import { ISocketWrapper } from '../types';
+import { EndOfTranscript, ISocketWrapper } from '../types';
 import {
   RealtimeTranscriptionConfig,
   ModelError,
@@ -94,6 +94,27 @@ describe('RealtimeSocketHandler', () => {
     expect(mockSubscriber.onRecognitionEnd).toHaveBeenCalled();
     expect(mockSocketWrapper.disconnect).toHaveBeenCalled();
   }, 20000);
+
+  test('stopRecognition is called in the connecting phase', async () => {
+    const stopMessage: string = JSON.stringify({
+      message: MessagesEnum.EndOfStream,
+      last_seq_no: 0,
+    });
+
+    const startRecognitionPromise = realtimeSocketHandler.startRecognition();
+    const stopRecognitionPromise = realtimeSocketHandler.stopRecognition();
+
+    mockSocketWrapper.onMessage?.({ message: MessagesEnum.RecognitionStarted });
+    mockSocketWrapper.onMessage?.({ message: MessagesEnum.EndOfTranscript });
+
+    await expect(stopRecognitionPromise).resolves.toBeUndefined();
+    await expect(startRecognitionPromise).resolves.toEqual({
+      message: 'RecognitionStarted',
+    } as RecognitionStarted);
+
+    expect(mockSubscriber.onRecognitionStart).toHaveBeenCalled();
+    expect(mockSocketWrapper.sendMessage).toHaveBeenCalledWith(stopMessage);
+  }, 5000);
 
   test('onSocketMessage error', () => {
     const error: ModelError = {

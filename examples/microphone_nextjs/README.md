@@ -4,7 +4,7 @@ This is an app to demonstrate how the Speechmatics JavaScript SDK can be used al
 
 ## Getting Started
 
-First you will need to add you API key to the next.config.js file. If you don't have an API key, you can get one from our [Portal](https://portal.speechmatics.com).
+You will need to add your API key to the next.config.js file. If you don't have an API key, you can get one from our [Portal](https://portal.speechmatics.com).
 
 Then run the development server:
 
