@@ -18,7 +18,7 @@ export class WebSocketWrapper implements ISocketWrapper {
   private disconnectResolve?: () => void;
 
   onDisconnect?: () => void;
-
+  onOpen?: ((event: Event) => void) | undefined;
   onMessage?: (data: RealtimeMessage) => void;
   onError?: (event: ModelError) => void;
 
@@ -89,6 +89,7 @@ export class WebSocketWrapper implements ISocketWrapper {
   }
 
   private handleSocketOpen = (): void => {
+    this.onOpen?.({} as Event);
     this.connectResolve?.();
   };
 

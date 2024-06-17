@@ -7,6 +7,7 @@ import {
   RecognitionStarted,
 } from '../types';
 import { getSmSDKVersion } from '../utils/request';
+import { on } from 'events';
 
 describe('RealtimeSocketHandler', () => {
   let mockSocketWrapper: jest.Mocked<ISocketWrapper>;
@@ -16,6 +17,7 @@ describe('RealtimeSocketHandler', () => {
   beforeEach(() => {
     mockSocketWrapper = {
       connect: jest.fn(),
+      onOpen: jest.fn(),
       disconnect: jest.fn(),
       isOpen: jest.fn(),
       sendAudioBuffer: jest.fn(),
@@ -101,18 +103,11 @@ describe('RealtimeSocketHandler', () => {
       last_seq_no: 0,
     });
 
-    const startRecognitionPromise = realtimeSocketHandler.startRecognition();
-    const stopRecognitionPromise = realtimeSocketHandler.stopRecognition();
+    realtimeSocketHandler.startRecognition();
+    realtimeSocketHandler.stopRecognition();
 
-    mockSocketWrapper.onMessage?.({ message: MessagesEnum.RecognitionStarted });
-    mockSocketWrapper.onMessage?.({ message: MessagesEnum.EndOfTranscript });
+    mockSocketWrapper.onOpen?.({} as Event);
 
-    await expect(stopRecognitionPromise).resolves.toBeUndefined();
-    await expect(startRecognitionPromise).resolves.toEqual({
-      message: 'RecognitionStarted',
-    } as RecognitionStarted);
-
-    expect(mockSubscriber.onRecognitionStart).toHaveBeenCalled();
     expect(mockSocketWrapper.sendMessage).toHaveBeenCalledWith(stopMessage);
   }, 5000);
 

@@ -2,7 +2,6 @@
  * Speech service main api class
  */
 
-import { send } from 'process';
 import {
   ModelError,
   RealtimeMessage,
@@ -41,8 +40,9 @@ export class RealtimeSocketHandler {
   private stopRecognitionResolve?: (value?: unknown) => void;
   private rejectPromise?: (error?: ModelError) => void; //used on both: start & stop
 
-  //flag used to automatically disconnect after connection when stopRecognition has been called in the connecting phase
-  private deferDisconnect = false;
+  //flag used to automatically disconnect when the socket is opened
+  //used when stopRecognition has been called during the connecting phase and we must wait for the socket to be open before disconnecting gracefully
+  private pendingDisconnect = false;
 
   private sub: Subscriber;
 
@@ -52,6 +52,7 @@ export class RealtimeSocketHandler {
 
     this.socketWrap.onMessage = this.onSocketMessage;
     this.socketWrap.onError = this.onSocketError;
+    this.socketWrap.onOpen = this.onSocketOpen;
     this.socketWrap.onDisconnect = this.onSocketDisconnect;
   }
 
@@ -106,7 +107,7 @@ export class RealtimeSocketHandler {
 
   async stopRecognition(): Promise<void> {
     if (!this.socketWrap.isOpen()) {
-      this.deferDisconnect = true;
+      this.pendingDisconnect = true;
     } else {
       this.sendStopRecognition();
     }
@@ -122,13 +123,8 @@ export class RealtimeSocketHandler {
   private onSocketMessage = (data: RealtimeMessage): void => {
     switch (data.message) {
       case MessagesEnum.RecognitionStarted:
-        if (this.deferDisconnect) {
-          this.deferDisconnect = false;
-          this.sendStopRecognition();
-        }
         this.sub?.onRecognitionStart?.(data as RecognitionStarted);
         this.startRecognitionResolve?.(data as RecognitionStarted);
-
         break;
 
       case MessagesEnum.AudioAdded:
@@ -197,6 +193,12 @@ export class RealtimeSocketHandler {
     this.sub.onDisconnect?.();
   };
 
+  private onSocketOpen = () => {
+    if (this.pendingDisconnect) {
+      this.pendingDisconnect = false;
+      this.sendStopRecognition();
+    }
+  };
   private onSocketError = (error: ModelError) => {
     this.sub.onError?.(error);
     this.rejectPromise?.(error);
