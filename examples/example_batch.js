@@ -14,18 +14,21 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
 }
 
 const sm = new Speechmatics(process.env.API_KEY);
-const inputFile = new Blob([
-  fs.readFileSync(path.join(__dirname, 'example_files', fileName)),
-]);
+
+// Note: when using NodeJS 20+ you may assign this to a `File` object instead
+const input = {
+  data: new Blob([
+    fs.readFileSync(path.join(__dirname, 'example_files', fileName)),
+  ]),
+  fileName,
+};
+
+const config = {
+  transcription_config: { language: 'en' },
+};
 
 sm.batch
-  .transcribe(
-    // Note: If using Node 20+ you can simply pass a `File` object as the first argument
-    { data: inputFile, fileName },
-    {
-      transcription_config: { language: 'en' },
-    },
-  )
+  .transcribe(input, config)
   .then(({ results }) => {
     console.log(results.map((r) => r.alternatives[0].content).join(' '));
   })
