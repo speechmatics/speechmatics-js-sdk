@@ -2,10 +2,6 @@
 
 require('dotenv').config();
 const { Speechmatics } = require('../dist');
-const fs = require('fs');
-const path = require('path');
-
-const fileName = 'example.wav';
 
 if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
   throw new Error(
@@ -13,19 +9,15 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
   );
 }
 
-const sm = new Speechmatics(process.env.API_KEY);
-
-// Note: when using NodeJS 20+ you may assign this to a `File` object instead
 const input = {
-  data: new Blob([
-    fs.readFileSync(path.join(__dirname, 'example_files', fileName)),
-  ]),
-  fileName,
+  url: 'https://speechmatics-devx.s3.eu-west-2.amazonaws.com/example.wav',
 };
 
 const config = {
   transcription_config: { language: 'en' },
 };
+
+const sm = new Speechmatics(process.env.API_KEY);
 
 sm.batch
   .transcribe(input, config)
