@@ -20,6 +20,7 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
   private disconnectResolve?: () => void;
 
   onDisconnect?: () => void;
+  onOpen?: () => void;
   onMessage?: (data: RealtimeMessage) => void;
   onError?: (event: ModelError) => void;
 
@@ -97,6 +98,7 @@ export class NodeWebSocketWrapper implements ISocketWrapper {
   }
 
   private handleSocketOpen = (): void => {
+    this.onOpen?.();
     this.connectResolve?.();
   };
 
