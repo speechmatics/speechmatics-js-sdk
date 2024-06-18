@@ -20,6 +20,7 @@ const inputFile = new Blob([
 
 sm.batch
   .transcribe(
+    // Note: If using Node 20+ you can simply pass a `File` object as the first argument
     { data: inputFile, fileName },
     {
       transcription_config: { language: 'en' },
