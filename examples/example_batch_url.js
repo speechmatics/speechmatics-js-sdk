@@ -14,15 +14,11 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
 }
 
 const sm = new Speechmatics(process.env.API_KEY);
-const inputFile = new Blob([
-  fs.readFileSync(path.join(__dirname, 'example_files', fileName)),
-]);
-
 sm.batch
   .transcribe(
-    { data: inputFile, fileName },
+    { url: 'https://demos.speechmatics.com/audio/es-agile-trimmed.mp3' },
     {
-      transcription_config: { language: 'en' },
+      transcription_config: { language: 'es' },
     },
   )
   .then(({ results }) => {
