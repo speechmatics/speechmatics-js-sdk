@@ -143,7 +143,7 @@ export class BatchTranscription {
 
   async createTranscriptionJob(
     input: JobInput,
-    jobConfig: Omit<JobConfig, 'type'> & {
+    jobConfig: Omit<JobConfig, 'type' | 'fetch_data'> & {
       transcription_config: BatchTranscriptionConfig;
     },
   ): Promise<CreateJobResponse> {
