@@ -85,20 +85,16 @@ describe('Testing rt capabilities', () => {
     const endFn = jest.fn();
 
     session.addListener('RecognitionStarted', () => {
-      console.log('session started');
       startFn();
     });
 
-    session.addListener('Error', (error) => {
-      console.log('session error', error);
-    });
+    session.addListener('Error', (error) => {});
 
     session.addListener('AddTranscript', (message: AddTranscript) => {
       messageFn(message);
     });
 
     session.addListener('EndOfTranscript', () => {
-      console.log('Session stopped');
       endFn();
     });
 

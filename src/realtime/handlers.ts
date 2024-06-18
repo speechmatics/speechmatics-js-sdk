@@ -17,6 +17,7 @@ import {
   RealtimeTranscriptionConfig,
   ISocketWrapper,
   SessionConfig,
+  EndOfTranscript,
 } from '../types';
 import { SpeechmaticsUnexpectedResponse } from '../utils/errors';
 
@@ -39,6 +40,10 @@ export class RealtimeSocketHandler {
   private stopRecognitionResolve?: (value?: unknown) => void;
   private rejectPromise?: (error?: ModelError) => void; //used on both: start & stop
 
+  //flag used to automatically disconnect when the socket is opened
+  //used when stopRecognition has been called during the connecting phase and we must wait for the socket to be open before disconnecting gracefully
+  private pendingDisconnect = false;
+
   private sub: Subscriber;
 
   constructor(sub: Subscriber, socketWrapImplementation: ISocketWrapper) {
@@ -47,6 +52,7 @@ export class RealtimeSocketHandler {
 
     this.socketWrap.onMessage = this.onSocketMessage;
     this.socketWrap.onError = this.onSocketError;
+    this.socketWrap.onOpen = this.onSocketOpen;
     this.socketWrap.onDisconnect = this.onSocketDisconnect;
   }
 
@@ -90,17 +96,21 @@ export class RealtimeSocketHandler {
     });
   }
 
-  async stopRecognition(): Promise<void> {
-    if (!this.socketWrap.isOpen()) {
-      return;
-    }
-
+  sendStopRecognition(): void {
     const stopMessage: string = JSON.stringify({
       message: MessagesEnum.EndOfStream,
       last_seq_no: this.seqNoIn,
     });
 
     this.socketWrap.sendMessage(stopMessage);
+  }
+
+  async stopRecognition(): Promise<void> {
+    if (!this.socketWrap.isOpen()) {
+      this.pendingDisconnect = true;
+    } else {
+      this.sendStopRecognition();
+    }
 
     return new Promise((resolve, reject): void => {
       this.stopRecognitionResolve = resolve;
@@ -157,13 +167,15 @@ export class RealtimeSocketHandler {
         this.sub?.onInfo?.(data as Info);
         break;
 
-      // We don't expect these messages to be sent (only received)
+      case MessagesEnum.AudioEventStarted:
+      case MessagesEnum.AudioEventEnded:
+
+      // We don't expect these messages to be received (only sent by the client)
       case MessagesEnum.StartRecognition:
       case MessagesEnum.AddAudio:
       case MessagesEnum.EndOfStream:
       case MessagesEnum.SetRecognitionConfig:
-      case MessagesEnum.AudioEventStarted:
-      case MessagesEnum.AudioEventEnded:
+
       // We also don't expect undefined
       case undefined:
         throw new SpeechmaticsUnexpectedResponse(
@@ -181,6 +193,12 @@ export class RealtimeSocketHandler {
     this.sub.onDisconnect?.();
   };
 
+  private onSocketOpen = () => {
+    if (this.pendingDisconnect) {
+      this.pendingDisconnect = false;
+      this.sendStopRecognition();
+    }
+  };
   private onSocketError = (error: ModelError) => {
     this.sub.onError?.(error);
     this.rejectPromise?.(error);

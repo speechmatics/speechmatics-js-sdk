@@ -1,5 +1,5 @@
 import { RealtimeSocketHandler, Subscriber } from './handlers';
-import { ISocketWrapper } from '../types';
+import { EndOfTranscript, ISocketWrapper } from '../types';
 import {
   RealtimeTranscriptionConfig,
   ModelError,
@@ -16,6 +16,7 @@ describe('RealtimeSocketHandler', () => {
   beforeEach(() => {
     mockSocketWrapper = {
       connect: jest.fn(),
+      onOpen: jest.fn(),
       disconnect: jest.fn(),
       isOpen: jest.fn(),
       sendAudioBuffer: jest.fn(),
@@ -94,6 +95,20 @@ describe('RealtimeSocketHandler', () => {
     expect(mockSubscriber.onRecognitionEnd).toHaveBeenCalled();
     expect(mockSocketWrapper.disconnect).toHaveBeenCalled();
   }, 20000);
+
+  test('stopRecognition is called in the connecting phase', async () => {
+    const stopMessage: string = JSON.stringify({
+      message: MessagesEnum.EndOfStream,
+      last_seq_no: 0,
+    });
+
+    realtimeSocketHandler.startRecognition();
+    realtimeSocketHandler.stopRecognition();
+
+    mockSocketWrapper.onOpen?.({} as Event);
+
+    expect(mockSocketWrapper.sendMessage).toHaveBeenCalledWith(stopMessage);
+  }, 5000);
 
   test('onSocketMessage error', () => {
     const error: ModelError = {

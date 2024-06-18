@@ -5,6 +5,10 @@ import {
   SpeechmaticsResponseError,
 } from '../utils/errors';
 
+Object.defineProperty(global, 'fetch', {
+  writable: true,
+});
+
 const originalFetch = global.fetch;
 const mockedFetch: jest.Mock<
   ReturnType<typeof global.fetch>,
