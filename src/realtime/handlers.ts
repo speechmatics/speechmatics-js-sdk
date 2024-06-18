@@ -17,7 +17,8 @@ import {
   RealtimeTranscriptionConfig,
   ISocketWrapper,
   SessionConfig,
-  EndOfTranscript,
+  AudioEventEnded,
+  AudioEventStarted,
 } from '../types';
 import { SpeechmaticsUnexpectedResponse } from '../utils/errors';
 
@@ -83,6 +84,7 @@ export class RealtimeSocketHandler {
       transcription_config: config?.transcription_config || rtDefaultConfig,
       audio_format: config?.audio_format || defaultAudioFormat,
       translation_config: config?.translation_config,
+      audio_events_config: config?.audio_events_config,
       message: 'StartRecognition',
     };
 
@@ -168,7 +170,12 @@ export class RealtimeSocketHandler {
         break;
 
       case MessagesEnum.AudioEventStarted:
+        this.sub?.onAudioEventStartedReceived?.(data as AudioEventStarted);
+        break;
+
       case MessagesEnum.AudioEventEnded:
+        this.sub?.onAudioEventEndedReceived?.(data as AudioEventEnded);
+        break;
 
       // We don't expect these messages to be received (only sent by the client)
       case MessagesEnum.StartRecognition:
@@ -216,4 +223,6 @@ export type Subscriber = {
   onError?: (data: ModelError) => void;
   onInfo?: (data: Info) => void;
   onDisconnect?: () => void;
+  onAudioEventStartedReceived?: (data: AudioEventStarted) => void;
+  onAudioEventEndedReceived?: (data: AudioEventEnded) => void;
 };

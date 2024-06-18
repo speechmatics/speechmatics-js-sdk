@@ -5,6 +5,8 @@ import {
   AddPartialTranslation,
   AddTranslation,
   ModelError,
+  AudioEventStarted,
+  AudioEventEnded,
 } from './models';
 
 export interface EventMap {
@@ -19,4 +21,6 @@ export interface EventMap {
   Warning: (message: string) => void;
   Error: (message: ModelError) => void;
   AudioAdded: () => void;
+  AudioEventStarted: (result: AudioEventStarted) => void;
+  AudioEventEnded: (result: AudioEventEnded) => void;
 }

@@ -1201,6 +1201,18 @@ definitions:
               parameter will conversely guide the algorithm towards being less
               sensitive in terms of retaining similar speakers, and as such may
               lead to fewer speakers overall.  The default is 0.5.
+      audio_filtering_config:
+            description: Configuration for limiting the transcription of quiet audio.
+            properties:
+              volume_threshold:
+                type: number
+                format: float
+                minimum: 0
+                maximum: 100
+                description: >-
+                  Controls the lower limit of audio volume at which speech and audio events will be transcribed.
+                  If the volume limit is very low, then most sound will be passed to the speech recognition engine.
+                  Higher numbers will cut out increasing amounts of sound.
     example:
       language: en
       output_locale: en-GB
