@@ -10,7 +10,7 @@ if (parseInt(process.version.match(/(?:v)([0-9]{2})/)[1]) < 18) {
 }
 
 const input = {
-  url: 'https://demos.speechmatics.com/audio/es-agile-trimmed.mp3',
+  url: 'https://speechmatics-devx.s3.eu-west-2.amazonaws.com/example.wav',
 };
 
 const config = {
