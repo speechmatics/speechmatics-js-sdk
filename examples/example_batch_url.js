@@ -14,7 +14,7 @@ const input = {
 };
 
 const config = {
-  transcription_config: { language: 'es' },
+  transcription_config: { language: 'en' },
 };
 
 const sm = new Speechmatics(process.env.API_KEY);
