@@ -7,7 +7,6 @@ import {
   RecognitionStarted,
 } from '../types';
 import { getSmSDKVersion } from '../utils/request';
-import { on } from 'events';
 
 describe('RealtimeSocketHandler', () => {
   let mockSocketWrapper: jest.Mocked<ISocketWrapper>;
