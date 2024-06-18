@@ -15,13 +15,19 @@
 /**
  *
  * @export
- * @interface AudioEventsConfig
+ * @interface AudioEventEndedEvent
  */
-export interface AudioEventsConfig {
+export interface AudioEventEndedEvent {
   /**
    *
-   * @type {Array<string>}
-   * @memberof AudioEventsConfig
+   * @type {number}
+   * @memberof AudioEventEndedEvent
    */
-  types?: Array<string>;
+  end_time: number;
+  /**
+   *
+   * @type {string}
+   * @memberof AudioEventEndedEvent
+   */
+  type: string;
 }

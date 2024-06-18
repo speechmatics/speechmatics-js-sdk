@@ -17,6 +17,9 @@
 import { BatchTranscriptionConfigAdditionalVocabInner } from './batch-transcription-config-additional-vocab-inner';
 // May contain unused imports in some cases
 // @ts-ignore
+import { BatchTranscriptionConfigAudioFilteringConfig } from './batch-transcription-config-audio-filtering-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import { BatchTranscriptionConfigPunctuationOverrides } from './batch-transcription-config-punctuation-overrides';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -37,6 +40,12 @@ export interface BatchTranscriptionConfig {
    * @memberof BatchTranscriptionConfig
    */
   additional_vocab?: Array<BatchTranscriptionConfigAdditionalVocabInner>;
+  /**
+   *
+   * @type {BatchTranscriptionConfigAudioFilteringConfig}
+   * @memberof BatchTranscriptionConfig
+   */
+  audio_filtering_config?: BatchTranscriptionConfigAudioFilteringConfig;
   /**
    * Transcript labels to use when using collating separate input channels.
    * @type {Array<string>}
