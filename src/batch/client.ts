@@ -143,16 +143,14 @@ export class BatchTranscription {
 
   async createTranscriptionJob(
     input: JobInput,
-    jobConfig: Omit<JobConfig, 'type' | 'fetch_data'> & {
-      transcription_config: BatchTranscriptionConfig;
-    },
+    jobConfig: CreateJobConfig,
   ): Promise<CreateJobResponse> {
     if (this.config.apiKey === undefined)
       throw new SpeechmaticsConfigurationError(
         'Missing apiKey in configuration',
       );
 
-    const config = {
+    const config: JobConfig = {
       ...jobConfig,
       type: 'transcription',
     };
@@ -243,3 +241,7 @@ export type JobInput =
   | File
   | { data: Blob; fileName: string }
   | DataFetchConfig;
+
+type CreateJobConfig = Omit<JobConfig, 'type' | 'fetch_data'> & {
+  transcription_config: BatchTranscriptionConfig;
+};
