@@ -1,0 +1,22 @@
+{
+  "name": "@speechmatics/batch",
+  "version": "0.0.1-alpha",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "generate-types": "./scripts/generate-models.sh",
+    "build": "rollup -c"
+  },
+  "keywords": ["speech", "ASR", "batch", "REST API"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@openapitools/openapi-generator-cli": "^2.13.5"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

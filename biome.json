@@ -5,8 +5,12 @@
   },
   "formatter": {
     "indentStyle": "space",
-    "indentSize": 2,
-    "ignore": ["./dist", "*/**/.next", "./examples/microphone_nextjs"]
+    "indentWidth": 2,
+    "ignore": [
+      "packages/**/dist/*",
+      "*/**/.next",
+      "./examples/microphone_nextjs"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -18,6 +22,10 @@
     "rules": {
       "recommended": true
     },
-    "ignore": ["./dist", "*/**/.next", "./examples/microphone_nextjs"]
+    "ignore": [
+      "./packages/*/dist/*",
+      "*/**/.next",
+      "./examples/microphone_nextjs"
+    ]
   }
 }

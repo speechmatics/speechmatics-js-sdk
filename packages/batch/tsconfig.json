@@ -1,0 +1,16 @@
+{
+  "exclude": ["node_modules/", "dist/"],
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "skipLibCheck": true,
+    "strict": true,
+
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": ".",
+    "outDir": "./dist"
+  }
+}
