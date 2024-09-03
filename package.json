@@ -2,7 +2,6 @@
   "name": "speechmatics-js-sdk",
   "version": "1.0.0",
   "description": "",
-  "packageManager": "pnpm@9.9.0",
   "scripts": {
     "format": "biome format --write .",
     "lint": "biome lint --write ."

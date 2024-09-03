@@ -10,8 +10,15 @@
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c"
   },
-  "keywords": ["speech", "ASR", "batch", "REST API", "transcript"],
-  "author": "",
+  "keywords": [
+    "speech",
+    "ASR",
+    "batch",
+    "REST API",
+    "transcript",
+    "translation",
+    "summary"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
