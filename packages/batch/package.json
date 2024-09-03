@@ -10,7 +10,7 @@
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c"
   },
-  "keywords": ["speech", "ASR", "batch", "REST API"],
+  "keywords": ["speech", "ASR", "batch", "REST API", "transcript"],
   "author": "",
   "license": "MIT",
   "devDependencies": {
