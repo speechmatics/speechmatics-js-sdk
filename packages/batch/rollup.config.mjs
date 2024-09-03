@@ -10,7 +10,13 @@ const name = packageJSON.main.replace(/\.js$/, '');
 export default function rollup() {
   return [
     {
-      plugins: [esbuild()],
+      plugins: [
+        esbuild({
+          define: {
+            SDK_VERSION: `'${packageJSON.version}'`,
+          },
+        }),
+      ],
       input: 'src/index.ts',
       output: [
         {
