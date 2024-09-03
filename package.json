@@ -12,6 +12,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
     "@changesets/cli": "^2.27.7",
+    "@openapitools/openapi-generator-cli": "^2.13.5",
     "@types/node": "^22.5.2",
     "esbuild": "^0.23.1",
     "rollup": "^4.21.2",
