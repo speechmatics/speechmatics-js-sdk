@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
   "scripts": {
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c"
