@@ -18,5 +18,8 @@
     "transcript",
     "translation"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1"
+  }
 }
