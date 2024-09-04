@@ -7,6 +7,7 @@ const name = packageJSON.main.replace(/\.js$/, '');
 // Based on gist
 //https://gist.github.com/aleclarson/9900ed2a9a3119d865286b218e14d226
 
+/** @returns {import("rollup").RollupOptions[]} */
 export default function rollup() {
   return [
     {
@@ -33,7 +34,13 @@ export default function rollup() {
     },
 
     {
-      plugins: [dts()],
+      plugins: [
+        dts({
+          compilerOptions: {
+            removeComments: true,
+          },
+        }),
+      ],
       input: 'src/index.ts',
       output: {
         file: `${name}.d.ts`,
