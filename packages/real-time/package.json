@@ -3,7 +3,8 @@
   "version": "0.0.1-alpha.0",
   "description": "Client for the Speechmatics real-time API",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "browser": "dist/index.browser.js",
+  "module": "dist/index.browser.js",
   "typings": "dist/index.d.ts",
   "files": ["dist/", "README.md"],
   "scripts": {
