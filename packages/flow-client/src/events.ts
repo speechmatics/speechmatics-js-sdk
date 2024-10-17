@@ -121,4 +121,5 @@ export interface FlowClientEventMap {
   socketOpen: Event;
   socketClosing: Event;
   socketClose: Event;
+  socketError: Event;
 }

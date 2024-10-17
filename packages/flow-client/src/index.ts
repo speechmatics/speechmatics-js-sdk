@@ -33,8 +33,16 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   private serverSeqNo = 0;
   private clientSeqNo = 0;
 
-  isConnected() {
-    return this.ws?.readyState === WebSocket.OPEN;
+  private isConnected() {
+    return this.socketState() === 'open';
+  }
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
+  socketState() {
+    if (!this.ws) return;
+    return (['connecting', 'open', 'closing', 'closed'] as const)[
+      this.ws?.readyState
+    ];
   }
 
   async connect(jwt: string, timeoutMs = 10_000) {
@@ -42,7 +50,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       throw new Error('Flow client is already connected');
     }
 
-    const waitForConnect = new Promise<void>((resolve, reject) => {
+    const waitForConnect = new Promise((resolve, reject) => {
       const wsUrl = new URL('/v1/flow', this.server);
       wsUrl.searchParams.append('jwt', jwt);
       wsUrl.searchParams.append('sm-app', this.appId);
@@ -57,18 +65,10 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       // Setup socket event listeners right away
       this.setupSocketEventListeners();
 
-      this.ws.addEventListener(
-        'open',
-        () => {
-          // Setup all other event listeners after opening
-          this.setupEventListeners();
-          resolve();
-        },
-        { once: true },
-      );
+      this.addEventListener('socketOpen', resolve, { once: true });
 
-      this.ws.addEventListener(
-        'error',
+      this.addEventListener(
+        'socketError',
         (e) => {
           reject(new Error('Error opening websocket', { cause: e }));
         },
@@ -83,16 +83,19 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private setupSocketEventListeners() {
-    this.ws?.addEventListener('open', () => {
+    if (!this.ws) throw new Error('socket not initialized!');
+
+    this.ws.addEventListener('open', () => {
       this.dispatchTypedEvent('socketOpen', new Event('socketOpen'));
     });
-    this.ws?.addEventListener('close', () =>
+    this.ws.addEventListener('close', () =>
       this.dispatchTypedEvent('socketClose', new Event('socketClose')),
     );
-  }
+    this.ws.addEventListener('error', (e) =>
+      this.dispatchTypedEvent('socketError', new Event('socketError', e)),
+    );
 
-  private setupEventListeners() {
-    this.ws?.addEventListener('message', ({ data }) => {
+    this.ws.addEventListener('message', ({ data }) => {
       // handle binary audio
       if (data instanceof Blob) {
         // send ack as soon as we receive audio
@@ -159,9 +162,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }
 
     const waitForConversationStarted = new Promise<void>((resolve) => {
-      this.addEventListener('message', ({ data }) => {
+      const client = this;
+      this.addEventListener('message', function onStart({ data }) {
         if (data.message === 'ConversationStarted') {
           resolve();
+          client.removeEventListener('message', onStart);
         }
       });
 
@@ -188,23 +193,17 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     ]);
   }
 
-  async endConversation() {
+  endConversation() {
     this.sendWebsocketMessage({
       message: 'AudioEnded',
       last_seq_no: this.clientSeqNo,
     });
-    await this.disconnectSocket();
+    this.disconnectSocket();
   }
 
-  private async disconnectSocket() {
+  private disconnectSocket() {
     this.dispatchTypedEvent('socketClosing', new Event('socketClosing'));
-
-    const waitForDisconnect = new Promise((resolve, reject) => {
-      if (!this.ws) return reject(new Error('no socket'));
-      this.ws.onclose = resolve;
-    });
-
-    return Promise.race([waitForDisconnect, rejectAfter(10_000, 'disconnect')]);
+    this.ws?.close();
   }
 }
 
