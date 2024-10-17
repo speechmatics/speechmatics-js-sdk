@@ -1,5 +1,5 @@
 {
-  "name": "@speechmatics/real-time",
+  "name": "@speechmatics/real-time-client",
   "version": "0.0.1-alpha.0",
   "description": "Client for the Speechmatics real-time API",
   "main": "dist/index.js",

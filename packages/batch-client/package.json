@@ -1,5 +1,5 @@
 {
-  "name": "@speechmatics/batch",
+  "name": "@speechmatics/batch-client",
   "version": "0.0.1-alpha.0",
   "description": "",
   "main": "dist/index.js",

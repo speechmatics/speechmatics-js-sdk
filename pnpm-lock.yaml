@@ -36,13 +36,13 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  packages/batch:
+  packages/batch-client:
     dependencies:
       zod:
         specifier: ^3.23.8
         version: 3.23.8
 
-  packages/real-time:
+  packages/real-time-client:
     dependencies:
       typescript-event-target:
         specifier: ^1.1.1
