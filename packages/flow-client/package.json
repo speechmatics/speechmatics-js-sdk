@@ -1,0 +1,15 @@
+{
+  "name": "@speechmatics/flow-client",
+  "version": "0.0.1-alpha.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1"
+  }
+}
