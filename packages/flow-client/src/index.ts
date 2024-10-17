@@ -135,11 +135,15 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
-    this.ws?.send(JSON.stringify(message));
+    if (this.isConnected()) {
+      this.ws?.send(JSON.stringify(message));
+    }
   }
 
   public sendWebsocketAudio(pcm16Data: Int16Array) {
-    this.ws?.send(pcm16Data);
+    if (this.isConnected()) {
+      this.ws?.send(pcm16Data);
+    }
   }
 
   async startConversation(config: { persona: { id: string } }) {

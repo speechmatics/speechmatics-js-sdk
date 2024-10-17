@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@rollup/plugin-inject": "^5.0.5",
     "typescript-event-target": "^1.1.1"
