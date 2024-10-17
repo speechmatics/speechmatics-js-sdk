@@ -49,6 +49,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
       this.ws = new WebSocket(wsUrl.toString());
 
+      this.dispatchTypedEvent(
+        'socketInitialized',
+        new Event('socketInitialized'),
+      );
+
       // Setup socket event listeners right away
       this.setupSocketEventListeners();
 
@@ -192,6 +197,8 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private async disconnectSocket() {
+    this.dispatchTypedEvent('socketClosing', new Event('socketClosing'));
+
     const waitForDisconnect = new Promise((resolve, reject) => {
       if (!this.ws) return reject(new Error('no socket'));
       this.ws.onclose = resolve;
