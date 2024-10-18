@@ -15,6 +15,11 @@ export type ConversationStartedMessage = {
   };
 };
 
+export type AudioAddedMessage = {
+  message: 'AudioAdded';
+  seq_no: number;
+};
+
 export type ResponseStartedMessage = {
   message: 'ResponseStarted';
   content: string;
@@ -60,6 +65,7 @@ export type ErrorMessage = {
 
 export type FlowClientIncomingMessage =
   | ConversationStartedMessage
+  | AudioAddedMessage
   | ResponseStartedMessage
   | ResponseCompletedMessage
   | ResponseInterruptedMessage

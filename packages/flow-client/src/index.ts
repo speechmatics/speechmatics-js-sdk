@@ -16,6 +16,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   public readonly appId: string;
   private readonly audioBufferingMs: number;
 
+  // Buffer for audio received from server
   private agentAudioQueue: Blob[] = [];
 
   constructor(
@@ -33,21 +34,19 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   private serverSeqNo = 0;
   private clientSeqNo = 0;
 
-  private isConnected() {
-    return this.socketState() === 'open';
-  }
-
-  // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
   socketState() {
     if (!this.ws) return;
-    return (['connecting', 'open', 'closing', 'closed'] as const)[
-      this.ws?.readyState
-    ];
+    return {
+      [WebSocket.CONNECTING]: 'connecting' as const,
+      [WebSocket.OPEN]: 'open' as const,
+      [WebSocket.CLOSING]: 'closing' as const,
+      [WebSocket.CLOSED]: 'closed' as const,
+    }[this.ws.readyState];
   }
 
   async connect(jwt: string, timeoutMs = 10_000) {
-    if (this.isConnected()) {
-      throw new Error('Flow client is already connected');
+    if (this.socketState() === 'open') {
+      throw new SpeechmaticsFlowError('Flow client is already connected');
     }
 
     const waitForConnect = new Promise((resolve, reject) => {
@@ -70,7 +69,9 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.addEventListener(
         'socketError',
         (e) => {
-          reject(new Error('Error opening websocket', { cause: e }));
+          reject(
+            new SpeechmaticsFlowError('Error opening websocket', { cause: e }),
+          );
         },
         { once: true },
       );
@@ -83,7 +84,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private setupSocketEventListeners() {
-    if (!this.ws) throw new Error('socket not initialized!');
+    if (!this.ws) throw new SpeechmaticsFlowError('socket not initialized!');
 
     this.ws.addEventListener('open', () => {
       this.dispatchTypedEvent('socketOpen', new Event('socketOpen'));
@@ -98,65 +99,70 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.ws.addEventListener('message', ({ data }) => {
       // handle binary audio
       if (data instanceof Blob) {
-        // send ack as soon as we receive audio
-        this.sendWebsocketMessage({
-          message: 'AudioReceived',
-          seq_no: ++this.serverSeqNo,
-          buffering: this.audioBufferingMs / 1000,
-        });
-
-        this.agentAudioQueue.push(data);
-
-        // Flush audio queue and dispatch events after buffer delay
-        setTimeout(() => {
-          while (this.agentAudioQueue.length) {
-            const data = this.agentAudioQueue.shift();
-            data?.arrayBuffer().then((arrayBuffer) => {
-              this.dispatchTypedEvent(
-                'agentAudio',
-                new AgentAudioEvent(new Uint8Array(arrayBuffer)),
-              );
-            });
-          }
-        }, this.audioBufferingMs);
-
-        return;
+        this.handleWebocketAudio(data);
+      } else if (typeof data === 'string') {
+        this.handleWebsocketMessage(data);
+      } else {
+        throw new SpeechmaticsFlowError(`Unexpected message type: ${data}`);
       }
-
-      if (typeof data !== 'string') {
-        throw new Error(`Unexpected message type: ${data}`);
-      }
-
-      // We're intentionally not validating the message shape. It is design by contract
-      let parsedData: FlowClientIncomingMessage;
-      try {
-        parsedData = JSON.parse(data);
-      } catch (e) {
-        throw new Error('Failed to parse message as JSON');
-      }
-
-      this.dispatchTypedEvent(
-        'message',
-        new MessageEvent('message', { data: parsedData }),
-      );
     });
   }
 
+  private handleWebocketAudio(data: Blob) {
+    // send ack as soon as we receive audio
+    this.sendWebsocketMessage({
+      message: 'AudioReceived',
+      seq_no: ++this.serverSeqNo,
+      buffering: this.audioBufferingMs / 1000,
+    });
+
+    this.agentAudioQueue.push(data);
+
+    // Flush audio queue and dispatch play events after buffer delay
+    setTimeout(() => {
+      while (this.agentAudioQueue.length) {
+        const data = this.agentAudioQueue.shift();
+        data?.arrayBuffer().then((arrayBuffer) => {
+          this.dispatchTypedEvent(
+            'agentAudio',
+            new AgentAudioEvent(new Uint8Array(arrayBuffer)),
+          );
+        });
+      }
+    }, this.audioBufferingMs);
+  }
+
+  private handleWebsocketMessage(message: string) {
+    // We're intentionally not validating the message shape. It is design by contract
+    let data: FlowClientIncomingMessage;
+    try {
+      data = JSON.parse(message);
+    } catch (e) {
+      throw new SpeechmaticsFlowError('Failed to parse message as JSON');
+    }
+
+    if (data.message === 'AudioAdded') {
+      this.clientSeqNo = data.seq_no;
+    }
+
+    this.dispatchTypedEvent('message', new MessageEvent('message', { data }));
+  }
+
   private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
-    if (this.isConnected()) {
+    if (this.socketState() === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
   }
 
-  public sendWebsocketAudio(pcm16Data: Int16Array) {
-    if (this.isConnected()) {
+  public sendAudio(pcm16Data: Int16Array) {
+    if (this.socketState() === 'open') {
       this.ws?.send(pcm16Data);
     }
   }
 
   async startConversation(config: { persona: { id: string } }) {
-    if (!this.isConnected()) {
-      throw new Error(
+    if (this.socketState() !== 'open') {
+      throw new SpeechmaticsFlowError(
         'Must call and await `connect` before starting conversation',
       );
     }
@@ -211,8 +217,19 @@ function rejectAfter(timeoutMs: number, key: string) {
   return new Promise((_, reject) => {
     setTimeout(
       () =>
-        reject(new Error(`Timed out after ${timeoutMs}s waiting for ${key}`)),
+        reject(
+          new SpeechmaticsFlowError(
+            `Timed out after ${timeoutMs}s waiting for ${key}`,
+          ),
+        ),
       timeoutMs,
     );
   });
+}
+
+export class SpeechmaticsFlowError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'SpeechmaticsFlowError';
+  }
 }
