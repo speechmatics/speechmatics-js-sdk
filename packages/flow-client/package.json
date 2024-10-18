@@ -10,11 +10,13 @@
   "scripts": {
     "build": "pnpm rollup -c"
   },
-  "keywords": [],
+  "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@rollup/plugin-inject": "^5.0.5",
     "typescript-event-target": "^1.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5"
   }
 }
