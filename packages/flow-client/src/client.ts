@@ -11,6 +11,7 @@ import {
 export interface FlowClientOptions {
   appId: string;
   audioBufferingMs?: number;
+  websocketBinaryType?: 'blob' | 'arrayBuffer';
 }
 
 export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
@@ -18,15 +19,26 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   private readonly audioBufferingMs: number;
 
   // Buffer for audio received from server
-  private agentAudioQueue: Blob[] = [];
+  private agentAudioQueue:
+    | { type: 'blob'; queue: Blob[] }
+    | { type: 'arrayBuffer'; queue: ArrayBuffer[] };
 
   constructor(
     public readonly server: string,
-    { appId, audioBufferingMs = 20 }: FlowClientOptions,
+    {
+      appId,
+      audioBufferingMs = 20,
+      websocketBinaryType = 'blob',
+    }: FlowClientOptions,
   ) {
     super();
     this.appId = appId;
     this.audioBufferingMs = audioBufferingMs;
+
+    this.agentAudioQueue = {
+      type: websocketBinaryType,
+      queue: [],
+    };
   }
 
   // active websocket
@@ -104,7 +116,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.ws.addEventListener('message', ({ data }) => {
       // handle binary audio
       if (data instanceof Blob) {
-        this.handleWebocketAudio(data);
+        this.handleWebsocketAudio(data);
       } else if (typeof data === 'string') {
         this.handleWebsocketMessage(data);
       } else {
@@ -113,7 +125,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     });
   }
 
-  private handleWebocketAudio(data: Blob) {
+  private handleWebsocketAudio(data: Blob | ArrayBuffer) {
     // send ack as soon as we receive audio
     this.sendWebsocketMessage({
       message: 'AudioReceived',
@@ -121,18 +133,38 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       buffering: this.audioBufferingMs / 1000,
     });
 
-    this.agentAudioQueue.push(data);
+    if (data instanceof Blob && this.agentAudioQueue.type === 'blob') {
+      this.agentAudioQueue.queue.push(data);
+    } else if (
+      data instanceof ArrayBuffer &&
+      this.agentAudioQueue.type === 'arrayBuffer'
+    ) {
+      this.agentAudioQueue.queue.push(data);
+    } else {
+      throw new SpeechmaticsFlowError(
+        `Could not process audio: expecting audio to be ${this.agentAudioQueue.type} but got ${data.constructor.name}`,
+      );
+    }
 
     // Flush audio queue and dispatch play events after buffer delay
     setTimeout(() => {
-      while (this.agentAudioQueue.length) {
-        const data = this.agentAudioQueue.shift();
-        data?.arrayBuffer().then((arrayBuffer) => {
+      while (this.agentAudioQueue.queue.length) {
+        const data = this.agentAudioQueue.queue.shift();
+        if (!data) continue;
+
+        if (data instanceof Blob) {
+          data?.arrayBuffer().then((arrayBuffer) => {
+            this.dispatchTypedEvent(
+              'agentAudio',
+              new AgentAudioEvent(new Uint8Array(arrayBuffer)),
+            );
+          });
+        } else {
           this.dispatchTypedEvent(
             'agentAudio',
-            new AgentAudioEvent(new Uint8Array(arrayBuffer)),
+            new AgentAudioEvent(new Uint8Array(data)),
           );
-        });
+        }
       }
     }, this.audioBufferingMs);
   }
