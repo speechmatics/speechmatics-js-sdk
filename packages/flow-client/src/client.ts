@@ -191,7 +191,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }
   }
 
-  public sendAudio(pcm16Data: Int16Array) {
+  public sendAudio(pcm16Data: ArrayBufferLike) {
     if (this.socketState === 'open') {
       this.ws?.send(pcm16Data);
     }
