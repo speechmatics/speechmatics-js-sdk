@@ -69,6 +69,8 @@ export type FlowClientIncomingMessage =
   | ResponseStartedMessage
   | ResponseCompletedMessage
   | ResponseInterruptedMessage
+  | ConversationEndingMessage
+  | ConversationEndedMessage
   | InfoMessage
   | WarningMessage
   | ErrorMessage;
