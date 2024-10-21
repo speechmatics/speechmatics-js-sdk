@@ -121,9 +121,15 @@ export class AgentAudioEvent extends Event {
   }
 }
 
+export class FlowIncomingMessageEvent extends Event {
+  constructor(public readonly data: FlowClientIncomingMessage) {
+    super('message');
+  }
+}
+
 export interface FlowClientEventMap {
   agentAudio: AgentAudioEvent;
-  message: MessageEvent<FlowClientIncomingMessage>;
+  message: FlowIncomingMessageEvent;
 
   socketInitialized: Event;
   socketOpen: Event;
