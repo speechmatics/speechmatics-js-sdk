@@ -115,7 +115,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
     this.ws.addEventListener('message', ({ data }) => {
       // handle binary audio
-      if (data instanceof Blob) {
+      if (data instanceof Blob || data instanceof ArrayBuffer) {
         this.handleWebsocketAudio(data);
       } else if (typeof data === 'string') {
         this.handleWebsocketMessage(data);
