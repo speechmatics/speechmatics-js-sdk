@@ -59,6 +59,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       wsUrl.searchParams.append('sm-app', this.appId);
 
       this.ws = new WebSocket(wsUrl.toString());
+      this.ws.binaryType = 'blob';
 
       this.dispatchTypedEvent(
         'socketInitialized',
