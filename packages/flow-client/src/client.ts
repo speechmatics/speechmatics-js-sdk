@@ -34,8 +34,8 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   private serverSeqNo = 0;
   private clientSeqNo = 0;
 
-  socketState() {
-    if (!this.ws) return;
+  get socketState() {
+    if (!this.ws) return undefined;
     return {
       [WebSocket.CONNECTING]: 'connecting' as const,
       [WebSocket.OPEN]: 'open' as const,
@@ -44,9 +44,12 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }[this.ws.readyState];
   }
 
-  async connect(jwt: string, timeoutMs = 10_000) {
-    if (this.socketState() === 'open') {
-      throw new SpeechmaticsFlowError('Flow client is already connected');
+  private async connect(jwt: string, timeoutMs = 10_000) {
+    const socketState = this.socketState;
+    if (socketState && socketState !== 'closed') {
+      throw new SpeechmaticsFlowError(
+        `Cannot start connection while socket is ${socketState}`,
+      );
     }
 
     const waitForConnect = new Promise((resolve, reject) => {
@@ -149,41 +152,49 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
-    if (this.socketState() === 'open') {
+    if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
   }
 
   public sendAudio(pcm16Data: Int16Array) {
-    if (this.socketState() === 'open') {
+    if (this.socketState === 'open') {
       this.ws?.send(pcm16Data);
     }
   }
 
-  async startConversation(config: { persona: { id: string } }) {
-    if (this.socketState() !== 'open') {
-      throw new SpeechmaticsFlowError(
-        'Must call and await `connect` before starting conversation',
-      );
-    }
+  async startConversation(
+    jwt: string,
+    config: StartConversationMessage['conversation_config'],
+  ) {
+    await this.connect(jwt);
 
-    const waitForConversationStarted = new Promise<void>((resolve) => {
+    const waitForConversationStarted = new Promise<void>((resolve, reject) => {
       const client = this;
       this.addEventListener('message', function onStart({ data }) {
         if (data.message === 'ConversationStarted') {
           resolve();
           client.removeEventListener('message', onStart);
+        } else if (data.message === 'Error') {
+          reject(
+            new SpeechmaticsFlowError('Error waiting for conversation start', {
+              cause: data,
+            }),
+          );
         }
       });
 
+      const conversation_config = {
+        ...config,
+        template_variables: {
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          ...config.template_variables,
+        },
+      };
+
       const startMessage: StartConversationMessage = {
         message: 'StartConversation',
-        conversation_config: {
-          template_id: config.persona.id,
-          template_variables: {
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          },
-        },
+        conversation_config,
         audio_format: {
           type: 'raw',
           encoding: 'pcm_s16le',
