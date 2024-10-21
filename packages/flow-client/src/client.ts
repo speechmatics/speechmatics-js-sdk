@@ -11,7 +11,7 @@ import {
 export interface FlowClientOptions {
   appId: string;
   audioBufferingMs?: number;
-  websocketBinaryType?: 'blob' | 'arrayBuffer';
+  websocketBinaryType?: 'blob' | 'arraybuffer';
 }
 
 export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
@@ -21,7 +21,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   // Buffer for audio received from server
   private agentAudioQueue:
     | { type: 'blob'; queue: Blob[] }
-    | { type: 'arrayBuffer'; queue: ArrayBuffer[] };
+    | { type: 'arraybuffer'; queue: ArrayBuffer[] };
 
   constructor(
     public readonly server: string,
@@ -71,7 +71,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       wsUrl.searchParams.append('sm-app', this.appId);
 
       this.ws = new WebSocket(wsUrl.toString());
-      this.ws.binaryType = 'blob';
+      this.ws.binaryType = this.agentAudioQueue.type;
 
       this.dispatchTypedEvent(
         'socketInitialized',
@@ -137,7 +137,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.agentAudioQueue.queue.push(data);
     } else if (
       data instanceof ArrayBuffer &&
-      this.agentAudioQueue.type === 'arrayBuffer'
+      this.agentAudioQueue.type === 'arraybuffer'
     ) {
       this.agentAudioQueue.queue.push(data);
     } else {
