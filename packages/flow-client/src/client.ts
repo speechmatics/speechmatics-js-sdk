@@ -1,6 +1,7 @@
 import { TypedEventTarget } from 'typescript-event-target';
 import {
   AgentAudioEvent,
+  FlowIncomingMessageEvent,
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
@@ -148,7 +149,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.clientSeqNo = data.seq_no;
     }
 
-    this.dispatchTypedEvent('message', new MessageEvent('message', { data }));
+    this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
   }
 
   private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
