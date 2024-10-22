@@ -148,25 +148,29 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
     // Flush audio queue and dispatch play events after buffer delay
     setTimeout(() => {
-      while (this.agentAudioQueue.queue.length) {
-        const data = this.agentAudioQueue.queue.shift();
-        if (!data) continue;
+      this.flushAgentAudioQueue();
+    }, this.audioBufferingMs);
+  }
 
-        if (data instanceof Blob) {
-          data?.arrayBuffer().then((arrayBuffer) => {
-            this.dispatchTypedEvent(
-              'agentAudio',
-              new AgentAudioEvent(new Int16Array(arrayBuffer)),
-            );
-          });
-        } else {
+  private flushAgentAudioQueue() {
+    while (this.agentAudioQueue.queue.length) {
+      const data = this.agentAudioQueue.queue.shift();
+      if (!data) continue;
+
+      if (data instanceof Blob) {
+        data?.arrayBuffer().then((arrayBuffer) => {
           this.dispatchTypedEvent(
             'agentAudio',
-            new AgentAudioEvent(new Int16Array(data)),
+            new AgentAudioEvent(new Int16Array(arrayBuffer)),
           );
-        }
+        });
+      } else {
+        this.dispatchTypedEvent(
+          'agentAudio',
+          new AgentAudioEvent(new Int16Array(data)),
+        );
       }
-    }, this.audioBufferingMs);
+    }
   }
 
   private handleWebsocketMessage(message: string) {
@@ -252,6 +256,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       last_seq_no: this.clientSeqNo,
     });
     this.disconnectSocket();
+    this.flushAgentAudioQueue();
   }
 
   private disconnectSocket() {
