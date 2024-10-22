@@ -115,8 +115,9 @@ export type FlowClientOutgoingMessage =
 /////////////////////////////////////////////
 
 // Custom event gets fired when we receive agent TTS audio
+// The underlying data is PCM16_SLE, represented as an Int16Array
 export class AgentAudioEvent extends Event {
-  constructor(public readonly data: Uint8Array) {
+  constructor(public readonly data: Int16Array) {
     super('agentAudio');
   }
 }

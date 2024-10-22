@@ -156,13 +156,13 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
           data?.arrayBuffer().then((arrayBuffer) => {
             this.dispatchTypedEvent(
               'agentAudio',
-              new AgentAudioEvent(new Uint8Array(arrayBuffer)),
+              new AgentAudioEvent(new Int16Array(arrayBuffer)),
             );
           });
         } else {
           this.dispatchTypedEvent(
             'agentAudio',
-            new AgentAudioEvent(new Uint8Array(data)),
+            new AgentAudioEvent(new Int16Array(data)),
           );
         }
       }
