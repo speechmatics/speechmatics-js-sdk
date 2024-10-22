@@ -199,7 +199,13 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
   async startConversation(
     jwt: string,
-    config: StartConversationMessage['conversation_config'],
+    {
+      config,
+      audioFormat,
+    }: {
+      config: StartConversationMessage['conversation_config'];
+      audioFormat?: StartConversationMessage['audio_format'];
+    },
   ) {
     await this.connect(jwt);
 
@@ -229,11 +235,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       const startMessage: StartConversationMessage = {
         message: 'StartConversation',
         conversation_config,
-        audio_format: {
-          type: 'raw',
-          encoding: 'pcm_s16le',
-          sample_rate: 16000,
-        },
+        audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
       };
       this.sendWebsocketMessage(startMessage);
     });
@@ -278,3 +280,9 @@ export class SpeechmaticsFlowError extends Error {
     this.name = 'SpeechmaticsFlowError';
   }
 }
+
+const DEFAULT_AUDIO_FORMAT = {
+  type: 'raw',
+  encoding: 'pcm_s16le',
+  sample_rate: 16000,
+} as const;
