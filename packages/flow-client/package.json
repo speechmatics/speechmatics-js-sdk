@@ -8,7 +8,9 @@
   "module": "dist/index.browser.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpm rollup -c"
+    "build": "pnpm rollup -c",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
   },
   "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
   "author": "",
