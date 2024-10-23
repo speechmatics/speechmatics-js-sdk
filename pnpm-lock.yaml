@@ -42,6 +42,16 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
 
+  packages/flow-client:
+    dependencies:
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
+    devDependencies:
+      '@rollup/plugin-inject':
+        specifier: ^5.0.5
+        version: 5.0.5(rollup@4.21.2)
+
   packages/real-time-client:
     dependencies:
       typescript-event-target:
