@@ -27,7 +27,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     public readonly server: string,
     {
       appId,
-      audioBufferingMs = 20,
+      audioBufferingMs = 10,
       websocketBinaryType = 'blob',
     }: FlowClientOptions,
   ) {
@@ -152,24 +152,18 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }, this.audioBufferingMs);
   }
 
-  private flushAgentAudioQueue() {
+  private async flushAgentAudioQueue() {
     while (this.agentAudioQueue.queue.length) {
       const data = this.agentAudioQueue.queue.shift();
       if (!data) continue;
 
-      if (data instanceof Blob) {
-        data?.arrayBuffer().then((arrayBuffer) => {
-          this.dispatchTypedEvent(
-            'agentAudio',
-            new AgentAudioEvent(new Int16Array(arrayBuffer)),
-          );
-        });
-      } else {
-        this.dispatchTypedEvent(
-          'agentAudio',
-          new AgentAudioEvent(new Int16Array(data)),
-        );
-      }
+      const arrayBuffer =
+        data instanceof Blob ? await data.arrayBuffer() : data;
+
+      this.dispatchTypedEvent(
+        'agentAudio',
+        new AgentAudioEvent(new Int16Array(arrayBuffer)),
+      );
     }
   }
 
