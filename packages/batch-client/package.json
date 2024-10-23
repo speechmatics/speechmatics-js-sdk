@@ -1,0 +1,26 @@
+{
+  "name": "@speechmatics/batch-client",
+  "version": "5.0.1-alpha.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "generate-types": "./scripts/generate-models.sh",
+    "build": "rollup -c"
+  },
+  "keywords": [
+    "speech",
+    "ASR",
+    "batch",
+    "REST API",
+    "transcript",
+    "translation",
+    "summary"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

@@ -1,5 +1,3 @@
-[![npm](https://img.shields.io/npm/v/speechmatics)](https://www.npmjs.com/package/speechmatics)
-
 # Table of Contents
 
 1. [Introduction](#speechmatics-javascript-sdk)
@@ -18,9 +16,9 @@
 
 # Speechmatics Javascript SDK
 
-Official JS/TS SDK for [Speechmatics](https://speechmatics.com) API.
+Official JS/TS SDK libraries for [Speechmatics](https://speechmatics.com) APIs.
 
-To access the API you need to have an account with Speechmatics. You can sign up for a free trial [here](https://portal.speechmatics.com/signup).
+To access our APIs, you need to have an account with Speechmatics. You can sign up for a free trial [here](https://portal.speechmatics.com/signup).
 
 ## Documentation
 
