@@ -3,7 +3,7 @@
 import { FlowClient, type FlowClientOptions } from '@speechmatics/flow-client';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import { FlowClientContext } from './flow-context';
-import { useClientEventListener } from './use-client-event-listener';
+import { useClientEventListener } from './use-flow-on';
 
 export function FlowClientContextProvider({
   server,
