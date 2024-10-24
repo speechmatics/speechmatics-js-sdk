@@ -8,7 +8,8 @@
   "typings": "dist/index.d.ts",
   "files": ["dist/", "README.md"],
   "scripts": {
-    "build": "pnpm rollup -c"
+    "build": "pnpm rollup -c",
+    "prepare": "pnpm build"
   },
   "keywords": [
     "speech",

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
+    "clean:builds": "pnpm -r exec rm -rf dist",
+    "clean": "pnpm clean:deps && pnpm clean:builds",
+
     "format": "biome format --write .",
     "lint": "biome lint --write ."
   },
