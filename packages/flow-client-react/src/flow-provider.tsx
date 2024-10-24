@@ -42,11 +42,7 @@ export function FlowProvider({
     [client, socketState, sessionId],
   );
 
-  return (
-    <FlowContext.Provider value={value}>
-      {children}
-    </FlowContext.Provider>
-  );
+  return <FlowContext.Provider value={value}>{children}</FlowContext.Provider>;
 }
 
 const SOCKET_EVENTS = [

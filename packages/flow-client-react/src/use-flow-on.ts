@@ -1,3 +1,4 @@
+'use client';
 import type { FlowClient, FlowClientEventMap } from '@speechmatics/flow-client';
 import { useContext, useEffect } from 'react';
 import type { TypedEventListenerOrEventListenerObject } from 'typescript-event-target';

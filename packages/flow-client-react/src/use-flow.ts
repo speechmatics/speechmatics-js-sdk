@@ -2,7 +2,7 @@ import { StartConversationMessage } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
 import { FlowContext } from './flow-context';
 
-function useFlow() {
+export function useFlow() {
   const context = useContext(FlowContext);
 
   if (context === null) {

@@ -1,0 +1,16 @@
+dt::after {
+  content: ": ";
+}
+
+dl {
+  display: grid;
+  grid-template-rows: max-content auto;
+}
+
+dt {
+  grid-column-start: 1;
+}
+
+dd {
+  grid-column-start: 2;
+}

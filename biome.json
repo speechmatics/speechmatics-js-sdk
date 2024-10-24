@@ -6,11 +6,7 @@
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": [
-      "packages/**/dist/*",
-      "*/**/.next",
-      "./examples/microphone_nextjs"
-    ]
+    "ignore": ["packages/**/dist/*", "*/**/.next"]
   },
   "javascript": {
     "formatter": {
@@ -24,8 +20,7 @@
     },
     "ignore": [
       "./packages/*/dist/*",
-      "*/**/.next",
-      "./examples/microphone_nextjs"
+      "*/**/.next"
     ]
   }
 }

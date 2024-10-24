@@ -1,3 +1,4 @@
+'use client';
 import type { FlowClient } from '@speechmatics/flow-client';
 import { createContext } from 'react';
 
