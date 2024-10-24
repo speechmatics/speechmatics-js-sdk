@@ -2,10 +2,10 @@
 
 import { FlowClient, type FlowClientOptions } from '@speechmatics/flow-client';
 import { useMemo, useState, useSyncExternalStore } from 'react';
-import { FlowClientContext } from './flow-context';
+import { FlowContext } from './flow-context';
 import { useClientEventListener } from './use-flow-on';
 
-export function FlowClientContextProvider({
+export function FlowProvider({
   server,
   children,
   ...options
@@ -43,9 +43,9 @@ export function FlowClientContextProvider({
   );
 
   return (
-    <FlowClientContext.Provider value={value}>
+    <FlowContext.Provider value={value}>
       {children}
-    </FlowClientContext.Provider>
+    </FlowContext.Provider>
   );
 }
 

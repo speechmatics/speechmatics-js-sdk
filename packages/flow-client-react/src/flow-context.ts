@@ -6,4 +6,4 @@ export type IFlowClientContext = {
   socketState: FlowClient['socketState'];
   sessionId?: string;
 };
-export const FlowClientContext = createContext<IFlowClientContext | null>(null);
+export const FlowContext = createContext<IFlowClientContext | null>(null);

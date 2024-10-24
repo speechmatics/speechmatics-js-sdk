@@ -1,9 +1,9 @@
 import { StartConversationMessage } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
-import { FlowClientContext } from './flow-context';
+import { FlowContext } from './flow-context';
 
 function useFlow() {
-  const context = useContext(FlowClientContext);
+  const context = useContext(FlowContext);
 
   if (context === null) {
     throw new Error('Flow client uninitialized in context');

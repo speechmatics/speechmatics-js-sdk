@@ -1,13 +1,13 @@
 import type { FlowClient, FlowClientEventMap } from '@speechmatics/flow-client';
 import { useContext, useEffect } from 'react';
 import type { TypedEventListenerOrEventListenerObject } from 'typescript-event-target';
-import { FlowClientContext } from './flow-context';
+import { FlowContext } from './flow-context';
 
 export function useFlowOn<E extends keyof FlowClientEventMap>(
   message: E,
   cb: TypedEventListenerOrEventListenerObject<FlowClientEventMap, E>,
 ) {
-  const context = useContext(FlowClientContext);
+  const context = useContext(FlowContext);
   if (context === null) {
     throw new Error('Flow client uninitialized in context');
   }
