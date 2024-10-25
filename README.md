@@ -16,15 +16,15 @@ See the `README.md` files in each package for installation and usage details:
 
 Official JS clients for Speechmatics APIs
 
-- [`@speechmatics/batch-client`]("./packages/batch-client")
-- [`@speechmatics/real-time-client`]("./packages/real-time-client")
-- [`@speechmatics/flow-client`]("./packages/flow-client")
+- [`@speechmatics/batch-client`](./packages/batch-client)
+- [`@speechmatics/real-time-client`](./packages/real-time-client)
+- [`@speechmatics/flow-client`](./packages/flow-client)
 
 ### React hooks
 
 Wrappers of the clients above to integrate into React projects:
 
-- [`@speechmatics/flow-client-react`]("./packages/flow-client-react")
+- [`@speechmatics/flow-client-react`](./packages/flow-client-react)
 
 ## Documentation
 
