@@ -40,6 +40,7 @@ export function Controls({
       </div>
       <div className="grid">
         <button
+          type="button"
           className={connected ? 'secondary' : undefined}
           aria-busy={loading}
           onClick={connected ? stopSession : () => startSession(persona)}

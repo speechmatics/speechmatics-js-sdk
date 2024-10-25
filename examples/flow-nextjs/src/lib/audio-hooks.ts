@@ -46,11 +46,13 @@ export function usePcmMicrophoneAudio(onAudio: (audio: Float32Array) => void) {
       mediaStreamRef.current = mediaStream;
       return mediaStream;
     },
-    [onAudio, isRecording],
+    [onAudio],
   );
 
   const stopRecording = useCallback(() => {
-    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+    for (const track of mediaStreamRef.current?.getTracks() ?? []) {
+      track.stop();
+    }
     mediaStreamRef.current = undefined;
 
     setIsRecording(false);
@@ -83,7 +85,8 @@ export function usePlayPcm16Audio(audioContext: AudioContext | undefined) {
       if (!audioContext) {
         console.warn('Audio context not initialized for playback!');
         return;
-      } else if (audioContext.state === 'closed') {
+      }
+      if (audioContext.state === 'closed') {
         console.warn('Audio context closed');
         return;
       }

@@ -1,4 +1,4 @@
-import { StartConversationMessage } from '@speechmatics/flow-client';
+import type { StartConversationMessage } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
 import { FlowContext } from './flow-context';
 

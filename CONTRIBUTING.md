@@ -41,23 +41,11 @@ If you want a feature, you can open a discussion via the [issues](https://github
 
 ## Style Guide
 
-> Any color you like.
-
 We use Biome for linting and formatting: https://www.npmjs.com/package/@biomejs/biome
 
 You can run linting and formatting using the scripts:
 
 ```
-npm run format
-npm run check
+pnpm lint
+pnpm format
 ```
-
-We also make use of the [pre-commit](https://pre-commit.com/) package. It will run a serious of checks on every commit to make sure your code is properly formatted and linted. You can run the pre-commit check independent of a commit with the command `pre-commit run --all-files`.
-
-In general, code should be self-explanatory and kept as simple as possible. Comments can be added to clarify what a piece of code does and jsdoc annotations should be added to any important functions that are expected to be used by SDK clients.
-
-## Testing
-
-Tests for this repo are included in the `/tests` directory. You can use the command `npm test` to run unit tests. 
-
-If you make changes to the SDK, the tests should be updated or added to in a sensible way to ensure the new change is properly covered.
