@@ -3,10 +3,9 @@
   "version": "0.0.1-alpha.0",
   "description": "React hooks for interacting with the Speechmatics Flow API",
   "main": "dist/index.cjs",
-  "files": ["dist/", "README.md"],
-  "browser": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../flow-client build && pnpm rollup -c",
     "prepare": "pnpm build",

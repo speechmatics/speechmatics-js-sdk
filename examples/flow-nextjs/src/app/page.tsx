@@ -1,6 +1,6 @@
 import { fetchCredentials } from '@/lib/fetch-credentials';
 import { Example } from '@/lib/Example';
-import { fetchPersonas } from '@/lib/fetchPersonas';
+import { fetchPersonas } from '@speechmatics/flow-client-react';
 
 export default async function Home() {
   // Credentials here are being fetched when rendering the server component.

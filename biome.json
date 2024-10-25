@@ -18,9 +18,6 @@
     "rules": {
       "recommended": true
     },
-    "ignore": [
-      "./packages/*/dist/*",
-      "*/**/.next"
-    ]
+    "ignore": ["./packages/*/dist/*", "*/**/.next"]
   }
 }
