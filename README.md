@@ -1,4 +1,12 @@
 
+<p align="center">
+  <br/>
+  <img src="./assets/logo.svg"/>
+  <h1 align="center">Speechmatics Javascript SDK</h1>
+  <p align="center">Monorepo of official Javascript libraries for interacting with Speechmatics APIs, and other related utilities.</p>
+  <p align="center">Packages can be found in the <a href="/packages"><code>packages/</code></a> directory.
+  <p align="center">Check out our <a href="/examples"><code>examples/</code></a> to see them in action
+</p>
 
 ## Legacy version
 
