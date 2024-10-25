@@ -23,6 +23,8 @@ This package exports a `BatchClient` class which can be used to call the batch j
 
 Note that the `apiKey` field of the `BatchClient` may be either a long lived API key, or a short-lived JWT.
 
+If it is a short-lived JWT, the developer is responsible for making sure the key is valid.
+
 You can generate a long-lived API key through our self service portal here: https://portal.speechmatics.com/api-keys
 
 See our documentation about generating short-lived JWTs here: https://docs.speechmatics.com/introduction/authentication
