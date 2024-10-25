@@ -1,5 +1,6 @@
 {
   "include": ["."],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
@@ -9,6 +10,8 @@
     "module": "ESNext",
     "noEmit": true,
     "strict": true,
-    "target": "ESNext"
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "target": "ESNext",
   }
 }
