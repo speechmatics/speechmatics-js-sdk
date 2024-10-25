@@ -70,11 +70,14 @@ importers:
         specifier: ^5
         version: 5.5.4
 
-  examples/nodejs-batch:
+  examples/nodejs:
     dependencies:
       '@speechmatics/batch-client':
         specifier: workspace:*
         version: link:../../packages/batch-client
+      '@speechmatics/real-time-client':
+        specifier: workspace:*
+        version: link:../../packages/real-time-client
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5

@@ -54,9 +54,14 @@ export interface RealtimeClientEventMap {
 }
 
 export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
-  constructor(private config: { url: string; appId?: string }) {
+  constructor(config: { url?: string; appId?: string } = {}) {
     super();
+    this.url = config.url ?? 'wss://eu2.rt.speechmatics.com/v2';
+    this.appId = config.appId;
   }
+
+  private readonly url: string;
+  private readonly appId?: string;
 
   private socket?: WebSocket;
 
@@ -82,10 +87,10 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     return new Promise<void>((resolve, reject) => {
       this.connectionState = 'connecting';
 
-      const url = new URL(this.config.url);
+      const url = new URL(this.url);
       url.searchParams.append('jwt', jwt);
-      if (this.config.appId) {
-        url.searchParams.append('sm-app', this.config.appId);
+      if (this.appId) {
+        url.searchParams.append('sm-app', this.appId);
       }
 
       this.socket = new WebSocket(url.toString());
@@ -154,7 +159,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     );
   }
 
-  sendAudio(data: Blob) {
+  sendAudio(data: Blob | ArrayBufferLike | string) {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
       console.warn('Socket not ready to receive audio, will not pass data');
       return;
@@ -162,10 +167,13 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.socket.send(data);
   }
 
-  async startRecognition(config: {
-    transcription_config: TranscriptionConfig;
-    translation_config?: TranslationConfig;
-  }) {
+  async start(
+    jwt: string,
+    config: Omit<StartRecognition, 'message' | 'audio_format'> &
+      Partial<Pick<StartRecognition, 'audio_format'>>,
+  ) {
+    await this.connect(jwt);
+
     const startRecognitionMessage = {
       ...config,
       audio_format: defaultAudioFormat,
@@ -203,17 +211,6 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
       this.sendMessage(startRecognitionMessage);
     });
-  }
-
-  async start(
-    jwt: string,
-    config: {
-      transcription_config: TranscriptionConfig;
-      translation_config?: TranslationConfig;
-    },
-  ) {
-    await this.connect(jwt);
-    await this.startRecognition(config);
   }
 
   /** Sends an `"EndOfStream"` message, resolving if acknowledged by an `"EndOfTranscript"` from server, rejecting if not received */

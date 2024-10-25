@@ -15,14 +15,13 @@ console.log('Sending file for transcription...');
 
 (async () => {
   const blob = await openAsBlob('./example.wav');
-  const response = await client.transcribe(
-    { data: blob, fileName: 'example.wav' },
-    {
-      transcription_config: {
-        language: 'en',
-      },
+  const file = new File([blob], 'example.wav');
+
+  const response = await client.transcribe(file, {
+    transcription_config: {
+      language: 'en',
     },
-  );
+  });
 
   console.log('Transcription finished!');
 
