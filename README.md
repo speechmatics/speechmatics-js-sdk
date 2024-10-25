@@ -16,9 +16,12 @@ See the `README.md` files in each package for installation and usage details:
 
 Official JS clients for Speechmatics APIs
 
-- [`@speechmatics/batch-client`](./packages/batch-client)
-- [`@speechmatics/real-time-client`](./packages/real-time-client)
-- [`@speechmatics/flow-client`](./packages/flow-client)
+- **Batch client**: Upload files for transcription:
+  [`@speechmatics/batch-client`](./packages/batch-client)
+- **Real-time client**: Stream audio data for real-time transcription:
+  [`@speechmatics/real-time-client`](./packages/real-time-client)
+- **Flow client**: Interact with Flow API, our voice assistant engine:
+  [`@speechmatics/flow-client`](./packages/flow-client)
 
 ### React hooks
 
