@@ -3,7 +3,7 @@
   <br/>
   <img src="./assets/logo.svg"/>
   <h1 align="center">Speechmatics Javascript SDK</h1>
-  <p align="center">🗨️ Best-in-class speech technology for the web and beyond 🚀</p>
+  <h3 align="center">Best-in-class speech technology for the web and beyond 🚀</h3>
   <p align="center">Packages can be found in the <a href="/packages"><code>packages/</code></a> directory.
   <p align="center">Check out our <a href="/examples"><code>examples/</code></a> to see them in action
 </p>
