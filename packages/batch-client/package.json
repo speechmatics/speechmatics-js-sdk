@@ -8,7 +8,8 @@
   "files": ["dist/", "README.md"],
   "scripts": {
     "generate-types": "./scripts/generate-models.sh",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepare": "pnpm build"
   },
   "keywords": [
     "speech",
