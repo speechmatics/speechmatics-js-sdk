@@ -37,6 +37,12 @@ Wrappers of the clients above to integrate into React projects:
 
 - [`@speechmatics/flow-client-react`](./packages/flow-client-react)
 
+## Supported JS runtimes
+
+Our philosophy is to adhere to web standard APIs as much as possible. We aim for our SDKs to work in all browsers, React Native, Deno, Bun and Cloudflare edge environments.
+
+If you encounter any issues running out SDKs in one of these environments, please [open an issue](https://github.com/speechmatics/speechmatics-js-sdk/issues/new).
+
 ## Documentation
 
 The documentation for the API can be found [here](https://docs.speechmatics.com/).
