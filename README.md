@@ -8,9 +8,14 @@
   <p align="center">Check out our <a href="/examples"><code>examples/</code></a> to see them in action
 </p>
 
-## Official SDKs
+## Legacy version
+
+**The [`speechmatics` NPM package](https://www.npmjs.com/package/speechmatics) has been deprecated**, and will not be updated further. The packages in this repo offer similar functionality. If you have any issues upgrading, don't hesitate to [get in touch](#feedback--help).
+
+## Packages
 
 See the `README.md` files in each package for installation and usage details:
+
 
 ### API clients
 
