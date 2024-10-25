@@ -1,10 +1,11 @@
 {
-  "name": "nodejs-batch",
+  "name": "nodejs-example",
   "version": "1.0.0",
+  "private": "true",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx index.ts"
+    "run-batch": "tsx batch-example.ts"
   },
   "keywords": [],
   "author": "",
