@@ -8,49 +8,21 @@ import type { JobConfig } from '../models/job-config';
 import type { TranscriptionConfig } from '../models/transcription-config';
 import type { BatchFeatureDiscovery } from './features';
 import { type QueryParams, request, SM_APP_PARAM_NAME } from './request';
-import {
-  SpeechmaticsConfigurationError,
-  SpeechmaticsResponseError,
-} from './errors';
 import { poll } from './poll';
 
-export interface ConnectionConfig {
-  apiUrl: string;
-  apiKey: string | (() => Promise<string>);
-  appId?: string;
-}
+export class BatchClient {
+  public apiKey: string;
+  private apiUrl: string;
+  public readonly appId: string;
 
-export class BatchTranscription {
-  private _apiKey: string | undefined = undefined;
-
-  get apiKey(): string | undefined {
-    return (
-      this._apiKey ??
-      (typeof this.config.apiKey === 'string' ? this.config.apiKey : undefined)
-    );
-  }
-
-  async refreshApiKey(): Promise<string> {
-    if (typeof this.config.apiKey === 'string') return this.config.apiKey;
-
-    const newKey = await this.config.apiKey();
-    this._apiKey = newKey;
-    return newKey;
-  }
-
-  constructor(private config: ConnectionConfig) {}
-
-  private async refreshOnAuthFail<T>(
-    doRequest: (key: string) => Promise<T>,
-  ): Promise<T> {
-    try {
-      return await doRequest(this.apiKey ?? (await this.refreshApiKey()));
-    } catch (e) {
-      if (e instanceof SpeechmaticsResponseError && e.response.code === 401) {
-        return await doRequest(await this.refreshApiKey());
-      }
-      throw e;
-    }
+  constructor({
+    apiKey,
+    apiUrl,
+    appId,
+  }: { apiKey: string; apiUrl?: string; appId: string }) {
+    this.apiKey = apiKey;
+    this.apiUrl = apiUrl ?? 'https://asr.api.speechmatics.com/v2';
+    this.appId = appId;
   }
 
   private async get<T>(
@@ -58,16 +30,14 @@ export class BatchTranscription {
     contentType?: string,
     queryParams?: QueryParams,
   ): Promise<T> {
-    return await this.refreshOnAuthFail((key: string) =>
-      request(
-        key,
-        this.config.apiUrl,
-        endpoint,
-        'GET',
-        null,
-        { ...queryParams, [SM_APP_PARAM_NAME]: this.config.appId },
-        contentType,
-      ),
+    return await request(
+      this.apiKey,
+      this.apiUrl,
+      endpoint,
+      'GET',
+      null,
+      { ...queryParams, [SM_APP_PARAM_NAME]: this.appId },
+      contentType,
     );
   }
 
@@ -76,26 +46,22 @@ export class BatchTranscription {
     body: FormData | null = null,
     contentType?: string,
   ): Promise<T> {
-    return await this.refreshOnAuthFail((key: string) =>
-      request(
-        key,
-        this.config.apiUrl,
-        endpoint,
-        'POST',
-        body,
-        { [SM_APP_PARAM_NAME]: this.config.appId },
-        contentType,
-      ),
+    return await request(
+      this.apiKey,
+      this.apiUrl,
+      endpoint,
+      'POST',
+      body,
+      { [SM_APP_PARAM_NAME]: this.appId },
+      contentType,
     );
   }
 
   private async delete<T>(endpoint: string, params?: QueryParams): Promise<T> {
-    return this.refreshOnAuthFail((key: string) =>
-      request(key, this.config.apiUrl, endpoint, 'DELETE', null, {
-        ...params,
-        [SM_APP_PARAM_NAME]: this.config.appId,
-      }),
-    );
+    return request(this.apiKey, this.apiUrl, endpoint, 'DELETE', null, {
+      ...params,
+      [SM_APP_PARAM_NAME]: this.appId,
+    });
   }
 
   /**
@@ -110,11 +76,6 @@ export class BatchTranscription {
     jobConfig: Parameters<typeof this.createTranscriptionJob>[1],
     format?: TranscriptionFormat,
   ): Promise<RetrieveTranscriptResponse | string> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
-
     const submitResponse = await this.createTranscriptionJob(input, jobConfig);
 
     if (submitResponse === null || submitResponse === undefined) {
@@ -140,11 +101,6 @@ export class BatchTranscription {
     input: JobInput,
     jobConfig: CreateJobConfig,
   ): Promise<CreateJobResponse> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
-
     const config: JobConfig = {
       ...jobConfig,
       type: 'transcription',
@@ -166,26 +122,14 @@ export class BatchTranscription {
   async listJobs(
     filters: RetrieveJobsFilters = {},
   ): Promise<RetrieveJobsResponse> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
     return this.get('/v2/jobs', 'application/json', { ...filters });
   }
 
   async getJob(id: string): Promise<RetrieveJobResponse> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
     return this.get(`/v2/jobs/${id}`, 'application/json');
   }
 
   async deleteJob(id: string, force = false): Promise<DeleteJobResponse> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
     const params = force ? { force } : undefined;
     return this.delete(`/v2/jobs/${id}`, params);
   }
@@ -207,10 +151,6 @@ export class BatchTranscription {
     jobId: string,
     format: TranscriptionFormat = 'json-v2',
   ): Promise<RetrieveTranscriptResponse | string> {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
     const params = { format: format === 'text' ? 'txt' : format };
     const contentType =
       format === 'json-v2' ? 'application/json' : 'text/plain';
@@ -218,10 +158,6 @@ export class BatchTranscription {
   }
 
   async getDataFile(jobId: string) {
-    if (this.config.apiKey === undefined)
-      throw new SpeechmaticsConfigurationError(
-        'Missing apiKey in configuration',
-      );
     return this.get(`/v2/jobs/${jobId}/data`, 'application/json');
   }
 
