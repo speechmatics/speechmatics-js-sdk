@@ -9,6 +9,7 @@
     "module": "ESNext",
     "noEmit": true,
     "strict": true,
+    "noImplicitAny": true,
     "target": "ESNext"
   }
 }
