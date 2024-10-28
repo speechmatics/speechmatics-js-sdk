@@ -9,11 +9,14 @@
     "clean": "pnpm clean:deps && pnpm clean:builds",
 
     "format": "biome format --write .",
-    "lint": "biome lint --write ."
+    "lint": "biome lint --write .",
+
+    "build:packages": "pnpm --filter '{packages/*}' build",
+    "publish:packages": "pnpm --filter '{packages/*}' publish --dry-run"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.7",
