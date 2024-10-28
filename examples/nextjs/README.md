@@ -2,6 +2,10 @@
 
 Example NextJS app using Speechmatics SDK packages.
 
+This project was created using [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) with Typescript.
+
+The default styling has been replaced with [PicoCSS](https://picocss.com/).
+
 # Installation and setup
 
 In this directory run
