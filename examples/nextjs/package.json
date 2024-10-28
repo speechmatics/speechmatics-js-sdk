@@ -1,5 +1,6 @@
 {
-  "name": "flow-nextjs-example",
+  "name": "nextjs-example",
+  "description": "NextJS app showcasing the Speechmatics JS SDK",
   "version": "0.1.0",
   "private": true,
   "scripts": {
