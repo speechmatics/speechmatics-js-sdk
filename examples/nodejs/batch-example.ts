@@ -17,15 +17,20 @@ console.log('Sending file for transcription...');
   const blob = await openAsBlob('./example.wav');
   const file = new File([blob], 'example.wav');
 
-  const response = await client.transcribe(file, {
-    transcription_config: {
-      language: 'en',
+  const response = await client.transcribe(
+    file,
+    {
+      transcription_config: {
+        language: 'en',
+      },
     },
-  });
+    'json-v2',
+  );
 
   console.log('Transcription finished!');
 
   console.log(
+    // Transcripts can be strings when the 'txt' format is chosen
     typeof response === 'string'
       ? response
       : response.results.map((r) => r.alternatives?.[0].content).join(' '),
