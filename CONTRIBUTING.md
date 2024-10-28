@@ -1,6 +1,7 @@
 # Contributing
 
 Welcome to the Speechmatics Javascript SDK! We're open to contributions from anyone. We hope you can find everything you need in here to get started contributing to this repo.
+
 ## Table of Contents
 
 - [Useful Links](#useful-links)
@@ -17,8 +18,25 @@ Welcome to the Speechmatics Javascript SDK! We're open to contributions from any
 - [Speechmatics Website](https://www.speechmatics.com/)
 - [Portal (for generating API keys)](https://portal.speechmatics.com/manage-access/)
 - [Docs](https://docs.speechmatics.com/)
+- [PNPM workspaces docs](https://pnpm.io/workspaces)
 
 
+## PNPM
+
+This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can install it in various ways, but we would recommend using Corepack, which comes bundled with recent NodeJS versions: https://pnpm.io/installation#using-corepack
+
+```
+corepack use pnpm@latest
+```
+
+After cloning this repo, run
+
+```sh
+# In the root of the project
+pnpm i
+```
+
+This will install dependencies for all projects in the workspace.
 
 ## How to Submit Changes
 
