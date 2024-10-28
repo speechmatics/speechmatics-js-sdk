@@ -74,7 +74,7 @@ export default function Component({
 
   return (
     <section>
-      <h1>Flow Example</h1>
+      <h3>Flow Example</h3>
       <section className="grid">
         <Controls
           personas={personas}

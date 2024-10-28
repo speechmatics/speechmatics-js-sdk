@@ -19,7 +19,7 @@ export default function RootLayout({
           <nav>
             <ul>
               <li>
-                <strong>Speechmatics ❤️ NextJS</strong>
+                <h6>Speechmatics ❤️ NextJS</h6>
               </li>
             </ul>
             <ul>
