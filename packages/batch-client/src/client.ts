@@ -75,6 +75,7 @@ export class BatchClient {
     input: JobInput,
     jobConfig: Parameters<typeof this.createTranscriptionJob>[1],
     format?: TranscriptionFormat,
+    timeoutMS?: number,
   ): Promise<RetrieveTranscriptResponse | string> {
     const submitResponse = await this.createTranscriptionJob(input, jobConfig);
 
@@ -91,7 +92,7 @@ export class BatchClient {
         return job.status === 'done';
       },
       3000, // repeat every 3 seconds
-      15 * 60 * 1000, // 15 minutes timeout
+      timeoutMS ?? 15 * 60 * 1000, // 15 minutes timeout default
     );
 
     return await this.getJobResult(submitResponse.id, format);
