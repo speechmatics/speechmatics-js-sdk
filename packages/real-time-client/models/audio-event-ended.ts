@@ -23,6 +23,12 @@ export interface AudioEventEnded {
    * @type {string}
    * @memberof AudioEventEnded
    */
+  message?: AudioEventEndedMessageEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof AudioEventEnded
+   */
   type?: string;
   /**
    *
@@ -31,3 +37,10 @@ export interface AudioEventEnded {
    */
   end_time?: number;
 }
+
+export const AudioEventEndedMessageEnum = {
+  AudioEventEnded: 'AudioEventEnded',
+} as const;
+
+export type AudioEventEndedMessageEnum =
+  (typeof AudioEventEndedMessageEnum)[keyof typeof AudioEventEndedMessageEnum];

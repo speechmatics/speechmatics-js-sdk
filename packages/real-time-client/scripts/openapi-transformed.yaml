@@ -165,6 +165,9 @@ components:
     AudioEventStarted:
       type: object
       properties:
+        message:
+          enum:
+            - AudioEventStarted
         type:
           type: string
         start_time:
@@ -176,6 +179,9 @@ components:
     AudioEventEnded:
       type: object
       properties:
+        message:
+          enum:
+            - AudioEventEnded
         type:
           type: string
         end_time:

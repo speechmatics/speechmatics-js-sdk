@@ -23,6 +23,12 @@ export interface AudioEventStarted {
    * @type {string}
    * @memberof AudioEventStarted
    */
+  message?: AudioEventStartedMessageEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof AudioEventStarted
+   */
   type?: string;
   /**
    *
@@ -37,3 +43,10 @@ export interface AudioEventStarted {
    */
   confidence?: number;
 }
+
+export const AudioEventStartedMessageEnum = {
+  AudioEventStarted: 'AudioEventStarted',
+} as const;
+
+export type AudioEventStartedMessageEnum =
+  (typeof AudioEventStartedMessageEnum)[keyof typeof AudioEventStartedMessageEnum];
