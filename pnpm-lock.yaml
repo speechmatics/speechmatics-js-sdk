@@ -44,6 +44,9 @@ importers:
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react
+      '@speechmatics/jwts':
+        specifier: workspace:*
+        version: link:../../packages/jwts
       next:
         specifier: 15.0.1
         version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
@@ -123,6 +126,8 @@ importers:
       typescript-event-target:
         specifier: ^1.1.1
         version: 1.1.1
+
+  packages/jwts: {}
 
   packages/real-time-client:
     dependencies:

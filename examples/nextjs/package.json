@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@speechmatics/flow-client-react": "workspace:*",
+    "@speechmatics/jwts": "workspace:*",
     "@picocss/pico": "^2.0.6",
     "next": "15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",

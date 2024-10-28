@@ -1,0 +1,15 @@
+{
+  "name": "@speechmatics/jwts",
+  "version": "0.0.1-alpha.0",
+  "description": "Library for fetching temporary keys for Speechmatics APIs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "rm -rf dist && rollup -c"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
