@@ -14,8 +14,6 @@ import type { AudioEventEnded } from '../models/audio-event-ended';
 import type { Info } from '../models/info';
 import type { Warning } from '../models/warning';
 import type { ModelError } from '../models/model-error';
-import type { TranscriptionConfig } from '../models/transcription-config';
-import type { TranslationConfig } from '../models/translation-config';
 
 // Messages to be sent to server
 export type RealtimeClientMessage =
