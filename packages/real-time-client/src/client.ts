@@ -102,7 +102,6 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       );
 
       this.socket.addEventListener('error', (error) => {
-        console.error(error);
         this.dispatchTypedEvent(
           'socketStateChange',
           new Event('socketStateChange'),
@@ -131,9 +130,6 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
           return;
         }
 
-        if (data.message === 'Error') {
-          console.error(data);
-        }
         if (data.message === 'AudioAdded') {
           this.lastAudioAddedSeqNo = data.seq_no;
         }
@@ -148,8 +144,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
   sendMessage(message: RealtimeClientMessage) {
     if (!this.socket) {
-      console.warn('Client socket not initialized');
-      return;
+      throw new SpeechmaticsRealtimeError('Client socket not initialized');
     }
     this.socket.send(JSON.stringify(message));
     this.dispatchTypedEvent(
@@ -160,8 +155,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
   sendAudio(data: Blob | ArrayBufferLike | string) {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
-      console.warn('Socket not ready to receive audio, will not pass data');
-      return;
+      throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
     this.socket.send(data);
   }
