@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import '@picocss/pico';
-import { FlowProvider } from '@speechmatics/flow-client-react';
 
 export const metadata: Metadata = {
   title: 'Speechmatics Flow example',
@@ -15,9 +14,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <FlowProvider appId="nextjs-example">
-        <body>{children}</body>
-      </FlowProvider>
+      <body>
+        <header className="container">
+          <nav>
+            <ul>
+              <li>
+                <strong>Speechmatics ❤️ NextJS</strong>
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <a href="/flow">Flow</a>
+              </li>
+              <li>
+                <a href="/batch">Batch</a>
+              </li>
+              <li>
+                <a href="/real-time">Real-time</a>
+              </li>
+            </ul>
+          </nav>
+        </header>
+        <main className="container">{children}</main>
+      </body>
     </html>
   );
 }

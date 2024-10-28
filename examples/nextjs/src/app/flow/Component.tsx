@@ -2,15 +2,18 @@
 
 import { useCallback, useState } from 'react';
 
-import { usePcmMicrophoneAudio, usePlayPcm16Audio } from './audio-hooks';
+import {
+  usePcmMicrophoneAudio,
+  usePlayPcm16Audio,
+} from '../../lib/audio-hooks';
 import { ErrorBoundary } from 'react-error-boundary';
-import { Controls } from './components/Controls';
-import { Status } from './components/Status';
-import { ErrorFallback } from './components/ErrorFallback';
-import { OutputView } from './components/OutputView';
+import { Controls } from './Controls';
+import { Status } from './Status';
+import { ErrorFallback } from '../../lib/components/ErrorFallback';
+import { OutputView } from './OutputView';
 import { useFlow, useFlowOn } from '@speechmatics/flow-client-react';
 
-export function Example({
+export default function Component({
   jwt,
   personas,
 }: {

@@ -36,7 +36,7 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  examples/flow-nextjs:
+  examples/nextjs:
     dependencies:
       '@picocss/pico':
         specifier: ^2.0.6
