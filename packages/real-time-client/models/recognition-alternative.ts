@@ -52,10 +52,4 @@ export interface RecognitionAlternative {
    * @memberof RecognitionAlternative
    */
   speaker?: string;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof RecognitionAlternative
-   */
-  tags?: Array<string>;
 }

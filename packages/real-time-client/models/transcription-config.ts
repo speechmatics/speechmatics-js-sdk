@@ -14,6 +14,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { AudioFilteringConfig } from './audio-filtering-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { DiarizationConfig } from './diarization-config';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -27,6 +30,9 @@ import type { PunctuationOverrides } from './punctuation-overrides';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { SpeakerDiarizationConfig } from './speaker-diarization-config';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { TranscriptFilteringConfig } from './transcript-filtering-config';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { VocabWord } from './vocab-word';
@@ -81,16 +87,22 @@ export interface TranscriptionConfig {
   max_delay_mode?: MaxDelayModeConfig;
   /**
    *
-   * @type {number}
-   * @memberof TranscriptionConfig
-   */
-  speaker_change_sensitivity?: number;
-  /**
-   *
    * @type {SpeakerDiarizationConfig}
    * @memberof TranscriptionConfig
    */
   speaker_diarization_config?: SpeakerDiarizationConfig;
+  /**
+   *
+   * @type {AudioFilteringConfig}
+   * @memberof TranscriptionConfig
+   */
+  audio_filtering_config?: AudioFilteringConfig;
+  /**
+   *
+   * @type {TranscriptFilteringConfig}
+   * @memberof TranscriptionConfig
+   */
+  transcript_filtering_config?: TranscriptFilteringConfig;
   /**
    *
    * @type {boolean}

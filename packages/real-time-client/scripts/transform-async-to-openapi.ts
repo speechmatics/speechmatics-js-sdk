@@ -1,3 +1,5 @@
+#!/usr/bin/env tsx
+
 import YAML from 'yaml';
 import * as fs from 'node:fs';
 import * as path from 'node:path';

@@ -239,50 +239,31 @@ components:
       payload:
         type: object
         properties:
-          message:
-            enum:
-              - AudioEventStarted
-          event:
-            type: object
-            properties: 
-              type:
-                type: string
-              start_time:
-                type: number
-                format: float
-              confidence:
-                type: number
-                format: float
-            required:
-              - type
-              - start_time
-              - confidence
-        required:
-          - message
-          - event
+          type:
+            type: string
+          start_time:
+            type: number
+            format: float
+          confidence:
+            type: number
+            format: float
+      required:
+        - type
+        - start_time
+        - confidence
     AudioEventEnded:
       summary: End of an audio event detected.
       payload:
         type: object
         properties:
-          message:
-            enum:
-              - AudioEventEnded
-          event:
-            type: object
-            properties: 
-              type:
-                type: string
-              end_time:
-                type: number
-                format: float
-            required:
-              - type
-              - end_time
-        required:
-          - message
-          - event
-    
+          type:
+            type: string
+          end_time:
+            type: number
+            format: float
+      required:
+        - type
+        - end_time
     Info:
       summary: Additional information sent from the server to the client.
       payload:
@@ -419,10 +400,12 @@ components:
           minimum: 0
         max_delay_mode:
           "$ref": "#/components/schemas/MaxDelayModeConfig"
-        speaker_change_sensitivity:
-          "$ref": "#/components/schemas/SpeakerChangeSensitivity"
         speaker_diarization_config:
           "$ref": "#/components/schemas/SpeakerDiarizationConfig"
+        audio_filtering_config:
+          "$ref": "#/components/schemas/AudioFilteringConfig"
+        transcript_filtering_config:
+          "$ref": "#/components/schemas/TranscriptFilteringConfig"
         enable_partials:
           type: boolean
           default: false
@@ -508,13 +491,6 @@ components:
       enum:
         - none
         - speaker
-        - speaker_change
-
-    SpeakerChangeSensitivity:
-      type: number
-      format: float
-      minimum: 0
-      maximum: 1
 
     SpeakerDiarizationConfig:
       type: object
@@ -524,6 +500,20 @@ components:
           format: integer
           minimum: 2
           maximum: 100
+
+    AudioFilteringConfig:
+      type: object
+      properties:
+        volume_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+
+    TranscriptFilteringConfig:
+      properties:
+        remove_disfluencies:
+          type: boolean
 
     OutputLocale:
       type: string
@@ -553,7 +543,6 @@ components:
           enum:
             - word
             - punctuation
-            - speaker_change
         start_time:
           type: number
           format: float
@@ -580,6 +569,11 @@ components:
           format: float
           minimum: 0
           maximum: 1
+        volume:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
       required:
         - type
         - start_time
@@ -620,10 +614,6 @@ components:
           "$ref": "#/components/schemas/RecognitionDisplay"
         speaker:
           type: string
-        tags:
-          type: array
-          items:
-            type: string
       required:
         - content
         - confidence

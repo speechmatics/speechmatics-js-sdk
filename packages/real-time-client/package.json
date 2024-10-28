@@ -9,7 +9,8 @@
   "files": ["dist/", "README.md"],
   "scripts": {
     "build": "pnpm rollup -c",
-    "prepare": "pnpm build"
+    "prepare": "pnpm build",
+    "generate-types": "./scripts/transform-async-to-openapi.ts && ./scripts/generate-models.sh"
   },
   "keywords": [
     "speech",

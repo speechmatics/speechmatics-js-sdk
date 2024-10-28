@@ -70,12 +70,17 @@ export interface RecognitionResult {
    * @memberof RecognitionResult
    */
   score?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof RecognitionResult
+   */
+  volume?: number;
 }
 
 export const RecognitionResultTypeEnum = {
   Word: 'word',
   Punctuation: 'punctuation',
-  SpeakerChange: 'speaker_change',
 } as const;
 
 export type RecognitionResultTypeEnum =

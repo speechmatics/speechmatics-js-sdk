@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @enum {string}
+ * @interface AudioFilteringConfig
  */
-
-export const DiarizationConfig = {
-  None: 'none',
-  Speaker: 'speaker',
-} as const;
-
-export type DiarizationConfig =
-  (typeof DiarizationConfig)[keyof typeof DiarizationConfig];
+export interface AudioFilteringConfig {
+  /**
+   *
+   * @type {number}
+   * @memberof AudioFilteringConfig
+   */
+  volume_threshold?: number;
+}

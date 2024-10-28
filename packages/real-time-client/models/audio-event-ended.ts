@@ -12,10 +12,6 @@
  * Do not edit the class manually.
  */
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { AudioEventEndedEvent } from './audio-event-ended-event';
-
 /**
  *
  * @export
@@ -27,18 +23,11 @@ export interface AudioEventEnded {
    * @type {string}
    * @memberof AudioEventEnded
    */
-  message: AudioEventEndedMessageEnum;
+  type?: string;
   /**
    *
-   * @type {AudioEventEndedEvent}
+   * @type {number}
    * @memberof AudioEventEnded
    */
-  event: AudioEventEndedEvent;
+  end_time?: number;
 }
-
-export const AudioEventEndedMessageEnum = {
-  AudioEventEnded: 'AudioEventEnded',
-} as const;
-
-export type AudioEventEndedMessageEnum =
-  (typeof AudioEventEndedMessageEnum)[keyof typeof AudioEventEndedMessageEnum];

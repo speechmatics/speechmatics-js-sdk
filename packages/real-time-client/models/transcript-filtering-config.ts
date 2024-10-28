@@ -15,13 +15,13 @@
 /**
  *
  * @export
- * @enum {string}
+ * @interface TranscriptFilteringConfig
  */
-
-export const DiarizationConfig = {
-  None: 'none',
-  Speaker: 'speaker',
-} as const;
-
-export type DiarizationConfig =
-  (typeof DiarizationConfig)[keyof typeof DiarizationConfig];
+export interface TranscriptFilteringConfig {
+  /**
+   *
+   * @type {boolean}
+   * @memberof TranscriptFilteringConfig
+   */
+  remove_disfluencies?: boolean;
+}
