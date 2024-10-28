@@ -42,6 +42,7 @@ client.addEventListener('receiveMessage', ({ data }) => {
     process.stdout.write(`\r${finalText}`);
   } else if (data.message === 'EndOfTranscript') {
     process.stdout.write('\n');
+    process.exit(0);
   }
 });
 

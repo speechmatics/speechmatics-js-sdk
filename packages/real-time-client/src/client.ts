@@ -50,7 +50,7 @@ export type ConnectionState =
 export interface RealtimeClientEventMap {
   sendMessage: MessageEvent<RealtimeClientMessage>;
   receiveMessage: MessageEvent<RealtimeServerMessage>;
-  changeConnectionState: Event;
+  socketStateChange: Event;
 }
 
 export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
@@ -65,18 +65,14 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
   private socket?: WebSocket;
 
-  private _connectionState: ConnectionState = 'idle';
-
-  get connectionState() {
-    return this._connectionState;
-  }
-
-  private set connectionState(value: ConnectionState) {
-    this._connectionState = value;
-    this.dispatchTypedEvent(
-      'changeConnectionState',
-      new Event('changeConnectionState'),
-    );
+  get socketState() {
+    if (!this.socket) return undefined;
+    return {
+      [WebSocket.CONNECTING]: 'connecting' as const,
+      [WebSocket.OPEN]: 'open' as const,
+      [WebSocket.CLOSING]: 'closing' as const,
+      [WebSocket.CLOSED]: 'closed' as const,
+    }[this.socket.readyState];
   }
 
   // Track the last AudioAdded sequence number, used when stopping transcription to avoid missing audio
@@ -85,8 +81,6 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
   private async connect(jwt: string) {
     return new Promise<void>((resolve, reject) => {
-      this.connectionState = 'connecting';
-
       const url = new URL(this.url);
       url.searchParams.append('jwt', jwt);
       if (this.appId) {
@@ -94,6 +88,10 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       }
 
       this.socket = new WebSocket(url.toString());
+      this.dispatchTypedEvent(
+        'socketStateChange',
+        new Event('socketStateChange'),
+      );
 
       this.socket.addEventListener(
         'open',
@@ -105,13 +103,20 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
       this.socket.addEventListener('error', (error) => {
         console.error(error);
+        this.dispatchTypedEvent(
+          'socketStateChange',
+          new Event('socketStateChange'),
+        );
         // In case the above hasn't resolved, we can reject here rather than waiting
         // If the above has resolved, this will be ignored
         reject(error);
       });
 
       this.socket.addEventListener('close', () => {
-        this.connectionState = 'idle';
+        this.dispatchTypedEvent(
+          'socketStateChange',
+          new Event('socketStateChange'),
+        );
       });
 
       this.socket.addEventListener('message', (socketMessage) => {
@@ -126,14 +131,8 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
           return;
         }
 
-        if (data.message === 'RecognitionStarted') {
-          this.connectionState = 'running';
-        }
         if (data.message === 'Error') {
           console.error(data);
-        }
-        if (data.message === 'RecognitionStarted') {
-          this.connectionState = 'running';
         }
         if (data.message === 'AudioAdded') {
           this.lastAudioAddedSeqNo = data.seq_no;
@@ -171,74 +170,60 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     jwt: string,
     config: Omit<StartRecognition, 'message' | 'audio_format'> &
       Partial<Pick<StartRecognition, 'audio_format'>>,
-  ) {
+  ): Promise<RecognitionStarted> {
     await this.connect(jwt);
 
-    const startRecognitionMessage = {
-      ...config,
-      audio_format: defaultAudioFormat,
-      message: 'StartRecognition' as const,
-    };
+    const waitForConversationStarted = new Promise<RecognitionStarted>(
+      (resolve, reject) => {
+        this.addEventListener('receiveMessage', ({ data }) => {
+          if (data.message === 'RecognitionStarted') {
+            resolve(data);
+          }
+          // If client receives an error message before starting, reject immediately
+          else if (data.message === 'Error') {
+            reject(new Error(data.type));
+          }
+        });
 
-    this.connectionState = 'starting';
+        const startRecognitionMessage = {
+          ...config,
+          audio_format: defaultAudioFormat,
+          message: 'StartRecognition' as const,
+        };
 
-    return new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(
-        () =>
-          reject(
-            new ServerTimeoutError(
-              RT_CLIENT_RESPONSE_TIMEOUT_MS,
-              'RecognitionStarted',
-            ),
-          ),
+        this.sendMessage(startRecognitionMessage);
+      },
+    );
+
+    return Promise.race([
+      waitForConversationStarted,
+      rejectAfter<RecognitionStarted>(
         RT_CLIENT_RESPONSE_TIMEOUT_MS,
-      );
-
-      this.addEventListener('changeConnectionState', () => {
-        if (this.connectionState === 'running') {
-          clearTimeout(timeout);
-          resolve();
-        }
-      });
-
-      // If client receives an error message before starting, reject immediately
-      this.addEventListener('receiveMessage', ({ data }) => {
-        if (data.message === 'Error') {
-          clearTimeout(timeout);
-          reject(new Error(data.type));
-        }
-      });
-
-      this.sendMessage(startRecognitionMessage);
-    });
+        'RecognitionStarted',
+      ),
+    ]);
   }
 
   /** Sends an `"EndOfStream"` message, resolving if acknowledged by an `"EndOfTranscript"` from server, rejecting if not received */
   async stopRecognition() {
-    return new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(
-          new ServerTimeoutError(
-            RT_CLIENT_RESPONSE_TIMEOUT_MS,
-            'EndOfTranscript',
-          ),
-        );
-      }, RT_CLIENT_RESPONSE_TIMEOUT_MS);
-
+    const waitForEndOfTranscript = new Promise<void>((resolve) => {
       this.addEventListener('receiveMessage', ({ data }) => {
         if (data.message === 'EndOfTranscript') {
-          clearTimeout(timeout);
           this.socket?.close();
           resolve();
         }
       });
 
-      this.connectionState = 'stopping';
       this.sendMessage({
         message: 'EndOfStream',
         last_seq_no: this.lastAudioAddedSeqNo,
       });
     });
+
+    return Promise.race([
+      waitForEndOfTranscript,
+      rejectAfter(RT_CLIENT_RESPONSE_TIMEOUT_MS, 'EndOfTranscript'),
+    ]);
   }
 }
 
@@ -263,13 +248,23 @@ const defaultAudioFormat = {
 
 const RT_CLIENT_RESPONSE_TIMEOUT_MS = 10_000;
 
-class ServerTimeoutError extends Error {
-  name = 'ServerTimeoutError';
-
-  constructor(timeoutMs: number, event: string) {
-    const message = `Timed out after waiting ${Math.floor(
-      timeoutMs / 1000,
-    )} seconds for '${event}'`;
-    super(message);
+export class SpeechmaticsRealtimeError extends Error {
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = 'SpeechmaticsRealtimeError';
   }
+}
+
+function rejectAfter<T = unknown>(timeoutMs: number, key: string): Promise<T> {
+  return new Promise<T>((_, reject) => {
+    setTimeout(
+      () =>
+        reject(
+          new SpeechmaticsRealtimeError(
+            `Timed out after ${timeoutMs}s waiting for ${key}`,
+          ),
+        ),
+      timeoutMs,
+    );
+  });
 }
