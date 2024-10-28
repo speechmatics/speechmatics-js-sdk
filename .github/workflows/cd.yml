@@ -23,7 +23,9 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
+      - name: Build packages
+        run: pnpm build:packages
       - name: Publish all packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: pnpm -r publish
+        run: pnpm publish:packages
