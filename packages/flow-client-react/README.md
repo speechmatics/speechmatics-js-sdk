@@ -1,4 +1,4 @@
-# @speechmatics/flow-client-react
+# Speechmatics Flow client (React) 🤖 ⚛
 
 React hooks for interacting with the [Speechmatics Flow API](https://docs.speechmatics.com/flow/getting-started).
 
