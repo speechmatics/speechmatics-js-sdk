@@ -4,7 +4,7 @@ import { useContext, useEffect } from 'react';
 import type { TypedEventListenerOrEventListenerObject } from 'typescript-event-target';
 import { FlowContext } from './flow-context';
 
-export function useFlowOn<E extends keyof FlowClientEventMap>(
+export function useFlowEventListener<E extends keyof FlowClientEventMap>(
   message: E,
   cb: TypedEventListenerOrEventListenerObject<FlowClientEventMap, E>,
 ) {

@@ -11,7 +11,7 @@ import { Controls } from './Controls';
 import { Status } from './Status';
 import { ErrorFallback } from '../../lib/components/ErrorFallback';
 import { OutputView } from './OutputView';
-import { useFlow, useFlowOn } from '@speechmatics/flow-client-react';
+import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 
 export default function Component({
   jwt,
@@ -26,7 +26,7 @@ export default function Component({
 
   const playAudio = usePlayPcm16Audio(audioContext);
 
-  useFlowOn('agentAudio', (audio) => {
+  useFlowEventListener('agentAudio', (audio) => {
     playAudio(audio.data);
   });
 

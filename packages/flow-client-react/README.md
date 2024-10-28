@@ -50,18 +50,18 @@ npm i @speechmatics/flow-client-react
 
 1. Listen for audio and messages
 
-    Incoming data from the Flow service can be subscribed to using the `useFlowOn` hook:
+    Incoming data from the Flow service can be subscribed to using the `useFlowEventListener` hook:
 
     ```TSX
     // Handling Messages
-    useFlowOn("message", ({ data }) => {
+    useFlowEventListener("message", ({ data }) => {
       if (data.message === "AddTranscript") {
         // handle transcript message
       }
     });
 
     // Handling audio
-    useFlowOn("agentAudio", (audio) => {
+    useFlowEventListener("agentAudio", (audio) => {
       // Incoming audio data is always 16-bit signed int PCM.
       // How you handle this depends on your environment.
       myPlayAudioFunction(audio.data);
