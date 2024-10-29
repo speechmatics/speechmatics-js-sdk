@@ -40,7 +40,24 @@ npm i @speechmatics/flow-client-react
   
     `startConversation` is a function which requires a JWT to open a websocket and begin a session.
   
-    **TODO** __add more details around `StartConversation`, audio formatm, and JWT auth__
+    See our documentation about generating JWTs (temporary keys): https://docs.speechmatics.com/introduction/authentication#temporary-keys
+
+    An example credentials fetching flow can be found in the [NextJS example](/examples/nextjs/src/lib/fetch-credentials.ts).
+  
+    ```typescript
+      await startConversation(jwt, {
+        config: {
+          template_id: personaId,
+          template_variables: {},
+        },
+        // `audioFormat` is optional. The value below is the default:
+        audioFormat: {
+          type: 'raw',
+          encoding: 'pcm_s16le', // this can also be set to 'pcm_f32le' for 32-bit Float
+          sample_rate: 16000,
+        },
+      });
+    ```
 
 
 1. Sending audio
