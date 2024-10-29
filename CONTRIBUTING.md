@@ -29,6 +29,16 @@ This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can inst
 corepack use pnpm@latest
 ```
 
+If for some reason that doesn't work, you can also just run
+
+```
+npm i -g pnpm
+```
+
+to install `pnpm` globally on your machine.
+
+### Installing dependencies
+
 After cloning this repo, run
 
 ```sh
