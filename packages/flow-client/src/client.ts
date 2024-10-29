@@ -11,6 +11,8 @@ import {
 export interface FlowClientOptions {
   appId: string;
   audioBufferingMs?: number;
+  // Sometimes it's useful to override the default Websocket binary type
+  // e.g. in React Native
   websocketBinaryType?: 'blob' | 'arraybuffer';
 }
 
@@ -18,7 +20,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   public readonly appId: string;
   private readonly audioBufferingMs: number;
 
-  // Buffer for audio received from server
+  // Buffer for audio received from server, rather than playing it back immediately.
+  // This makes playback more resilient to poor network conditions.
+  //
+  // More sophisticated buffering strategies will likely be implemented soon,
+  // but for now we have a configurable initial delay.
   private agentAudioQueue:
     | { type: 'blob'; queue: Blob[] }
     | { type: 'arraybuffer'; queue: ArrayBuffer[] };
@@ -126,7 +132,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private handleWebsocketAudio(data: Blob | ArrayBuffer) {
-    // send ack as soon as we receive audio
+    // Acknowledge we've received the audio as soon as we've received it
     this.sendWebsocketMessage({
       message: 'AudioReceived',
       seq_no: ++this.serverSeqNo,

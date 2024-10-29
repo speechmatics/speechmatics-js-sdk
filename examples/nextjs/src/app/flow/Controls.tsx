@@ -19,10 +19,6 @@ export function Controls({
   return (
     <article>
       <div className="grid">
-        <label aria-invalid="true">
-          Select input device
-          <select />
-        </label>
         <label>
           Select persona
           <select
