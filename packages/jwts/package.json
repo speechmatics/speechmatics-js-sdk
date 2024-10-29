@@ -9,7 +9,12 @@
   "scripts": {
     "build": "rm -rf dist && rollup -c"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "Speechmatics",
+    "authentication",
+    "transcription",
+    "batch",
+    "real-time"
+  ],
+  "license": "MIT"
 }
