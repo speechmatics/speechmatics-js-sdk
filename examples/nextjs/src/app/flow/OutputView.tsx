@@ -15,9 +15,6 @@ export function OutputView() {
     showBoundary(e);
   });
 
-  return (
-    <article>
-      <header>Transcript</header>
-    </article>
-  );
+  // TODO show transcript/other output here
+  return null;
 }
