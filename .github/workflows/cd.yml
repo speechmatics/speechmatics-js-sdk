@@ -1,28 +1,30 @@
 name: Publish to NPM
-
 on:
-  release:
-    types: [ published ]
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 18
-          registry-url: https://registry.npmjs.org/
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Check
-        run: npm run check
-
-      - name: Build TypeScript
-        run: npm run build
-
-      - run: npm publish
+          version: 9
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build packages
+        run: pnpm build:packages
+      - name: Publish all packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: pnpm publish:packages

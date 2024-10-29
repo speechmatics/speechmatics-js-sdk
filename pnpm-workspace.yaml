@@ -1,0 +1,4 @@
+packages:
+  - "packages/*"
+  - "examples/nextjs"
+  - "examples/nodejs"

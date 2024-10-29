@@ -1,0 +1,642 @@
+---
+asyncapi: "2.0.0-rc1"
+id: "urn:com:speechmatics:realtime-asr-api"
+defaultContentType: "application/json"
+info:
+  title: Speechmatics Realtime ASR API
+  version: "2.0.0"
+  contact:
+    name: Speechmatics Support
+    url: https://www.speechmatics.com/product/support/
+    email: support@speechmatics.com
+
+servers:
+  - url: example.speechmatics.com
+    description: RealTime ASR server
+    protocol: WebSocket
+    protocolVersion: v13 (RFC 6455)
+    variables:
+      ports:
+        default: "9000"
+
+channels:
+  /:
+    publish:
+      message:
+        oneOf:
+          - $ref: "#/components/messages/StartRecognition"
+          - $ref: "#/components/messages/AddAudio"
+          - $ref: "#/components/messages/EndOfStream"
+          - $ref: "#/components/messages/SetRecognitionConfig"
+    subscribe:
+      message:
+        oneOf:
+          - $ref: "#/components/messages/RecognitionStarted"
+          - $ref: "#/components/messages/AudioAdded"
+          - $ref: "#/components/messages/AddPartialTranscript"
+          - $ref: "#/components/messages/AddTranscript"
+          - $ref: "#/components/messages/AddPartialTranslation"
+          - $ref: "#/components/messages/AddTranslation"
+          - $ref: "#/components/messages/EndOfTranscript"
+          - $ref: "#/components/messages/AudioEventStarted"
+          - $ref: "#/components/messages/AudioEventEnded"
+          - $ref: "#/components/messages/Error"
+          - $ref: "#/components/messages/Warning"
+          - $ref: "#/components/messages/Info"
+
+components:
+  messages:
+    # Sub
+    StartRecognition:
+      summary: Initiates a new recognition session.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - StartRecognition
+          audio_format:
+            "$ref": "#/components/schemas/AudioFormat"
+          transcription_config:
+            "$ref": "#/components/schemas/TranscriptionConfig"
+          translation_config:
+            "$ref": "#/components/schemas/TranslationConfig"
+          audio_events_config:
+            "$ref": "#/components/schemas/AudioEventsConfig"
+        required:
+          - message
+          - audio_format
+          - transcription_config
+
+    AddAudio:
+      summary: A binary chunk of audio. The server confirms receipt by sending an AudioAdded message.
+      contentType: "application/octet-stream"
+      payload:
+        type: string
+        format: binary
+
+    EndOfStream:
+      summary: Declares that the client has no more audio to send.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - EndOfStream
+          last_seq_no:
+            type: integer
+        required:
+          - message
+          - last_seq_no
+
+    SetRecognitionConfig:
+      summary: Allows the client to re-configure the recognition session.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - SetRecognitionConfig
+          transcription_config:
+            "$ref": "#/components/schemas/TranscriptionConfig"
+        required:
+          - message
+          - transcription_config
+
+    # Pub
+    RecognitionStarted:
+      summary: Server response to StartRecognition, acknowledging that a recognition session has started.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - RecognitionStarted
+          id:
+            type: string
+        required:
+          - message
+
+    AudioAdded:
+      summary: Server response to AddAudio, indicating that audio has been added successfully.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AudioAdded
+          seq_no:
+            type: integer
+        required:
+          - message
+          - seq_no
+
+    AddPartialTranscript:
+      summary: Contains a work-in-progress transcript of a part of the audio that the client has sent.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AddPartialTranscript
+          format:
+            type: string
+            example: "2.1"
+            description: Speechmatics JSON output format version number.
+          metadata:
+            "$ref": "#/components/schemas/RecognitionMetadata"
+          results:
+            type: array
+            items:
+              "$ref": "#/components/schemas/RecognitionResult"
+        required:
+          - message
+          - metadata
+          - results
+
+    AddTranscript:
+      summary: Contains the final transcript of a part of the audio that the client has sent.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AddTranscript
+          format:
+            type: string
+            example: "2.1"
+            description: Speechmatics JSON output format version number.
+          metadata:
+            "$ref": "#/components/schemas/RecognitionMetadata"
+          results:
+            type: array
+            items:
+              "$ref": "#/components/schemas/RecognitionResult"
+        required:
+          - message
+          - metadata
+          - results
+
+    AddPartialTranslation:
+      summary: Contains a work-in-progress translation of a part of the audio that the client has sent.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AddPartialTranslation
+          format:
+            type: string
+            example: "2.1"
+            description: Speechmatics JSON output format version number.
+          language:
+            type: string
+          results:
+            type: array
+            items:
+              "$ref": "#/components/schemas/TranslatedSentence"
+        required:
+          - message
+          - language
+          - results
+
+    AddTranslation:
+      summary: Contains the final translation of a part of the audio that the client has sent.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AddTranslation
+          format:
+            type: string
+            example: "2.1"
+            description: Speechmatics JSON output format version number.
+          language:
+            type: string
+          results:
+            type: array
+            items:
+              "$ref": "#/components/schemas/TranslatedSentence"
+        required:
+          - message
+          - language
+          - results
+
+    EndOfTranscript:
+      summary: Server response to EndOfStream, after the server has finished sending all AddTranscript messages.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - EndOfTranscript
+        required:
+          - message
+
+    AudioEventStarted:
+      summary: Start of an audio event detected.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AudioEventStarted
+          type:
+            type: string
+          start_time:
+            type: number
+            format: float
+          confidence:
+            type: number
+            format: float
+      required:
+        - message
+        - type
+        - start_time
+        - confidence
+    AudioEventEnded:
+      summary: End of an audio event detected.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - AudioEventEnded
+          type:
+            type: string
+          end_time:
+            type: number
+            format: float
+      required:
+        - message
+        - type
+        - end_time
+    Info:
+      summary: Additional information sent from the server to the client.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - Info
+          type:
+            enum:
+              - recognition_quality
+              - model_redirect
+              - deprecated
+          reason:
+            type: string
+          code:
+            type: integer
+          seq_no:
+            type: integer
+          quality:
+            type: string
+        required:
+          - message
+          - type
+          - reason
+
+    Warning:
+      summary: Warning messages sent from the server to the client.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - Warning
+          type:
+            enum:
+              - duration_limit_exceeded
+          reason:
+            type: string
+          code:
+            type: integer
+          seq_no:
+            type: integer
+          duration_limit:
+            type: number
+        required:
+          - message
+          - type
+          - reason
+
+    Error:
+      summary: Error messages sent from the server to the client.
+      payload:
+        type: object
+        properties:
+          message:
+            enum:
+              - Error
+          type:
+            enum:
+              - invalid_message
+              - invalid_model
+              - invalid_config
+              - invalid_audio_type
+              - not_authorised
+              - insufficient_funds
+              - not_allowed
+              - job_error
+              - data_error
+              - buffer_error
+              - protocol_error
+              - unknown_error
+          reason:
+            type: string
+          code:
+            type: integer
+          seq_no:
+            type: integer
+        required:
+          - message
+          - type
+          - reason
+  schemas:
+    AudioFormat:
+      type: object
+      required:
+        - type
+      oneOf:
+        - "$ref": "#/components/schemas/AudioFormatRaw"
+        - "$ref": "#/components/schemas/AudioFormatFile"
+
+    AudioFormatRaw:
+      properties:
+        type:
+          enum:
+            - raw
+        encoding:
+          enum:
+            - pcm_f32le
+            - pcm_s16le
+            - mulaw
+        sample_rate:
+          type: integer
+      required:
+        - type
+        - encoding
+        - sample_rate
+
+    AudioFormatFile:
+      properties:
+        type:
+          enum:
+            - file
+      required:
+        - type
+
+    TranscriptionConfig:
+      type: object
+      properties:
+        language:
+          type: string
+        domain:
+          type: string
+          description: >-
+            Request a specialized model based on 'language' but optimized for a particular field, e.g. "finance" or "medical".
+        output_locale:
+          "$ref": "#/components/schemas/OutputLocale"
+        additional_vocab:
+          "$ref": "#/components/schemas/VocabList"
+        diarization:
+          "$ref": "#/components/schemas/DiarizationConfig"
+        max_delay:
+          type: number
+          minimum: 0
+        max_delay_mode:
+          "$ref": "#/components/schemas/MaxDelayModeConfig"
+        speaker_diarization_config:
+          "$ref": "#/components/schemas/SpeakerDiarizationConfig"
+        audio_filtering_config:
+          "$ref": "#/components/schemas/AudioFilteringConfig"
+        transcript_filtering_config:
+          "$ref": "#/components/schemas/TranscriptFilteringConfig"
+        enable_partials:
+          type: boolean
+          default: false
+        enable_entities:
+          type: boolean
+          default: true
+        operating_point:
+          "$ref": "#/components/schemas/OperatingPoint"
+        punctuation_overrides:
+          "$ref": "#/components/schemas/PunctuationOverrides"
+
+      required:
+        - language
+
+    OperatingPoint:
+      type: string
+      enum:
+        - standard
+        - enhanced
+
+    PunctuationOverrides:
+      type: object
+      properties:
+        permitted_marks:
+          type: array
+          description: "The punctuation marks which the client is prepared to accept in transcription output, or the special value 'all' (the default). Unsupported marks are ignored. This value is used to guide the transcription process."
+          items:
+            pattern: "^(.|all)$"
+            type: string
+        sensitivity:
+          type: number
+          description: "Ranges between zero and one. Higher values will produce more punctuation. The default is 0.5."
+          format: float
+          maximum: 1
+          minimum: 0
+
+    TranslationConfig:
+      type: object
+      properties:
+        target_languages:
+          type: array
+          items:
+            type: string
+        enable_partials:
+          type: boolean
+          default: false
+      required:
+        - target_languages
+
+    AudioEventsConfig:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+
+    VocabList:
+      type: array
+      items:
+        "$ref": "#/components/schemas/VocabWord"
+
+    VocabWord:
+      oneOf:
+        - type: object
+          properties:
+            content:
+              type: string
+              minLength: 1
+            sounds_like:
+              type: array
+              items:
+                type: string
+                minLength: 1
+              minItems: 1
+          required:
+            - content
+        - type: string
+          minLength: 1
+
+    DiarizationConfig:
+      type: string
+      enum:
+        - none
+        - speaker
+
+    SpeakerDiarizationConfig:
+      type: object
+      properties:
+        max_speakers:
+          type: number
+          format: integer
+          minimum: 2
+          maximum: 100
+
+    AudioFilteringConfig:
+      type: object
+      properties:
+        volume_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+
+    TranscriptFilteringConfig:
+      properties:
+        remove_disfluencies:
+          type: boolean
+
+    OutputLocale:
+      type: string
+      minLength: 1
+
+    RecognitionMetadata:
+      type: object
+      properties:
+        start_time:
+          type: number
+          format: float
+        end_time:
+          type: number
+          format: float
+        transcript:
+          type: string
+      required:
+        - start_time
+        - end_time
+        - transcript
+
+    RecognitionResult:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - word
+            - punctuation
+        start_time:
+          type: number
+          format: float
+        end_time:
+          type: number
+          format: float
+        channel:
+          type: string
+        attaches_to:
+          type: string
+          enum:
+            - next
+            - previous
+            - none
+            - both
+        is_eos:
+          type: boolean
+        alternatives:
+          type: array
+          items:
+            "$ref": "#/components/schemas/RecognitionAlternative"
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        volume:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+      required:
+        - type
+        - start_time
+        - end_time
+
+    TranslatedSentence:
+      type: object
+      properties:
+        content:
+          type: string
+        start_time:
+          type: number
+          format: float
+        end_time:
+          type: number
+          format: float
+        speaker:
+          type: string
+      required:
+        - content
+        - start_time
+        - end_time
+
+    RecognitionAlternative:
+      type: object
+      properties:
+        content:
+          type: string
+        confidence:
+          type: number
+          format: float
+        language:
+          # Although language is technically optional removing language breaks the way adapters adds spaces and
+          # language specific punctuation. This caused REQ-10454. The solution for Bellini was to add the language field
+          # back in at the rt-worker level. The future work on this issue is written up in REQ-10633.
+          type: string
+        display:
+          "$ref": "#/components/schemas/RecognitionDisplay"
+        speaker:
+          type: string
+      required:
+        - content
+        - confidence
+
+    RecognitionDisplay:
+      required:
+        - direction
+      properties:
+        direction:
+          type: string
+          enum:
+            - ltr
+            - rtl
+    MaxDelayModeConfig:
+      type: string
+      enum:
+        - flexible
+        - fixed

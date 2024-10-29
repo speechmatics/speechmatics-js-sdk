@@ -1,6 +1,7 @@
 # Contributing
 
 Welcome to the Speechmatics Javascript SDK! We're open to contributions from anyone. We hope you can find everything you need in here to get started contributing to this repo.
+
 ## Table of Contents
 
 - [Useful Links](#useful-links)
@@ -17,8 +18,35 @@ Welcome to the Speechmatics Javascript SDK! We're open to contributions from any
 - [Speechmatics Website](https://www.speechmatics.com/)
 - [Portal (for generating API keys)](https://portal.speechmatics.com/manage-access/)
 - [Docs](https://docs.speechmatics.com/)
+- [PNPM workspaces docs](https://pnpm.io/workspaces)
 
 
+## PNPM
+
+This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can install it in various ways, but we would recommend using Corepack, which comes bundled with recent NodeJS versions: https://pnpm.io/installation#using-corepack
+
+```
+corepack use pnpm@latest
+```
+
+If for some reason that doesn't work, you can also just run
+
+```
+npm i -g pnpm
+```
+
+to install `pnpm` globally on your machine.
+
+### Installing dependencies
+
+After cloning this repo, run
+
+```sh
+# In the root of the project
+pnpm i
+```
+
+This will install dependencies for all projects in the workspace.
 
 ## How to Submit Changes
 
@@ -41,23 +69,11 @@ If you want a feature, you can open a discussion via the [issues](https://github
 
 ## Style Guide
 
-> Any color you like.
-
 We use Biome for linting and formatting: https://www.npmjs.com/package/@biomejs/biome
 
 You can run linting and formatting using the scripts:
 
 ```
-npm run format
-npm run check
+pnpm lint
+pnpm format
 ```
-
-We also make use of the [pre-commit](https://pre-commit.com/) package. It will run a serious of checks on every commit to make sure your code is properly formatted and linted. You can run the pre-commit check independent of a commit with the command `pre-commit run --all-files`.
-
-In general, code should be self-explanatory and kept as simple as possible. Comments can be added to clarify what a piece of code does and jsdoc annotations should be added to any important functions that are expected to be used by SDK clients.
-
-## Testing
-
-Tests for this repo are included in the `/tests` directory. You can use the command `npm test` to run unit tests. 
-
-If you make changes to the SDK, the tests should be updated or added to in a sensible way to ensure the new change is properly covered.

@@ -1,0 +1,2579 @@
+swagger: "2.0"
+info:
+  title: Speechmatics ASR REST API
+  version: 2.0.0
+  description: The Speechmatics Automatic Speech Recognition REST API is used to
+    submit ASR jobs and receive the results. The supported job type is
+    transcription of audio files.
+  contact:
+    email: support@speechmatics.com
+basePath: https://asr.api.speechmatics.com/v2
+schemes:
+  - https
+produces:
+  - application/json
+  - application/vnd.speechmatics.v2+json
+parameters:
+  AuthHeader:
+    name: Authorization
+    in: header
+    description: Customer API token
+    required: true
+    type: string
+  EARTag:
+    name: X-SM-EAR-Tag
+    in: header
+    description: Early Access Release Tag
+    required: false
+    type: string
+paths:
+  /jobs:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    post:
+      summary: Create a new job.
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: config
+          in: formData
+          type: string
+          description:
+            JSON containing a `JobConfig` model indicating the type and
+            parameters for the recognition job.
+          required: true
+        - name: data_file
+          in: formData
+          description:
+            The data file to be processed. Alternatively the data file can be
+            fetched from a url specified in `JobConfig`.
+          required: false
+          type: file
+        - name: text_file
+          in: formData
+          description:
+            For alignment jobs, the text file that the data file should be
+            aligned to.
+          required: false
+          type: file
+      responses:
+        "201":
+          description: OK
+          schema:
+            $ref: "#/definitions/CreateJobResponse"
+        "400":
+          description: Bad request
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 400
+              error: Job rejected
+              detail: Job config JSON is invalid
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "403":
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 403
+              error: Invalid or missing license
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: Requested Early Access Release not available
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: Python
+          label: Python
+          source: |
+            from speechmatics.batch_client import BatchClient
+
+            # Open the client using a context manager
+            with BatchClient("YOUR_API_KEY") as client:
+                job_id = client.submit_job(
+                    audio="PATH_TO_FILE",
+                )
+                print(job_id)
+        - lang: cURL
+          label: cURL
+          source: >
+            API_KEY="YOUR_API_KEY"
+
+            PATH_TO_FILE="example.wav"
+
+
+            curl -L -X POST "https://asr.api.speechmatics.com/v2/jobs/" \
+                -H "Authorization: Bearer ${API_KEY}" \
+                -F data_file=@${PATH_TO_FILE} \
+                -F config='{"type": "transcription","transcription_config": { "operating_point":"enhanced", "language": "en" }}'
+        - lang: CLI
+          label: CLI
+          source: speechmatics batch transcribe example.wav
+    get:
+      summary: List all jobs.
+      parameters:
+        - name: created_before
+          in: query
+          type: string
+          format: date-time
+          description:
+            UTC Timestamp cursor for paginating request response. Filters jobs
+            based on creation time to the nearest millisecond. Accepts up to
+            nanosecond precision, truncating to millisecond precision. By
+            default, the response will start with the most recent job.
+          required: false
+        - name: limit
+          in: query
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Limit for paginating the request response. Defaults to 100.
+          required: false
+        - name: include_deleted
+          in: query
+          type: boolean
+          description:
+            Specifies whether deleted jobs should be included in the response.
+            Defaults to false.
+          required: false
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/RetrieveJobsResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 422
+              error: limit in query must be of type int64
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: Python
+          label: Python
+          source: |
+            from speechmatics.batch_client import BatchClient
+
+            with BatchClient("YOUR_API_KEY") as client:
+                jobs_list = client.list_jobs()
+
+                # Here, we get and print out the name 
+                # of the first job if it exists
+                if len(jobs_list):
+                  first_job_name = jobs_list["jobs"][0]["data_name"]
+                  print(first_job_name)
+        - lang: cURL
+          label: cURL
+          source: >
+            API_KEY="YOUR_API_KEY"
+
+
+            curl -L -X GET "https://asr.api.speechmatics.com/v2/jobs" \                                
+                -H "Authorization: Bearer ${YOUR_API_KEY}"
+        - lang: CLI
+          label: CLI
+          source: speechmatics batch list-jobs
+  /jobs/{jobid}:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get job details, including progress and any error reports.
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/RetrieveJobResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: Job Expired
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: Python
+          label: Python
+          source: |
+            from speechmatics.batch_client import BatchClient
+
+            # This example shows how to check the duration of the file
+            with BatchClient("YOUR_API_KEY") as client:
+                job_response = client.check_job_status("YOUR_JOB_ID")
+
+                job_duration = job_response["job"]["duration"]
+                print(job_duration)
+        - lang: cURL
+          label: cURL
+          source: >
+            JOB_ID="YOUR_JOB_ID"
+
+            API_KEY="YOUR_API_KEY"
+
+
+            curl -L -X GET "https://asr.api.speechmatics.com/v2/jobs/${JOB_ID}" \
+                -H "Authorization: Bearer ${API_KEY}"
+        - lang: CLI
+          label: CLI
+          source: speechmatics batch job-status --job-id YOUR_JOB_ID
+    delete:
+      summary: Delete a job and remove all associated resources.
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job to delete.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+        - name: force
+          in: query
+          description:
+            When set, a running job will be force terminated. When unset
+            (default), a running job will not be terminated and request will
+            return HTTP 423 Locked.
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: The job that was deleted.
+          schema:
+            $ref: "#/definitions/DeleteJobResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: Job Expired
+        "423":
+          description: Locked
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 423
+              error: Resource Locked
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: Python
+          label: Python
+          source: |
+            from speechmatics.batch_client import BatchClient
+
+            with BatchClient("YOUR_API_KEY") as client:
+                client.delete_job("YOUR_JOB_ID")
+        - lang: cURL
+          label: cURL
+          source: >
+            JOB_ID="YOUR_JOB_ID"
+
+            API_KEY="YOUR_API_KEY"
+
+
+            curl -L -X DELETE "https://asr.api.speechmatics.com/v2/jobs/${JOB_ID}" \
+                -H "Authorization: Bearer ${API_KEY}"
+        - lang: CLI
+          label: CLI
+          source: speechmatics batch delete --job-id YOUR_JOB_ID
+  /jobs/{jobid}/data:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the data file used as input to a job.
+      produces:
+        - application/octet-stream
+        - application/json
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: File Expired
+              detail: File deleted from the storage
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+  /jobs/{jobid}/text:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the text file used as input to an alignment job.
+      produces:
+        - text/plain
+        - application/json
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: File Expired
+              detail: File deleted from the storage
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+  /jobs/{jobid}/transcript:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the transcript for a transcription job.
+      produces:
+        - application/json
+        - application/vnd.speechmatics.v2
+        - application/vnd.speechmatics.v2+json
+        - text/plain
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+        - name: format
+          in: query
+          description:
+            The transcription format (by default the `json-v2` format is
+            returned).
+          required: false
+          type: string
+          enum:
+            - json-v2
+            - txt
+            - srt
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/RetrieveTranscriptResponse"
+          examples:
+            application/vnd.speechmatics.v2+json:
+              format: "2.7"
+              job:
+                created_at: 2018-01-09T12:29:01.853047Z
+                data_name: recording.mp3
+                duration: 244
+                id: a1b2c3d4e5
+                tracking:
+                  title: ACME Q12018 Statement
+                  reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+                  tags:
+                    - quick-review
+                    - segment
+                  details:
+                    client: ACME Corp
+                    segment: 8
+                    seg_start: 963.201
+                    seg_end: 1091.481
+              metadata:
+                created_at: 2018-01-09T12:31:46.918860Z
+                type: transcription
+                transcription_config:
+                  additional_vocab:
+                    - content: Speechmatics
+                      sounds_like:
+                        - speechmatics
+                    - content: gnocchi
+                      sounds_like:
+                        - nyohki
+                        - nokey
+                        - nochi
+                    - content: CEO
+                      sounds_like:
+                        - C.E.O.
+                    - content: financial crisis
+                  diarization: channel
+                  channel_diarization_labels:
+                    - Agent
+                    - Caller
+                  language: en
+              results:
+                - channel: Agent
+                  start_time: 0.55
+                  end_time: 1.2
+                  type: word
+                  alternatives:
+                    - confidence: 0.95
+                      content: Hello
+                      language: en
+                      display:
+                        direction: ltr
+                - channel: Agent
+                  start_time: 1.45
+                  end_time: 1.8
+                  type: word
+                  alternatives:
+                    - confidence: 0.76
+                      content: world
+                      language: en
+                      display:
+                        direction: ltr
+                - channel: Agent
+                  start_time: 1.8
+                  end_time: 1.8
+                  type: punctuation
+                  alternatives:
+                    - confidence: 0.98
+                      content: .
+                      language: en
+                      display:
+                        direction: ltr
+            text/plain: |
+              SPEAKER: S1
+              Hello world.
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: File Expired
+              detail: File deleted from the storage
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: Python
+          label: Python
+          source: >
+            from speechmatics.batch_client import BatchClient
+
+
+            # This examples shows how to unpack various things from the transcript
+
+            with BatchClient("YOUR_API_KEY") as client:
+                transcript = client.get_job_result("YOUR_JOB_ID")
+
+                # Print out the first word of the transcript
+                first_word = transcript["results"][0][0]["alternatives"][0]
+                print(first_word)
+
+                # Supposing we had submitted a translation, we might get the first sentence
+                translation_sentence = transcript["translations"]["de"][0][content]
+                print(translation_sentence)
+
+                # If we wanted a summary
+                summary = transcript["summary"]["content"]
+                print(summary)
+
+                # If we wanted to check for sentiment analysis
+                first_sentiment = transcript["sentiment_analysis"]["segments"][0]["sentiment"]
+                print(first_sentiment)
+        - lang: cURL
+          label: cURL
+          source: >
+            JOB_ID="YOUR_JOB_ID"
+
+            API_KEY="YOUR_API_KEY"
+
+
+            curl -L -X GET "https://asr.api.speechmatics.com/v2/jobs/${JOB_ID}/transcript?format=txt" \
+                -H "Authorization: Bearer ${API_KEY}"
+        - lang: CLI
+          label: CLI
+          source: speechmatics batch get-results --job-id YOUR_JOB_ID
+  /jobs/{jobid}/alignment:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the aligned text file for an alignment job.
+      produces:
+        - text/plain
+        - application/json
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+        - name: tags
+          in: query
+          description:
+            Control how timing information is added to the text file provided
+            as input to the alignment job. If set to `word_start_and_end`, SGML
+            tags are inserted at the start and end of each word, for example
+            <time=0.41>. If set to `one_per_line` square bracket tags are
+            inserted at the start of each line, for example `[00:00:00.4] `. The
+            default is `word_start_and_end`.
+          required: false
+          type: string
+          enum:
+            - word_start_and_end
+            - one_per_line
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+          examples:
+            word_start_and_end: |
+              <time=0.41>hello<time=0.76> <time=0.89>world<time=1.18>
+            one_per_line: |
+              [00:00:00.4]    hello world
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Job not found
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: File Expired
+              detail: File deleted from the storage
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+      externalDocs:
+        description: More details of our alignment service can be found here.
+        url: https://docs.speechmatics.com/features-other/word-alignment
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: cURL
+          label: cURL
+          source: >
+            JOB_ID="YOUR_JOB_ID"
+
+            API_KEY="YOUR_API_KEY"
+
+
+            curl -L -X GET "https://asr.api.speechmatics.com/v2/jobs/${JOB_ID}/alignment" \
+                -H "Authorization: Bearer ${API_KEY}"
+  /jobs/{jobid}/log:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the log file for a job.
+      produces:
+        - application/json
+        - text/plain
+      parameters:
+        - name: jobid
+          in: path
+          description: ID of the job.
+          required: true
+          type: string
+          x-example: a1b2c3d4e5
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+          examples:
+            text/plain: >
+              2021-01-23 17:58:55,559 INFO    orchestrator.transport.cmd.utils
+              Loading model 'en'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 401
+              error: Permission Denied
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 404
+              error: Log file not available
+              detail: Could not read log file
+        "410":
+          description: Gone
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 410
+              error: File Expired
+              detail: File deleted from the storage
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 500
+              error: Internal Server Error
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+          examples:
+            application/json:
+              code: 501
+              error: Not Implemented
+  /usage:
+    parameters:
+      - $ref: "#/parameters/AuthHeader"
+      - $ref: "#/parameters/EARTag"
+    get:
+      summary: Get the usage statistics.
+      produces:
+        - application/json
+      parameters:
+        - name: since
+          in: query
+          required: false
+          type: string
+          format: date
+          description:
+            "Include usage after the given date (inclusive). This is a
+            [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date
+            format: `YYYY-MM-DD`."
+        - name: until
+          in: query
+          required: false
+          type: string
+          format: date
+          description:
+            "Include usage before the given date (inclusive). This is a
+            [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date
+            format: `YYYY-MM-DD`."
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/UsageResponse"
+          examples:
+            application/json:
+              since: 2021-09-12T00:00:00Z
+              until: 2022-01-01T23:59:59Z
+              summary:
+                - mode: batch
+                  type: transcription
+                  count: 5
+                  duration_hrs: 1.53
+                - mode: batch
+                  type: alignment
+                  count: 1
+                  duration_hrs: 0.1
+              details:
+                - mode: batch
+                  type: transcription
+                  language: sv
+                  operating_point: standard
+                  count: 4
+                  duration_hrs: 1.33
+                - mode: batch
+                  type: transcription
+                  language: de
+                  operating_point: enhanced
+                  count: 1
+                  duration_hrs: 0.2
+                - mode: batch
+                  type: alignment
+                  language: en
+                  count: 1
+                  duration_hrs: 0.1
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "429":
+          description: Rate Limited
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      tags:
+        - jobs
+      x-codeSamples:
+        - lang: cURL
+          label: cURL
+          source: |
+            API_KEY="YOUR_API_KEY"
+
+            curl -L -X GET "https://asr.api.speechmatics.com/v2/usage" \
+                -H "Authorization: Bearer ${API_KEY}"
+definitions:
+  ErrorResponse:
+    type: object
+    required:
+      - code
+      - error
+    properties:
+      code:
+        type: integer
+        description: The HTTP status code.
+        minimum: 100
+      error:
+        type: string
+        description: The error message.
+        enum:
+          - Bad Request
+          - File Expired
+          - Forbidden
+          - Resource Locked
+          - Format Not Supported
+          - Internal Server Error
+          - Job error
+          - Job Expired
+          - Job In Progress
+          - Job is not of type alignment
+          - Job is not of type transcription
+          - Job not found
+          - Job rejected
+          - Job rejected due to invalid audio
+          - Job rejected due to invalid text
+          - Malformed request
+          - Missing callback
+          - Missing data_file
+          - Missing text_file
+          - No language selected
+          - Not Implemented
+          - Permission Denied
+          - Requested product not available
+          - Transcription not ready
+          - Log file not available
+          - Requested Early Access Release not available
+          - Unprocessable Entity
+      detail:
+        type: string
+        description: The details of the error.
+  TrackingData:
+    properties:
+      title:
+        type: string
+        description: The title of the job.
+      reference:
+        type: string
+        description: External system reference.
+      tags:
+        type: array
+        x-omitempty: true
+        items:
+          type: string
+      details:
+        type: object
+        description: Customer-defined JSON structure.
+    example:
+      title: ACME Q12018 Earnings Call
+      reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+      tags:
+        - quick-review
+        - segment
+      details:
+        client: ACME Corp
+        segment: 8
+        seg_start: 963.201
+        seg_end: 1091.481
+  DataFetchConfig:
+    required:
+      - url
+    properties:
+      url:
+        type: string
+      auth_headers:
+        type: array
+        x-omitempty: true
+        items:
+          type: string
+        description:
+          A list of additional headers to be added to the input fetch request
+          when using http or https. This is intended to support authentication
+          or authorization, for example by supplying an OAuth2 bearer token.
+  AlignmentConfig:
+    required:
+      - language
+    properties:
+      language:
+        type: string
+    example:
+      language: en
+  TranslationError:
+    properties:
+      type:
+        type: string
+        enum:
+          - translation_failed
+          - unsupported_translation_pair
+      message:
+        type: string
+        description: Human readable error message
+  SummarizationError:
+    properties:
+      type:
+        type: string
+        enum:
+          - summarization_failed
+          - unsupported_language
+      message:
+        type: string
+        description: Human readable error message
+  SentimentAnalysisError:
+    properties:
+      type:
+        type: string
+        enum:
+          - sentiment_analysis_failed
+          - unsupported_language
+      message:
+        type: string
+        description: Human readable error message
+  TopicDetectionError:
+    properties:
+      type:
+        type: string
+        enum:
+          - topic_detection_failed
+          - unsupported_list_of_topics
+          - unsupported_language
+      message:
+        type: string
+        description: Human readable error message
+  AutoChaptersResultError:
+    properties:
+      type:
+        type: string
+        enum:
+          - auto_chapters_failed
+          - unsupported_language
+      message:
+        type: string
+        description: Human readable error message
+  TranscriptionConfig:
+    required:
+      - language
+    properties:
+      language:
+        type: string
+        description:
+          Language model to process the audio input, normally specified as an
+          ISO language code
+      domain:
+        type: string
+        description:
+          Request a specialized model based on 'language' but optimized for a
+          particular field, e.g. "finance" or "medical".
+      output_locale:
+        type: string
+        description:
+          Language locale to be used when generating the transcription
+          output, normally specified as an ISO language code
+      operating_point:
+        $ref: "#/definitions/OperatingPoint"
+        description: >-
+          Specify an operating point to use.
+
+          Operating points change the transcription process in a high level way, such as altering the acoustic model.
+
+          The default is `standard`.
+            - **standard**:
+            - **enhanced**: transcription will take longer but be more accurate than 'standard'
+      additional_vocab:
+        type: array
+        x-omitempty: true
+        items:
+          type: object
+          required:
+            - content
+          properties:
+            content:
+              type: string
+            sounds_like:
+              type: array
+              x-omitempty: true
+              items:
+                type: string
+        description: List of custom words or phrases that should be recognized.
+          Alternative pronunciations can be specified to aid recognition.
+      punctuation_overrides:
+        properties:
+          sensitivity:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
+            description:
+              Ranges between zero and one. Higher values will produce more
+              punctuation. The default is 0.5.
+          permitted_marks:
+            type: array
+            items:
+              type: string
+              pattern: ^(.|all)$
+            description:
+              The punctuation marks which the client is prepared to accept in
+              transcription output, or the special value 'all' (the default).
+              Unsupported marks are ignored. This value is used to guide the
+              transcription process.
+        description: Control punctuation settings.
+      diarization:
+        type: string
+        enum:
+          - none
+          - speaker
+          - channel
+          - speaker_change
+          - channel_and_speaker_change
+        description: >-
+          Specify whether speaker or channel labels are added to the transcript.
+
+          The default is `none`.
+            - **none**: no speaker or channel labels are added.
+            - **speaker**: speaker attribution is performed based on acoustic matching;
+                       all input channels are mixed into a single stream for processing.
+            - **channel**: multiple input channels are processed individually and collated
+                      into a single transcript.
+            - **speaker_change**: the output indicates when the speaker in the audio changes.
+                              No speaker attribution is performed. This is a faster method
+                              than speaker. The reported speaker changes may not agree with speaker.
+            - **channel_and_speaker_change**: both channel and speaker_change are switched on.
+                                          The speaker change is indicated if more than one speaker
+                                          are recorded in one channel.
+      speaker_change_sensitivity:
+        type: number
+        format: float
+        minimum: 0
+        maximum: 1
+        description:
+          Ranges between zero and one. Controls how responsive the system is
+          for potential speaker changes. High value indicates high sensitivity.
+          Defaults to 0.4.
+      channel_diarization_labels:
+        type: array
+        x-omitempty: true
+        items:
+          type: string
+          pattern: ^[A-Za-z0-9._]+$
+        description: Transcript labels to use when using collating separate input channels.
+      enable_entities:
+        type: boolean
+        description:
+          Include additional 'entity' objects in the transcription results
+          (e.g. dates, numbers) and their original spoken form. These entities
+          are interleaved with other types of results. The concatenation of
+          these words is represented as a single entity with the concatenated
+          written form present in the 'content' field. The entities contain a
+          'spoken_form' field, which can be used in place of the corresponding
+          'word' type results, in case a spoken form is preferred to a written
+          form. They also contain a 'written_form', which can be used instead of
+          the entity, if you want a breakdown of the words without spaces. They
+          can still contain non-breaking spaces and other special whitespace
+          characters, as they are considered part of the word for the formatting
+          output. In case of a written_form, the individual word times are
+          estimated and might not be accurate if the order of the words in the
+          written form does not correspond to the order they were actually
+          spoken (such as 'one hundred million dollars' and '$100 million').
+      max_delay_mode:
+        type: string
+        enum:
+          - fixed
+          - flexible
+        description:
+          Whether or not to enable flexible endpointing and allow the entity
+          to continue to be spoken.
+      speaker_diarization_config:
+        description: Configuration for speaker diarization
+        properties:
+          speaker_sensitivity:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
+            description:
+              Controls how sensitive the algorithm is in terms of keeping similar
+              speakers separate, as opposed to combining them into a single
+              speaker.  Higher values will typically lead to more speakers, as
+              the degree of difference between speakers in order to allow them
+              to remain distinct will be lower.  A lower value for this
+              parameter will conversely guide the algorithm towards being less
+              sensitive in terms of retaining similar speakers, and as such may
+              lead to fewer speakers overall.  The default is 0.5.
+      audio_filtering_config:
+        description: Configuration for limiting the transcription of quiet audio.
+        properties:
+          volume_threshold:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 100
+            description: >-
+              Controls the lower limit of audio volume at which speech and audio events will be transcribed.
+              If the volume limit is very low, then most sound will be passed to the speech recognition engine.
+              Higher numbers will cut out increasing amounts of sound.
+    example:
+      language: en
+      output_locale: en-GB
+      additional_vocab:
+        - content: Speechmatics
+          sounds_like:
+            - speechmatics
+        - content: gnocchi
+          sounds_like:
+            - nyohki
+            - nokey
+            - nochi
+        - content: CEO
+          sounds_like:
+            - C.E.O.
+        - content: financial crisis
+      diarization: channel
+      channel_diarization_labels:
+        - Caller
+        - Agent
+  NotificationConfig:
+    required:
+      - url
+    properties:
+      url:
+        type: string
+        description: |
+          The url to which a notification message will be sent upon
+          completion of the job. The job `id` and `status` are added
+          as query parameters, and any combination of the job inputs
+          and outputs can be included by listing them in `contents`.
+
+          If `contents` is empty, the body of the request will be
+          empty.
+
+          If only one item is listed, it will be sent as the body of
+          the request with `Content-Type` set to an appropriate value
+          such as `application/octet-stream` or `application/json`.
+
+          If multiple items are listed they will be sent as named file
+          attachments using the multipart content type.
+
+          If `contents` is not specified, the `transcript` item will
+          be sent as a file attachment named `data_file`, for
+          backwards compatibility.
+
+          If the job was rejected or failed during processing, that
+          will be indicated by the status, and any output items that
+          are not available as a result will be omitted. The body
+          formatting rules will still be followed as if all items were
+          available.
+
+          The user-agent header is set to `Speechmatics-API/2.0`, or
+          `Speechmatics API V2` in older API versions.
+      contents:
+        type: array
+        items:
+          type: string
+          enum:
+            - jobinfo
+            - transcript
+            - transcript.json-v2
+            - transcript.txt
+            - transcript.srt
+            - alignment
+            - alignment.word_start_and_end
+            - alignment.one_per_line
+            - data
+            - text
+        description:
+          Specifies a list of items to be attached to the notification
+          message. When multiple items are requested, they are included as named
+          file attachments.
+      method:
+        type: string
+        description: The method to be used with http and https urls. The default is post.
+        enum:
+          - post
+          - put
+      auth_headers:
+        type: array
+        x-omitempty: true
+        items:
+          type: string
+        description:
+          A list of additional headers to be added to the notification
+          request when using http or https. This is intended to support
+          authentication or authorization, for example by supplying an OAuth2
+          bearer token.
+    example:
+      - url: https://collector.example.org/callback
+        contents:
+          - transcript:json-v2
+        auth_headers:
+          - "Authorization: Bearer
+            eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNW\
+            RhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb1\
+            1y1537t3rGzcM"
+  LanguagePackInfo:
+    description: Properties of the language pack.
+    required:
+      - word_delimiter
+    properties:
+      language_description:
+        type: string
+        description: Full descriptive name of the language, e.g. 'Japanese'.
+      word_delimiter:
+        type: string
+        description: The character to use to separate words.
+      writing_direction:
+        type: string
+        enum:
+          - left-to-right
+          - right-to-left
+        description: The direction that words in the language should be written and read in.
+      itn:
+        type: boolean
+        description:
+          Whether or not ITN (inverse text normalization) is available for
+          the language pack.
+      adapted:
+        type: boolean
+        description:
+          Whether or not language model adaptation has been applied to the
+          language pack.
+  OutputConfig:
+    x-omitempty: true
+    type: object
+    properties:
+      srt_overrides:
+        description: "Parameters that override default values of srt conversion.
+          max_line_length: sets maximum count of characters per subtitle line
+          including white space. max_lines: sets maximum count of lines in a
+          subtitle section."
+        type: object
+        properties:
+          max_line_length:
+            type: integer
+          max_lines:
+            type: integer
+  JobType:
+    type: string
+    enum:
+      - alignment
+      - transcription
+  JobConfig:
+    description: |
+      JSON object that contains various groups of job configuration
+      parameters. Based on the value of `type`, a type-specific object
+      such as `transcription_config` is required to be present to
+      specify all configuration settings or parameters needed to
+      process the job inputs as expected.
+
+      If the results of the job are to be forwarded on completion,
+      `notification_config` can be provided with a list of callbacks
+      to be made; no assumptions should be made about the order in
+      which they will occur.
+
+      Customer specific job details or metadata can be supplied in
+      `tracking`, and this information will be available where
+      possible in the job results and in callbacks.
+    required:
+      - type
+    properties:
+      type:
+        $ref: "#/definitions/JobType"
+      fetch_data:
+        $ref: "#/definitions/DataFetchConfig"
+      fetch_text:
+        $ref: "#/definitions/DataFetchConfig"
+      alignment_config:
+        $ref: "#/definitions/AlignmentConfig"
+      transcription_config:
+        $ref: "#/definitions/TranscriptionConfig"
+      notification_config:
+        type: array
+        x-omitempty: true
+        items:
+          $ref: "#/definitions/NotificationConfig"
+      tracking:
+        $ref: "#/definitions/TrackingData"
+      output_config:
+        $ref: "#/definitions/OutputConfig"
+      translation_config:
+        $ref: "#/definitions/TranslationConfig"
+      language_identification_config:
+        $ref: "#/definitions/LanguageIdentificationConfig"
+      summarization_config:
+        $ref: "#/definitions/SummarizationConfig"
+      sentiment_analysis_config:
+        $ref: "#/definitions/SentimentAnalysisConfig"
+      topic_detection_config:
+        $ref: "#/definitions/TopicDetectionConfig"
+      auto_chapters_config:
+        $ref: "#/definitions/AutoChaptersConfig"
+      audio_events_config:
+        $ref: "#/definitions/AudioEventsConfig"
+  TranslationConfig:
+    required:
+      - target_languages
+    properties:
+      target_languages:
+        type: array
+        maxItems: 5
+        items:
+          type: string
+  LanguageIdentificationConfig:
+    properties:
+      expected_languages:
+        type: array
+        x-omitempty: true
+        items:
+          type: string
+      low_confidence_action:
+        type: string
+        enum:
+          - allow
+          - reject
+          - use_default_language
+        description:
+          Action to take if all of the predicted languages are below the
+          confidence threshold
+      default_language:
+        type: string
+  SummarizationConfig:
+    properties:
+      content_type:
+        type: string
+        enum:
+          - auto
+          - informative
+          - conversational
+      summary_length:
+        type: string
+        enum:
+          - brief
+          - detailed
+      summary_type:
+        type: string
+        enum:
+          - paragraphs
+          - bullets
+  TopicDetectionConfig:
+    properties:
+      topics:
+        x-omitempty: true
+        type: array
+        items:
+          type: string
+  SentimentAnalysisConfig:
+    type: object
+  AutoChaptersConfig:
+    type: object
+  AudioEventsConfig:
+    type: object
+    properties:
+      types:
+        type: array
+        items:
+          type: string
+  CreateJobResponse:
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description:
+          The unique ID assigned to the job. Keep a record of this for later
+          retrieval of your completed job.
+    example:
+      id: a1b2c3d4e5
+  JobDetails:
+    description:
+      Document describing a job. JobConfig will be present in JobDetails
+      returned for GET jobs/<id> request in SaaS and in Batch Appliance, but it
+      will not be present in JobDetails returned as item in RetrieveJobsResponse
+      in case of Batch Appliance.
+    required:
+      - created_at
+      - data_name
+      - id
+      - status
+    properties:
+      created_at:
+        type: string
+        format: date-time
+        example: 2018-01-09T12:29:01.853047Z
+        description: The UTC date time the job was created.
+      data_name:
+        type: string
+        description: Name of the data file submitted for job.
+      text_name:
+        type: string
+        description: Name of the text file submitted to be aligned to audio.
+      duration:
+        type: integer
+        description: The file duration (in seconds). May be missing for fetch URL jobs.
+        minimum: 0
+      id:
+        type: string
+        example: a1b2c3d4e5
+        description: The unique id assigned to the job.
+      status:
+        type: string
+        description:
+          The status of the job. * `running` - The job is actively running. *
+          `done` - The job completed successfully. * `rejected` - The job was
+          accepted at first, but later could not be processed by the
+          transcriber. * `deleted` - The user deleted the job. * `expired` - The
+          system deleted the job. Usually because the job was in the `done`
+          state for a very long time.
+        enum:
+          - running
+          - done
+          - rejected
+          - deleted
+          - expired
+      config:
+        $ref: "#/definitions/JobConfig"
+      lang:
+        type: string
+        description: Optional parameter used for backwards compatibility with v1 api
+      errors:
+        x-omitempty: true
+        description:
+          "Optional list of errors that have occurred in user interaction,
+          for example: audio could not be fetched or notification could not be
+          sent."
+        type: array
+        items:
+          $ref: "#/definitions/JobDetailError"
+  RetrieveJobsResponse:
+    required:
+      - jobs
+    properties:
+      jobs:
+        type: array
+        items:
+          $ref: "#/definitions/JobDetails"
+    example:
+      jobs:
+        - created_at: 2018-01-09T12:29:01.853047Z
+          data_name: recording.mp3
+          duration: 244
+          id: a1b2c3d4e5
+          status: transcribing
+          type: transcription
+          tracking:
+            title: ACME Q12018 Statement
+            reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+            tags:
+              - quick-review
+              - segment
+            details:
+              client: ACME Corp
+              segment: 8
+              seg_start: 963.201
+              seg_end: 1091.481
+          transcription_config:
+            language: en
+            additional_vocab:
+              - content: Speechmatics
+                sounds_like:
+                  - speechmatics
+              - content: gnocchi
+                sounds_like:
+                  - nyohki
+                  - nokey
+                  - nochi
+              - content: CEO
+                sounds_like:
+                  - C.E.O.
+              - content: financial crisis
+            diarization: channel
+            channel_diarization_labels:
+              - Agent
+              - Caller
+          notification_config:
+            - url: https://collector.example.org/callback
+              contents:
+                - transcript
+                - data
+              auth_headers:
+                - "Authorization: Bearer
+                  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZh\
+                  Zi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdo\
+                  HrcZxH-x5mb11y1537t3rGzcM"
+        - created_at: 2018-01-09T11:23:42.984612Z
+          data_name: hello.wav
+          duration: 130
+          id: 084d1f86-9fe9-11e8-9c91-00155d019c0b
+          status: aligning
+          type: alignment
+          text_name: hello.txt
+          alignment_config:
+            language: en
+          notification_config:
+            - url: https://collector.example.org/trigger-fetch
+              contents: []
+          tracking:
+            title: Project X Intro
+            reference: /data/projects/X/overview/audio/hello.wav
+  RetrieveJobResponse:
+    required: &a1
+      - job
+    properties: &a2
+      job:
+        $ref: "#/definitions/JobDetails"
+    example:
+      job:
+        created_at: 2018-01-09T12:29:01.853047Z
+        data_name: recording.mp3
+        duration: 244
+        id: a1b2c3d4e5
+        status: transcribing
+        type: transcription
+        transcription_config:
+          language: en
+          additional_vocab:
+            - content: Speechmatics
+              sounds_like:
+                - speechmatics
+            - content: gnocchi
+              sounds_like:
+                - nyohki
+                - nokey
+                - nochi
+            - content: CEO
+              sounds_like:
+                - C.E.O.
+            - content: financial crisis
+          diarization: channel
+          channel_diarization_labels:
+            - Agent
+            - Caller
+        notification_config:
+          - url: https://collector.myorg.com/callback
+            contents:
+              - transcript
+              - data
+            auth_headers:
+              - "Authorization: Bearer
+                eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi\
+                0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZ\
+                xH-x5mb11y1537t3rGzcM"
+        tracking:
+          title: ACME Q12018 Statement
+          reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+          tags:
+            - quick-review
+            - segment
+          details:
+            client: ACME Corp
+            segment: 8
+            seg_start: 963.201
+            seg_end: 1091.481
+  DeleteJobResponse:
+    required: *a1
+    properties: *a2
+    example:
+      job:
+        created_at: 2018-01-09T12:29:01.853047Z
+        data_name: recording.mp3
+        duration: 244
+        id: a1b2c3d4e5
+        status: deleted
+        type: transcription
+        transcription_config:
+          language: en
+          additional_vocab:
+            - content: Speechmatics
+              sounds_like:
+                - speechmatics
+            - content: gnocchi
+              sounds_like:
+                - nyohki
+                - nokey
+                - nochi
+            - content: CEO
+              sounds_like:
+                - C.E.O.
+            - content: financial crisis
+          diarization: channel
+          channel_diarization_labels:
+            - Agent
+            - Caller
+        notification_config:
+          - url: https://collector.myorg.com/callback
+            contents:
+              - transcript
+              - data
+            auth_headers:
+              - "Authorization: Bearer
+                eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi\
+                0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZ\
+                xH-x5mb11y1537t3rGzcM"
+        tracking:
+          title: ACME Q12018 Statement
+          reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+          tags:
+            - quick-review
+            - segment
+          details:
+            client: ACME Corp
+            segment: 8
+            seg_start: 963.201
+            seg_end: 1091.481
+  JobInfo:
+    description:
+      Summary information about an ASR job, to support identification and
+      tracking.
+    required:
+      - created_at
+      - data_name
+      - duration
+      - id
+    properties:
+      created_at:
+        type: string
+        format: date-time
+        example: 2018-01-09T12:29:01.853047Z
+        description: The UTC date time the job was created.
+      data_name:
+        type: string
+        description: Name of data file submitted for job.
+      duration:
+        type: integer
+        description: The data file audio duration (in seconds).
+        minimum: 0
+      id:
+        type: string
+        example: a1b2c3d4e5
+        description: The unique id assigned to the job.
+      text_name:
+        type: string
+        description: Name of the text file submitted to be aligned to audio.
+      tracking:
+        $ref: "#/definitions/TrackingData"
+  RecognitionMetadata:
+    description:
+      Summary information about the output from an ASR job, comprising
+      the job type and configuration parameters used when generating the output.
+    required:
+      - created_at
+      - type
+    properties:
+      created_at:
+        type: string
+        format: date-time
+        example: 2018-01-09T12:29:01.853047Z
+        description: The UTC date time the transcription output was created.
+      type:
+        $ref: "#/definitions/JobType"
+      transcription_config:
+        $ref: "#/definitions/TranscriptionConfig"
+      translation_errors:
+        $ref: "#/definitions/TranslationError"
+        description: List of errors that occurred in the translation stage.
+      summarization_errors:
+        $ref: "#/definitions/SummarizationError"
+        description: List of errors that occurred in the summarization stage.
+      sentiment_analysis_errors:
+        $ref: "#/definitions/SentimentAnalysisError"
+        description: List of errors that occurred in the sentiment analysis stage.
+      topic_detection_errors:
+        $ref: "#/definitions/TopicDetectionError"
+        description: List of errors that occurred in the topic detection stage.
+      auto_chapters_errors:
+        $ref: "#/definitions/AutoChaptersResultError"
+        description: List of errors that occurred in the auto chapters stage.
+      alignment_config:
+        $ref: "#/definitions/AlignmentConfig"
+      output_config:
+        $ref: "#/definitions/OutputConfig"
+      language_pack_info:
+        $ref: "#/definitions/LanguagePackInfo"
+      language_identification:
+        $ref: "#/definitions/LanguageIdentificationResult"
+        description:
+          Result of the language identification of the audio, configured
+          using `language_identification_config`,  or setting the transcription
+          language to `auto`.
+  RecognitionDisplay:
+    required:
+      - direction
+    properties:
+      direction:
+        type: string
+        enum:
+          - ltr
+          - rtl
+  RecognitionAlternative:
+    description: List of possible job output item values, ordered by likelihood.
+    required:
+      - content
+      - confidence
+      - language
+    properties:
+      content:
+        type: string
+      confidence:
+        type: number
+        format: float
+      language:
+        type: string
+      display:
+        $ref: "#/definitions/RecognitionDisplay"
+      speaker:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+  RecognitionResult:
+    description: An ASR job output item. The primary item types are `word` and
+      `punctuation`. Other item types may be present, for example to provide
+      semantic information of different forms.
+    required:
+      - start_time
+      - end_time
+      - type
+    properties:
+      channel:
+        type: string
+      start_time:
+        type: number
+        format: float
+      end_time:
+        type: number
+        format: float
+      volume:
+        type: number
+        format: float
+        maximum: 100
+        minimum: 0
+        description:
+          An indication of the volume of audio across the time period the
+          word was spoken.
+      is_eos:
+        type: boolean
+        description:
+          Whether the punctuation mark is an end of sentence character. Only
+          applies to punctuation marks.
+      type:
+        type: string
+        description:
+          New types of items may appear without being requested; unrecognized
+          item types can be ignored.
+        enum:
+          - word
+          - punctuation
+          - speaker_change
+          - entity
+      written_form:
+        $ref: "#/definitions/WrittenFormRecognitionResult"
+      spoken_form:
+        $ref: "#/definitions/SpokenFormRecognitionResult"
+      alternatives:
+        type: array
+        items:
+          $ref: "#/definitions/RecognitionAlternative"
+    example:
+      - channel: channel_1
+        start_time: 0.55
+        end_time: 1.2
+        type: word
+        volume: 0.5
+        alternatives:
+          - confidence: 0.95
+            content: Hello
+            language: en
+            speaker: S1
+            display:
+              direction: ltr
+  WrittenFormRecognitionResult:
+    description: A WrittenFormRecognitionResult describes a simple object which
+      consists solely of 'word' type entries with a start and end time. It can
+      occur only inside the written_form property of a full RecognitionResult"
+    properties:
+      alternatives:
+        items:
+          $ref: "#/definitions/RecognitionAlternative"
+        type: array
+      end_time:
+        format: float
+        type: number
+      start_time:
+        format: float
+        type: number
+      type:
+        description:
+          "What kind of object this is. See #/Definitions/RecognitionResult
+          for definitions of the enums."
+        enum:
+          - word
+        type: string
+    required:
+      - start_time
+      - end_time
+      - type
+      - alternatives
+    type: object
+  SpokenFormRecognitionResult:
+    description: A SpokenFormRecognitionResult describes a simple object which
+      consists solely of 'word' or 'punctuation' type entries with a start and
+      end time. It can occur only inside the spoken_form property of a full
+      "RecognitionResult"
+    properties:
+      alternatives:
+        items:
+          $ref: "#/definitions/RecognitionAlternative"
+        type: array
+      end_time:
+        format: float
+        type: number
+      start_time:
+        format: float
+        type: number
+      type:
+        description:
+          "What kind of object this is. See #/Definitions/RecognitionResult
+          for definitions of the enums."
+        enum:
+          - word
+          - punctuation
+        type: string
+    required:
+      - start_time
+      - end_time
+      - type
+      - alternatives
+    type: object
+  RetrieveTranscriptResponse:
+    type: object
+    required:
+      - format
+      - job
+      - metadata
+      - results
+    properties:
+      format:
+        type: string
+        example: "2.1"
+        description: Speechmatics JSON transcript format version number.
+      job:
+        $ref: "#/definitions/JobInfo"
+      metadata:
+        $ref: "#/definitions/RecognitionMetadata"
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/RecognitionResult"
+      translations:
+        type: object
+        description:
+          Translations of the transcript into other languages. It is a map of
+          ISO language codes to arrays of translated sentences. Configured using
+          `translation_config`.
+        additionalProperties:
+          type: array
+          items:
+            $ref: "#/definitions/TranslationSentence"
+        example:
+          de:
+            - start_time: 0.5
+              end_time: 1.3
+              content: Guten Tag, wie geht es dir?
+              speaker: UU
+          fr:
+            - start_time: 0.5
+              end_time: 1.3
+              content: Bonjour, comment ça va?
+              speaker: UU
+      summary:
+        $ref: "#/definitions/SummarizationResult"
+      sentiment_analysis:
+        $ref: "#/definitions/SentimentAnalysisResult"
+      topics:
+        $ref: "#/definitions/TopicDetectionResult"
+      chapters:
+        $ref: "#/definitions/AutoChaptersResult"
+      audio_events:
+        type: array
+        description:
+          Timestamped audio events, only set if `audio_events_config` is in
+          the config
+        items:
+          $ref: "#/definitions/AudioEventItem"
+      audio_event_summary:
+        type: object
+        description: Summary statistics per event type, keyed by `type`, e.g. music
+        properties:
+          overall:
+            type: object
+            description: Overall summary on all channels
+            $ref: "#/definitions/AudioEventSummary"
+          channels:
+            description:
+              Summary keyed by channel, only set if channel diarization is
+              enabled
+            type: object
+            additionalProperties:
+              type: object
+              $ref: "#/definitions/AudioEventSummary"
+  SummarizationResult:
+    description: Summary of the transcript, configured using `summarization_config`.
+    type: object
+    properties:
+      content:
+        type: string
+    example:
+      content: this is a summary
+  SentimentAnalysisResult:
+    type: object
+    description: The main object that holds sentiment analysis data.
+    properties:
+      sentiment_analysis:
+        type: object
+        description: Holds the detailed sentiment analysis information.
+        properties:
+          segments:
+            type: array
+            description:
+              An array of objects that represent a segment of text and its
+              associated sentiment.
+            items:
+              description:
+                A an object that holds overall sentiment information, and
+                per-speaker and per-channel sentiment data.
+              $ref: "#/definitions/SentimentSegment"
+          summary:
+            description:
+              An object that holds overall sentiment information, and per-speaker
+              and per-channel sentiment data.
+            $ref: "#/definitions/SentimentSummary"
+    example:
+      segments:
+        - text: I am happy with the product.
+          start_time: 0
+          end_time: 5
+          sentiment: positive
+          speaker: John Doe
+          channel: Chat
+          confidence: 0.9
+        - text: I don't like the customer service.
+          start_time: 6
+          end_time: 12
+          sentiment: negative
+          speaker: John Doe
+          channel: Chat
+          confidence: 0.8
+      summary:
+        overall:
+          positive_count: 1
+          negative_count: 1
+          neutral_count: 0
+        speakers:
+          - speaker: John Doe
+            positive_count: 1
+            negative_count: 1
+            neutral_count: 0
+        channels:
+          - channel: Chat
+            positive_count: 1
+            negative_count: 1
+            neutral_count: 0
+  SentimentSegment:
+    type: object
+    description: Represents a segment of text and its associated sentiment.
+    properties:
+      text:
+        type: string
+      start_time:
+        type: number
+        format: float
+      end_time:
+        type: number
+        format: float
+      sentiment:
+        type: string
+      speaker:
+        type: string
+      channel:
+        type: string
+      confidence:
+        type: number
+        format: float
+  SentimentSummary:
+    type: object
+    description: Holds overall sentiment information, as well as detailed
+      per-speaker and per-channel sentiment data.
+    properties:
+      overall:
+        description: Summary of overall sentiment data.
+        $ref: "#/definitions/SentimentSummaryDetail"
+      speakers:
+        type: array
+        description:
+          An array of objects that represent sentiment data for a specific
+          speaker.
+        items:
+          $ref: "#/definitions/SentimentSpeakerSummary"
+      channels:
+        type: array
+        description:
+          An array of objects that represent sentiment data for a specific
+          channel.
+        items:
+          $ref: "#/definitions/SentimentChannelSummary"
+  SentimentSummaryDetail:
+    type: object
+    description: Holds the count of sentiment information grouped by positive,
+      neutral and negative.
+    properties:
+      positive_count:
+        type: integer
+      negative_count:
+        type: integer
+      neutral_count:
+        type: integer
+  SentimentSpeakerSummary:
+    type: object
+    description: Holds sentiment information for a specific speaker.
+    properties:
+      speaker:
+        type: string
+      positive_count:
+        type: integer
+      negative_count:
+        type: integer
+      neutral_count:
+        type: integer
+  SentimentChannelSummary:
+    type: object
+    description: Holds sentiment information for a specific channel.
+    properties:
+      channel:
+        type: string
+      positive_count:
+        type: integer
+      negative_count:
+        type: integer
+      neutral_count:
+        type: integer
+  TopicDetectionResult:
+    description: Main object that holds topic detection results.
+    type: object
+    properties:
+      segments:
+        type: array
+        description:
+          An array of objects that represent a segment of text and its
+          associated topic information.
+        items:
+          description: An object that holds topic information for a single segment.
+          $ref: "#/definitions/TopicDetectionSegment"
+      summary:
+        description: An object that holds overall information on the topics detected.
+        $ref: "#/definitions/TopicDetectionSummary"
+    example:
+      segments:
+        - text: I am happy with the product.
+          start_time: 0
+          end_time: 5
+          topics:
+            - topic: product
+        - text: We will deploy this container for Spanish.
+          start_time: 6
+          end_time: 12
+          topics:
+            - topic: deployment
+            - topic: languages
+      summary:
+        overall:
+          deployment: 1
+          languages: 1
+          product: 1
+  TopicDetectionSegment:
+    type: object
+    description: Represents a segment of text and its associated topic information.
+    properties:
+      text:
+        type: string
+      start_time:
+        type: number
+        format: float
+      end_time:
+        type: number
+        format: float
+      topics:
+        type: array
+        items:
+          $ref: "#/definitions/TopicDetectionSegmentTopic"
+  TopicDetectionSegmentTopic:
+    type: object
+    description: Represents a topic and its associated information.
+    properties:
+      topic:
+        type: string
+  TopicDetectionSummary:
+    type: object
+    description: Holds overall information on the topics detected.
+    properties:
+      overall:
+        description: Summary of overall topic detection results.
+        $ref: "#/definitions/TopicDetectionSummaryOverall"
+  TopicDetectionSummaryOverall:
+    type: object
+    description: Holds the count of topics detected.
+    additionalProperties:
+      type: integer
+  AutoChaptersResult:
+    type: array
+    description: An array of objects that represent summarized chapters of the transcript
+    items:
+      $ref: "#/definitions/Chapter"
+    example:
+      - title: Part 1
+        summary: Summary of part 1
+        start_time: 0
+        end_time: 5
+      - title: Part 2
+        summary: Summary of part 2
+        start_time: 5
+        end_time: 10
+  Chapter:
+    type: object
+    properties:
+      title:
+        type: string
+      summary:
+        type: string
+      start_time:
+        type: number
+      end_time:
+        type: number
+  AudioEventItem:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Kind of audio event. E.g. music
+      start_time:
+        type: number
+        description: Time (in seconds) at which the audio event starts
+        format: float
+      end_time:
+        type: number
+        description: Time (in seconds) at which the audio event ends
+        format: float
+      confidence:
+        type: number
+        format: float
+        description: Prediction confidence associated with this event
+      channel:
+        type: string
+        description: Input channel this event occurred on
+  AudioEventSummary:
+    type: object
+    additionalProperties:
+      type: object
+      $ref: "#/definitions/AudioEventSummaryItem"
+  AudioEventSummaryItem:
+    type: object
+    description: Summary statistics for this audio event type
+    properties:
+      total_duration:
+        type: number
+        description: Total duration (in seconds) of all audio events of this type
+        format: float
+      count:
+        type: number
+        description: Number of events of this type
+  TranslationSentence:
+    type: object
+    properties:
+      start_time:
+        type: number
+        format: float
+      end_time:
+        type: number
+        format: float
+      content:
+        type: string
+      speaker:
+        type: string
+      channel:
+        type: string
+  LanguageIdentificationResult:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/LanguageIdentificationResultItem"
+      error:
+        type: string
+        enum:
+          - LOW_CONFIDENCE
+          - UNEXPECTED_LANGUAGE
+          - NO_SPEECH
+          - FILE_UNREADABLE
+          - OTHER
+      message:
+        type: string
+    example:
+      results:
+        - alternatives:
+            - language: en
+              confidence: 0.98
+            - language: fr
+              confidence: 0.02
+          start_time: 0
+          end_time: 5.5
+        - alternatives:
+            - language: en
+              confidence: 0.95
+            - language: fr
+              confidence: 0.05
+          start_time: 5.6
+          end_time: 10
+  LanguageIdentificationResultItem:
+    type: object
+    properties:
+      alternatives:
+        type: array
+        items:
+          $ref: "#/definitions/LanguageIdentificationResultAlternative"
+      start_time:
+        type: number
+      end_time:
+        type: number
+  LanguageIdentificationResultAlternative:
+    type: object
+    properties:
+      language:
+        type: string
+      confidence:
+        type: number
+  JobDetailError:
+    type: object
+    required:
+      - timestamp
+      - message
+    properties:
+      timestamp:
+        type: string
+        example: 2021-07-14T11:53:49.242Z
+      message:
+        type: string
+        example: Audio fetch error, http status 418
+  OperatingPoint:
+    type: string
+    enum:
+      - standard
+      - enhanced
+  JobMode:
+    type: string
+    enum:
+      - batch
+  UsageResponse:
+    type: object
+    required:
+      - since
+      - until
+      - summary
+      - details
+    properties:
+      since:
+        type: string
+        format: date-time
+        example: 2021-10-14T00:55:00Z
+      until:
+        type: string
+        format: date-time
+        example: 2022-12-01T00:00:00Z
+      summary:
+        type: array
+        items:
+          $ref: "#/definitions/UsageDetails"
+      details:
+        type: array
+        items:
+          $ref: "#/definitions/UsageDetails"
+  UsageDetails:
+    type: object
+    required:
+      - mode
+      - type
+      - count
+      - duration_hrs
+    properties:
+      mode:
+        $ref: "#/definitions/JobMode"
+      type:
+        $ref: "#/definitions/JobType"
+      language:
+        type: string
+        example: en
+      operating_point:
+        $ref: "#/definitions/OperatingPoint"
+      count:
+        type: integer
+        description: Total number of billable jobs in this cycle
+      duration_hrs:
+        type: number
+        format: float
+        description: Total duration of billable jobs (in hours) this cycle
+tags:
+  - name: jobs
+    x-displayName: Jobs
+  - name: ErrorResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/ErrorResponse" />
+    x-displayName: ErrorResponse
+  - name: TrackingData
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/TrackingData" />
+    x-displayName: TrackingData
+  - name: DataFetchConfig
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DataFetchConfig" />
+    x-displayName: DataFetchConfig
+  - name: AlignmentConfig
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/AlignmentConfig" />
+    x-displayName: AlignmentConfig
+  - name: TranscriptionConfig
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/TranscriptionConfig" />
+    x-displayName: TranscriptionConfig
+  - name: NotificationConfig
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/NotificationConfig" />
+    x-displayName: NotificationConfig
+  - name: OutputConfig
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/OutputConfig" />
+    x-displayName: OutputConfig
+  - name: JobType
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/JobType" />
+    x-displayName: JobType
+  - name: JobInfo
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/JobInfo" />
+    x-displayName: JobInfo
+  - name: JobConfig
+    description: >
+      This model should be used when you create a new job. It will also be
+      returned as a part of response in a number of requests. This includes when
+      you get job details or get the transcript for a transcription job.
+
+
+      Based on the value of `type`, a type-specific object such as `transcription_config` is required to be present to specify all configuration settings or parameters needed to process the job inputs as expected.
+
+
+      If the results of the job are to be forwarded on completion, `notification_config` can be provided with a list of callbacks to be made; no assumptions should be made about the order in
+
+      which they will occur. For more details, please refer to [Notifications](https://docs.speechmatics.com/features-other/notifications) in the documentation.
+
+
+      Customer specific job details or metadata can be supplied in `tracking`, and this information will be available where possible in the job results and in callbacks.
+
+
+      <SchemaDefinition schemaRef="#/components/schemas/JobConfig" />
+    x-displayName: Job Config
+  - name: CreateJobResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/CreateJobResponse" />
+    x-displayName: CreateJobResponse
+  - name: JobDetails
+    description: >
+      Returned when you get job details, list all jobs or delete a job. This
+      model includes the status and config that was used. 
+
+
+      <SchemaDefinition schemaRef="#/components/schemas/JobDetails" />
+    x-displayName: Job Details
+  - name: RetrieveJobsResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/RetrieveJobsResponse" />
+    x-displayName: RetrieveJobsResponse
+  - name: RetrieveJobResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/RetrieveJobResponse" />
+    x-displayName: RetrieveJobResponse
+  - name: DeleteJobResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DeleteJobResponse" />
+    x-displayName: DeleteJobResponse
+  - name: RecognitionMetadata
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/RecognitionMetadata" />
+    x-displayName: RecognitionMetadata
+  - name: RecognitionDisplay
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/RecognitionDisplay" />
+    x-displayName: RecognitionDisplay
+  - name: RecognitionAlternative
+    description: >
+      <SchemaDefinition schemaRef="#/components/schemas/RecognitionAlternative"
+      />
+    x-displayName: RecognitionAlternative
+  - name: RecognitionResult
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/RecognitionResult" />
+    x-displayName: RecognitionResult
+  - name: RetrieveTranscriptResponse
+    description: >
+      Returned when you get the transcript for a transcription job. It includes
+      metadata about the job, such as the transcription config that was used.  
+
+      <SchemaDefinition schemaRef="#/components/schemas/RetrieveTranscriptResponse" />
+    x-displayName: Transcript
+  - name: JobDetailError
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/JobDetailError" />
+    x-displayName: JobDetailError
+  - name: OperatingPoint
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/OperatingPoint" />
+    x-displayName: OperatingPoint
+  - name: JobMode
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/JobMode" />
+    x-displayName: JobMode
+  - name: UsageResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UsageResponse" />
+    x-displayName: UsageResponse
+  - name: UsageDetails
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UsageDetails" />
+    x-displayName: UsageDetails
+x-tagGroups:
+  - name: Requests
+    tags:
+      - jobs
+  - name: Models
+    tags:
+      - JobConfig
+      - JobDetails
+      - RetrieveTranscriptResponse

@@ -1,0 +1,27 @@
+{
+  "name": "@speechmatics/batch-client",
+  "version": "5.0.0-beta.0",
+  "description": "Javascript client for the Speechmatics batch jobs API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "generate-types": "./scripts/generate-models.sh",
+    "build": "rollup -c",
+    "prepare": "pnpm build"
+  },
+  "keywords": [
+    "speech",
+    "ASR",
+    "batch",
+    "REST API",
+    "transcript",
+    "translation",
+    "summary"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

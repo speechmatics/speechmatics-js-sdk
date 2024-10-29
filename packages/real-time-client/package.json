@@ -1,0 +1,35 @@
+{
+  "name": "@speechmatics/real-time-client",
+  "version": "5.0.0-beta.0",
+  "description": "Client for the Speechmatics real-time API",
+  "main": "dist/index.js",
+  "browser": "dist/index.browser.js",
+  "module": "dist/index.browser.js",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "pnpm rollup -c",
+    "prepare": "pnpm build",
+    "generate-types": "./scripts/transform-async-to-openapi.ts && ./scripts/generate-models.sh"
+  },
+  "keywords": [
+    "speech",
+    "ASR",
+    "real-time",
+    "realtime",
+    "real time",
+    "websocket",
+    "transcript",
+    "translation"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
+    "tsx": "^4.19.0",
+    "yaml": "^2.5.0"
+  }
+}

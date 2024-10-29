@@ -1,0 +1,24 @@
+{
+  "name": "@speechmatics/flow-client",
+  "version": "0.0.1-alpha.19",
+  "description": "",
+  "main": "dist/index.js",
+  "files": ["dist/", "README.md"],
+  "browser": "dist/index.browser.js",
+  "module": "dist/index.browser.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "pnpm rollup -c",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5"
+  }
+}
