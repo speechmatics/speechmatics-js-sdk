@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - fix-publish-script-again
 jobs:
   build:
     runs-on: ubuntu-latest
