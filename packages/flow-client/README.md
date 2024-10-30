@@ -9,6 +9,9 @@ Official Javascript client for the Speechmatics Flow API.
 npm i @speechmatics/flow-client
 ```
 
+> [!WARNING]  
+> For React Native, make sure to install the [`event-target-polyfill`](https://www.npmjs.com/package/event-target-polyfill) package, or any other polyfill for the [`EventTarget` class](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+
 ## Usage
 
 The two main exports from this package are the `FlowClient` class, and the `fetchPersonas` function.
