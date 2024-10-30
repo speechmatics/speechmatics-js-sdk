@@ -343,6 +343,8 @@ components:
               - data_error
               - buffer_error
               - protocol_error
+              - timelimit_exceeded
+              - quota_exceeded
               - unknown_error
           reason:
             type: string
