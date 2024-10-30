@@ -10,6 +10,9 @@ This package wraps the `@speechmatics/flow-client` package for use in React proj
 npm i @speechmatics/flow-client-react
 ```
 
+> [!WARNING]  
+> For React Native, make sure to install the [`event-target-polyfill`](https://www.npmjs.com/package/event-target-polyfill) package, or any other polyfill for the [`EventTarget` class](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
+
 ## Usage
 
 
