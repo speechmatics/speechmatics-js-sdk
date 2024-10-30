@@ -12,7 +12,7 @@
     "lint": "biome lint --write .",
 
     "build:packages": "pnpm --filter '{packages/*}' build",
-    "publish:packages": "pnpm --filter '{packages/*}' publish"
+    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public"
   },
   "keywords": [],
   "author": "",
