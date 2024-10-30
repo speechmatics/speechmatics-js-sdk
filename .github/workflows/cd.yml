@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - fix-publish-script-again
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,13 +21,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-      - name: Set publishing config
-        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NPM_AUTH_TOKEN}"
-        env:
-          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Install dependencies
         run: pnpm recursive install
       - name: Build packages
         run: pnpm build:packages
       - name: Publish all packages
-        run: pnpm publish:packages
+        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NPM_AUTH_TOKEN}" && pnpm publish:packages
+        env:
+          NPM_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
