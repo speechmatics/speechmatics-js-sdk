@@ -1,0 +1,20 @@
+{
+  "name": "@speechmatics/browser-audio-input",
+  "version": "0.0.1",
+  "description": "Manage audio input devices and persmissions across browsers",
+  "exports": ["./dist/index.js"],
+  "module": "./dist/index.js",
+  "type": "module",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "rollup -c",
+    "prepare": "pnpm build",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": ["Audio", "Browser", "device", "selection"],
+  "license": "MIT",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1"
+  }
+}

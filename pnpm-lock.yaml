@@ -41,6 +41,9 @@ importers:
       '@picocss/pico':
         specifier: ^2.0.6
         version: 2.0.6
+      '@speechmatics/browser-audio-input-react':
+        specifier: workspace:*
+        version: link:../../packages/browser-audio-input-react
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react
@@ -91,6 +94,28 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.23.8
+
+  packages/browser-audio-input:
+    dependencies:
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
+
+  packages/browser-audio-input-react:
+    dependencies:
+      '@speechmatics/browser-audio-input':
+        specifier: workspace:*
+        version: link:../browser-audio-input
+      react:
+        specifier: ^18 || ^19
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
 
   packages/flow-client:
     dependencies:

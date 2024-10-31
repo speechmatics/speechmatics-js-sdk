@@ -1,0 +1,36 @@
+{
+  "name": "@speechmatics/browser-audio-input-react",
+  "version": "0.0.1",
+  "description": "React hooks for managing audio inputs and permissions across browsers",
+  "exports": ["./dist/index.js"],
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm -C ../browser-audio-input build && pnpm rollup -c",
+    "prepare": "pnpm build",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": [
+    "Flow",
+    "API",
+    "React",
+    "hooks",
+    "transcription",
+    "speech",
+    "intelligence"
+  ],
+  "dependencies": {
+    "@speechmatics/browser-audio-input": "workspace:*"
+  },
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "typescript-event-target": "^1.1.1"
+  }
+}
