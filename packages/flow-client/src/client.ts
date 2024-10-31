@@ -67,6 +67,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     const socketState = this.socketState;
     if (socketState && socketState !== 'closed') {
       throw new SpeechmaticsFlowError(
+        'SocketNotClosed',
         `Cannot start connection while socket is ${socketState}`,
       );
     }
@@ -93,7 +94,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
         'socketError',
         (e) => {
           reject(
-            new SpeechmaticsFlowError('Error opening websocket', { cause: e }),
+            new SpeechmaticsFlowError(
+              'SocketError',
+              'Error opening websocket',
+              { cause: e },
+            ),
           );
         },
         { once: true },
@@ -107,7 +112,8 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 
   private setupSocketEventListeners() {
-    if (!this.ws) throw new SpeechmaticsFlowError('socket not initialized!');
+    if (!this.ws)
+      throw new SpeechmaticsFlowError('SocketError', 'socket not initialized!');
 
     this.ws.addEventListener('open', () => {
       this.dispatchTypedEvent('socketOpen', new Event('socketOpen'));
@@ -126,7 +132,10 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       } else if (typeof data === 'string') {
         this.handleWebsocketMessage(data);
       } else {
-        throw new SpeechmaticsFlowError(`Unexpected message type: ${data}`);
+        throw new SpeechmaticsFlowError(
+          'UnexpectedMessage',
+          `Unexpected message type: ${data}`,
+        );
       }
     });
   }
@@ -148,6 +157,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.agentAudioQueue.queue.push(data);
     } else {
       throw new SpeechmaticsFlowError(
+        'BadBinaryMessage',
         `Could not process audio: expecting audio to be ${this.agentAudioQueue.type} but got ${data.constructor.name}`,
       );
     }
@@ -179,7 +189,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     try {
       data = JSON.parse(message);
     } catch (e) {
-      throw new SpeechmaticsFlowError('Failed to parse message as JSON');
+      throw new SpeechmaticsFlowError(
+        'UnexpectedMessage',
+        'Failed to parse message as JSON',
+        { cause: e },
+      );
     }
 
     if (data.message === 'AudioAdded') {
@@ -221,9 +235,13 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
           client.removeEventListener('message', onStart);
         } else if (data.message === 'Error') {
           reject(
-            new SpeechmaticsFlowError('Error waiting for conversation start', {
-              cause: data,
-            }),
+            new SpeechmaticsFlowError(
+              'ServerError',
+              'Error waiting for conversation start',
+              {
+                cause: data,
+              },
+            ),
           );
         }
       });
@@ -244,8 +262,24 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.sendWebsocketMessage(startMessage);
     });
 
+    // If the socket closes before the conversation starts, resolve
+    const rejectOnSocketClose = new Promise<void>((_, reject) => {
+      this.addEventListener(
+        'socketClose',
+        () =>
+          reject(
+            new SpeechmaticsFlowError(
+              'SocketClosedPrematurely',
+              'Socket closed before conversation started',
+            ),
+          ),
+        { once: true },
+      );
+    });
+
     await Promise.race([
       waitForConversationStarted,
+      rejectOnSocketClose,
       rejectAfter(10_000, 'conversation start'),
     ]);
   }
@@ -271,6 +305,7 @@ function rejectAfter(timeoutMs: number, key: string) {
       () =>
         reject(
           new SpeechmaticsFlowError(
+            'Timeout',
             `Timed out after ${timeoutMs}s waiting for ${key}`,
           ),
         ),
@@ -279,8 +314,21 @@ function rejectAfter(timeoutMs: number, key: string) {
   });
 }
 
+export type SpeechmaticsFlowErrorType =
+  | 'SocketNotClosed'
+  | 'SocketClosedPrematurely'
+  | 'SocketError'
+  | 'ServerError'
+  | 'UnexpectedMessage'
+  | 'BadBinaryMessage'
+  | 'Timeout';
+
 export class SpeechmaticsFlowError extends Error {
-  constructor(message: string, options?: ErrorOptions) {
+  constructor(
+    readonly type: SpeechmaticsFlowErrorType,
+    message: string,
+    options?: ErrorOptions,
+  ) {
     super(message, options);
     this.name = 'SpeechmaticsFlowError';
   }
