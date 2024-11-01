@@ -265,7 +265,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.sendWebsocketMessage(startMessage);
     });
 
-    // If the socket closes before the conversation starts, resolve
+    // If the socket closes before the conversation starts, reject rather than waiting
     const rejectOnSocketClose = new Promise<void>((_, reject) => {
       this.addEventListener(
         'socketClose',
