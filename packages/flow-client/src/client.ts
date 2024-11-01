@@ -63,7 +63,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }[this.ws.readyState];
   }
 
-  private async connect(jwt: string, timeoutMs = 10_000) {
+  private async connect(jwt: string, timeoutMs = 2_000) {
     const socketState = this.socketState;
     if (socketState && socketState !== 'closed') {
       throw new SpeechmaticsFlowError(
@@ -105,10 +105,13 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       );
     });
 
-    await Promise.race([
-      waitForConnect,
-      rejectAfter(timeoutMs, 'websocket connect'),
-    ]);
+    const { timeout, cancelTimeout } = rejectAfter(
+      timeoutMs,
+      'websocket connect',
+    );
+
+    await Promise.race([waitForConnect, timeout]);
+    cancelTimeout();
   }
 
   private setupSocketEventListeners() {
@@ -277,11 +280,21 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       );
     });
 
-    await Promise.race([
-      waitForConversationStarted,
-      rejectOnSocketClose,
-      rejectAfter(10_000, 'conversation start'),
-    ]);
+    const { timeout, cancelTimeout } = rejectAfter(
+      10_000,
+      'conversation start',
+    );
+
+    console.log('waiting for conversation to start');
+    try {
+      await Promise.race([
+        waitForConversationStarted,
+        rejectOnSocketClose,
+        timeout,
+      ]);
+    } finally {
+      cancelTimeout();
+    }
   }
 
   endConversation() {
@@ -299,9 +312,17 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   }
 }
 
-function rejectAfter(timeoutMs: number, key: string) {
-  return new Promise((_, reject) => {
-    setTimeout(
+function rejectAfter(
+  timeoutMs: number,
+  key: string,
+): { cancelTimeout: () => void; timeout: Promise<void> } {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
+  let resolve: (() => void) | undefined = undefined;
+
+  const timeout = new Promise<void>((_resolve, reject) => {
+    resolve = _resolve;
+
+    timeoutId = setTimeout(
       () =>
         reject(
           new SpeechmaticsFlowError(
@@ -312,6 +333,15 @@ function rejectAfter(timeoutMs: number, key: string) {
       timeoutMs,
     );
   });
+
+  const cancel = () => {
+    if (typeof timeoutId !== 'undefined') {
+      clearTimeout(timeoutId);
+    }
+    resolve?.();
+  };
+
+  return { timeout, cancelTimeout: cancel };
 }
 
 export type SpeechmaticsFlowErrorType =
