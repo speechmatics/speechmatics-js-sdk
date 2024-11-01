@@ -12,7 +12,7 @@ export function usePcmMicrophoneAudio(onAudio: (audio: Float32Array) => void) {
   const mediaStreamRef = useRef<MediaStream>();
 
   const startRecording = useCallback(
-    async (audioContext: AudioContext) => {
+    async (audioContext: AudioContext, deviceId?: string) => {
       // If stream is present, it means we're already recording, nothing to do
       if (mediaStreamRef.current) {
         return mediaStreamRef.current;
@@ -20,6 +20,7 @@ export function usePcmMicrophoneAudio(onAudio: (audio: Float32Array) => void) {
 
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
+          deviceId,
           sampleRate: audioContext?.sampleRate,
           sampleSize: 16,
           channelCount: 1,

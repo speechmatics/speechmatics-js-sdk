@@ -68,6 +68,8 @@ export const ModelErrorTypeEnum = {
   DataError: 'data_error',
   BufferError: 'buffer_error',
   ProtocolError: 'protocol_error',
+  TimelimitExceeded: 'timelimit_exceeded',
+  QuotaExceeded: 'quota_exceeded',
   UnknownError: 'unknown_error',
 } as const;
 

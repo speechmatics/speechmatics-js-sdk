@@ -168,25 +168,38 @@ components:
         message:
           enum:
             - AudioEventStarted
-        type:
-          type: string
-        start_time:
-          type: number
-          format: float
-        confidence:
-          type: number
-          format: float
+        event:
+          type: object
+          properties:
+            type:
+              type: string
+            start_time:
+              type: number
+              format: float
+            confidence:
+              type: number
+              format: float
+          required:
+            - type
+            - start_time
+            - confidence
     AudioEventEnded:
       type: object
       properties:
         message:
           enum:
             - AudioEventEnded
-        type:
-          type: string
-        end_time:
-          type: number
-          format: float
+        event:
+          type: object
+          properties:
+            type:
+              type: string
+            end_time:
+              type: number
+              format: float
+          required:
+            - type
+            - end_time
     Info:
       type: object
       properties:
@@ -250,6 +263,8 @@ components:
             - data_error
             - buffer_error
             - protocol_error
+            - timelimit_exceeded
+            - quota_exceeded
             - unknown_error
         reason:
           type: string
