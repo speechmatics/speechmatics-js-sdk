@@ -24,7 +24,6 @@
     "@rollup/plugin-inject": "^5.0.5",
     "@types/sinon": "^17.0.3",
     "@types/ws": "^8.5.12",
-    "sinon": "^19.0.2",
     "tsx": "^4.19.0"
   }
 }
