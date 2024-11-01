@@ -41,6 +41,9 @@ importers:
       '@picocss/pico':
         specifier: ^2.0.6
         version: 2.0.6
+      '@speechmatics/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@speechmatics/browser-audio-input-react':
         specifier: workspace:*
         version: link:../../packages/browser-audio-input-react
@@ -75,6 +78,9 @@ importers:
 
   examples/nodejs:
     dependencies:
+      '@speechmatics/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@speechmatics/batch-client':
         specifier: workspace:*
         version: link:../../packages/batch-client
@@ -88,6 +94,8 @@ importers:
       tsx:
         specifier: ^4.19.0
         version: 4.19.0
+
+  packages/auth: {}
 
   packages/batch-client:
     dependencies:

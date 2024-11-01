@@ -1,4 +1,4 @@
-export async function getSpeechmaticsJWT({
+export async function createSpeechmaticsJWT({
   type,
   apiKey,
   clientRef,
