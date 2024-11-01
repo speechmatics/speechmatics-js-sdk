@@ -2,7 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert';
 import { WebSocket } from 'ws';
 
-// @ts-ignore
+// @ts-ignore: We're polyfilling the global WebSocket object in the test.
+// If we imported from '../dist' this would occur automatically,
+// but importing from '../src' is slightly more convenient for development.
 globalThis.WebSocket = WebSocket;
 
 import { FlowClient } from '../src/client';

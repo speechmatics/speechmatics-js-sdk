@@ -63,7 +63,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }[this.ws.readyState];
   }
 
-  private async connect(jwt: string, timeoutMs = 2_000) {
+  private async connect(jwt: string, timeoutMs = 10_000) {
     const socketState = this.socketState;
     if (socketState && socketState !== 'closed') {
       throw new SpeechmaticsFlowError(
@@ -285,7 +285,6 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       'conversation start',
     );
 
-    console.log('waiting for conversation to start');
     try {
       await Promise.race([
         waitForConversationStarted,
