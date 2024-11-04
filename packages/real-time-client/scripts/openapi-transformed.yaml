@@ -205,8 +205,7 @@ components:
             - end_time
       required:
         - message
-        - type
-        - end_time
+        - event
     Info:
       type: object
       properties:
