@@ -257,9 +257,9 @@ components:
               - type
               - start_time
               - confidence
-      required:
-        - message
-        - event
+        required:
+          - message
+          - event
     AudioEventEnded:
       summary: End of an audio event detected.
       payload:
@@ -279,11 +279,10 @@ components:
             required:
               - type
               - end_time
-
-      required:
-        - message
-        - type
-        - end_time
+        required:
+          - message
+          - type
+          - end_time
     Info:
       summary: Additional information sent from the server to the client.
       payload:
