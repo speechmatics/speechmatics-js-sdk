@@ -41,7 +41,10 @@ export default function Component({
   );
 
   const startSession = useCallback(
-    async (personaId: string) => {
+    async ({
+      personaId,
+      deviceId,
+    }: { personaId: string; deviceId?: string }) => {
       try {
         setLoading(true);
         const audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
@@ -57,7 +60,7 @@ export default function Component({
             sample_rate: SAMPLE_RATE,
           },
         });
-        const mediaStream = await startRecording(audioContext);
+        const mediaStream = await startRecording(audioContext, deviceId);
         setMediaStream(mediaStream);
       } finally {
         setLoading(false);
