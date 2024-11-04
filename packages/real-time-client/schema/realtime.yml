@@ -281,8 +281,7 @@ components:
               - end_time
         required:
           - message
-          - type
-          - end_time
+          - event
     Info:
       summary: Additional information sent from the server to the client.
       payload:
