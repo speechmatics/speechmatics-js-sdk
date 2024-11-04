@@ -27,7 +27,7 @@ export interface AudioEventEnded {
    * @type {string}
    * @memberof AudioEventEnded
    */
-  message?: AudioEventEndedMessageEnum;
+  message: AudioEventEndedMessageEnum;
   /**
    *
    * @type {AudioEventEndedEvent}

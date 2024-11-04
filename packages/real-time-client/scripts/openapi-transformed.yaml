@@ -183,6 +183,9 @@ components:
             - type
             - start_time
             - confidence
+      required:
+        - message
+        - event
     AudioEventEnded:
       type: object
       properties:
@@ -200,6 +203,10 @@ components:
           required:
             - type
             - end_time
+      required:
+        - message
+        - type
+        - end_time
     Info:
       type: object
       properties:
