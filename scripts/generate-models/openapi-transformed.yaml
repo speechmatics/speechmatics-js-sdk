@@ -1,0 +1,2006 @@
+components:
+  schemas:
+    AddAudio:
+      format: binary
+      type: string
+    AddPartialTranscript:
+      properties:
+        format:
+          description: Speechmatics JSON output format version number.
+          example: '2.1'
+          type: string
+        message:
+          enum:
+          - AddPartialTranscript
+        metadata:
+          $ref: '#/components/schemas/RealtimeRecognitionMetadata'
+        results:
+          items:
+            $ref: '#/components/schemas/RealtimeRecognitionResult'
+          type: array
+      required:
+      - message
+      - metadata
+      - results
+      type: object
+    AddPartialTranslation:
+      properties:
+        format:
+          description: Speechmatics JSON output format version number.
+          example: '2.1'
+          type: string
+        language:
+          type: string
+        message:
+          enum:
+          - AddPartialTranslation
+        results:
+          items:
+            $ref: '#/components/schemas/TranslatedSentence'
+          type: array
+      required:
+      - message
+      - language
+      - results
+      type: object
+    AddTranscript:
+      properties:
+        format:
+          description: Speechmatics JSON output format version number.
+          example: '2.1'
+          type: string
+        message:
+          enum:
+          - AddTranscript
+        metadata:
+          $ref: '#/components/schemas/RealtimeRecognitionMetadata'
+        results:
+          items:
+            $ref: '#/components/schemas/RealtimeRecognitionResult'
+          type: array
+      required:
+      - message
+      - metadata
+      - results
+      type: object
+    AddTranslation:
+      properties:
+        format:
+          description: Speechmatics JSON output format version number.
+          example: '2.1'
+          type: string
+        language:
+          type: string
+        message:
+          enum:
+          - AddTranslation
+        results:
+          items:
+            $ref: '#/components/schemas/TranslatedSentence'
+          type: array
+      required:
+      - message
+      - language
+      - results
+      type: object
+    AlignmentConfig:
+      example:
+        language: en
+      properties:
+        language:
+          type: string
+      required:
+      - language
+    AudioAdded:
+      properties:
+        message:
+          enum:
+          - AudioAdded
+        seq_no:
+          type: integer
+      required:
+      - message
+      - seq_no
+      type: object
+    AudioEventEnded:
+      properties:
+        end_time:
+          format: float
+          type: number
+        type:
+          type: string
+      type: object
+    AudioEventItem:
+      properties:
+        channel:
+          description: Input channel this event occurred on
+          type: string
+        confidence:
+          description: Prediction confidence associated with this event
+          format: float
+          type: number
+        end_time:
+          description: Time (in seconds) at which the audio event ends
+          format: float
+          type: number
+        start_time:
+          description: Time (in seconds) at which the audio event starts
+          format: float
+          type: number
+        type:
+          description: Kind of audio event. E.g. music
+          type: string
+      type: object
+    AudioEventStarted:
+      properties:
+        confidence:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          type: string
+      type: object
+    AudioEventSummary:
+      additionalProperties:
+        $ref: '#/definitions/AudioEventSummaryItem'
+        type: object
+      type: object
+    AudioEventSummaryItem:
+      description: Summary statistics for this audio event type
+      properties:
+        count:
+          description: Number of events of this type
+          type: number
+        total_duration:
+          description: Total duration (in seconds) of all audio events of this type
+          format: float
+          type: number
+      type: object
+    AudioEventsConfig:
+      properties:
+        types:
+          items:
+            type: string
+          type: array
+      type: object
+    AudioFormat:
+      oneOf:
+      - $ref: '#/components/schemas/AudioFormatRaw'
+      - $ref: '#/components/schemas/AudioFormatFile'
+      required:
+      - type
+      type: object
+    AudioFormatFile:
+      properties:
+        type:
+          enum:
+          - file
+      required:
+      - type
+    AudioFormatRaw:
+      properties:
+        encoding:
+          enum:
+          - pcm_f32le
+          - pcm_s16le
+          - mulaw
+        sample_rate:
+          type: integer
+        type:
+          enum:
+          - raw
+      required:
+      - type
+      - encoding
+      - sample_rate
+    AutoChaptersConfig:
+      type: object
+    AutoChaptersResult:
+      description: An array of objects that represent summarized chapters of the transcript
+      example:
+      - end_time: 5
+        start_time: 0
+        summary: Summary of part 1
+        title: Part 1
+      - end_time: 10
+        start_time: 5
+        summary: Summary of part 2
+        title: Part 2
+      items:
+        $ref: '#/definitions/Chapter'
+      type: array
+    AutoChaptersResultError:
+      properties:
+        message:
+          description: Human readable error message
+          type: string
+        type:
+          enum:
+          - auto_chapters_failed
+          - unsupported_language
+          type: string
+    BatchRecognitionAlternative:
+      description: List of possible job output item values, ordered by likelihood.
+      properties:
+        confidence:
+          format: float
+          type: number
+        content:
+          type: string
+        display:
+          $ref: '#/definitions/BatchRecognitionDisplay'
+        language:
+          type: string
+        speaker:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+      required:
+      - content
+      - confidence
+      - language
+    BatchRecognitionDisplay:
+      properties:
+        direction:
+          enum:
+          - ltr
+          - rtl
+          type: string
+      required:
+      - direction
+    BatchRecognitionMetadata:
+      description: Summary information about the output from an ASR job, comprising
+        the job type and configuration parameters used when generating the output.
+      properties:
+        alignment_config:
+          $ref: '#/definitions/AlignmentConfig'
+        auto_chapters_errors:
+          $ref: '#/definitions/AutoChaptersResultError'
+          description: List of errors that occurred in the auto chapters stage.
+        created_at:
+          description: The UTC date time the transcription output was created.
+          example: 2018-01-09 12:29:01.853047+00:00
+          format: date-time
+          type: string
+        language_identification:
+          $ref: '#/definitions/LanguageIdentificationResult'
+          description: Result of the language identification of the audio, configured
+            using `language_identification_config`,  or setting the transcription
+            language to `auto`.
+        language_pack_info:
+          $ref: '#/definitions/LanguagePackInfo'
+        output_config:
+          $ref: '#/definitions/OutputConfig'
+        sentiment_analysis_errors:
+          $ref: '#/definitions/SentimentAnalysisError'
+          description: List of errors that occurred in the sentiment analysis stage.
+        summarization_errors:
+          $ref: '#/definitions/SummarizationError'
+          description: List of errors that occurred in the summarization stage.
+        topic_detection_errors:
+          $ref: '#/definitions/TopicDetectionError'
+          description: List of errors that occurred in the topic detection stage.
+        transcription_config:
+          $ref: '#/definitions/BatchTranscriptionConfig'
+        translation_errors:
+          $ref: '#/definitions/TranslationError'
+          description: List of errors that occurred in the translation stage.
+        type:
+          $ref: '#/definitions/JobType'
+      required:
+      - created_at
+      - type
+    BatchRecognitionResult:
+      description: An ASR job output item. The primary item types are `word` and `punctuation`.
+        Other item types may be present, for example to provide semantic information
+        of different forms.
+      example:
+      - alternatives:
+        - confidence: 0.95
+          content: Hello
+          display:
+            direction: ltr
+          language: en
+          speaker: S1
+        channel: channel_1
+        end_time: 1.2
+        start_time: 0.55
+        type: word
+        volume: 0.5
+      properties:
+        alternatives:
+          items:
+            $ref: '#/definitions/BatchRecognitionAlternative'
+          type: array
+        channel:
+          type: string
+        end_time:
+          format: float
+          type: number
+        is_eos:
+          description: Whether the punctuation mark is an end of sentence character.
+            Only applies to punctuation marks.
+          type: boolean
+        spoken_form:
+          $ref: '#/definitions/SpokenFormRecognitionResult'
+        start_time:
+          format: float
+          type: number
+        type:
+          description: New types of items may appear without being requested; unrecognized
+            item types can be ignored.
+          enum:
+          - word
+          - punctuation
+          - speaker_change
+          - entity
+          type: string
+        volume:
+          description: An indication of the volume of audio across the time period
+            the word was spoken.
+          format: float
+          maximum: 100
+          minimum: 0
+          type: number
+        written_form:
+          $ref: '#/definitions/WrittenFormRecognitionResult'
+      required:
+      - start_time
+      - end_time
+      - type
+    BatchTranscriptionConfig:
+      example:
+        additional_vocab:
+        - content: Speechmatics
+          sounds_like:
+          - speechmatics
+        - content: gnocchi
+          sounds_like:
+          - nyohki
+          - nokey
+          - nochi
+        - content: CEO
+          sounds_like:
+          - C.E.O.
+        - content: financial crisis
+        channel_diarization_labels:
+        - Caller
+        - Agent
+        diarization: channel
+        language: en
+        output_locale: en-GB
+      properties:
+        additional_vocab:
+          description: List of custom words or phrases that should be recognized.
+            Alternative pronunciations can be specified to aid recognition.
+          items:
+            properties:
+              content:
+                type: string
+              sounds_like:
+                items:
+                  type: string
+                type: array
+                x-omitempty: true
+            required:
+            - content
+            type: object
+          type: array
+          x-omitempty: true
+        channel_diarization_labels:
+          description: Transcript labels to use when using collating separate input
+            channels.
+          items:
+            pattern: ^[A-Za-z0-9._]+$
+            type: string
+          type: array
+          x-omitempty: true
+        diarization:
+          description: "Specify whether speaker or channel labels are added to the\
+            \ transcript.\nThe default is `none`.\n  - **none**: no speaker or channel\
+            \ labels are added.\n  - **speaker**: speaker attribution is performed\
+            \ based on acoustic matching;\n             all input channels are mixed\
+            \ into a single stream for processing.\n  - **channel**: multiple input\
+            \ channels are processed individually and collated\n            into a\
+            \ single transcript.\n  - **speaker_change**: the output indicates when\
+            \ the speaker in the audio changes.\n                    No speaker attribution\
+            \ is performed. This is a faster method\n                    than speaker.\
+            \ The reported speaker changes may not agree with speaker.\n  - **channel_and_speaker_change**:\
+            \ both channel and speaker_change are switched on.\n                 \
+            \               The speaker change is indicated if more than one speaker\n\
+            \                                are recorded in one channel."
+          enum:
+          - none
+          - speaker
+          - channel
+          - speaker_change
+          - channel_and_speaker_change
+          type: string
+        domain:
+          description: Request a specialized model based on 'language' but optimized
+            for a particular field, e.g. "finance" or "medical".
+          type: string
+        enable_entities:
+          description: Include additional 'entity' objects in the transcription results
+            (e.g. dates, numbers) and their original spoken form. These entities are
+            interleaved with other types of results. The concatenation of these words
+            is represented as a single entity with the concatenated written form present
+            in the 'content' field. The entities contain a 'spoken_form' field, which
+            can be used in place of the corresponding 'word' type results, in case
+            a spoken form is preferred to a written form. They also contain a 'written_form',
+            which can be used instead of the entity, if you want a breakdown of the
+            words without spaces. They can still contain non-breaking spaces and other
+            special whitespace characters, as they are considered part of the word
+            for the formatting output. In case of a written_form, the individual word
+            times are estimated and might not be accurate if the order of the words
+            in the written form does not correspond to the order they were actually
+            spoken (such as 'one hundred million dollars' and '$100 million').
+          type: boolean
+        language:
+          description: Language model to process the audio input, normally specified
+            as an ISO language code
+          type: string
+        max_delay_mode:
+          description: Whether or not to enable flexible endpointing and allow the
+            entity to continue to be spoken.
+          enum:
+          - fixed
+          - flexible
+          type: string
+        operating_point:
+          $ref: '#/definitions/OperatingPoint'
+          description: "Specify an operating point to use.\nOperating points change\
+            \ the transcription process in a high level way, such as altering the\
+            \ acoustic model.\nThe default is `standard`.\n  - **standard**:\n  -\
+            \ **enhanced**: transcription will take longer but be more accurate than\
+            \ 'standard'"
+        output_locale:
+          description: Language locale to be used when generating the transcription
+            output, normally specified as an ISO language code
+          type: string
+        punctuation_overrides:
+          description: Control punctuation settings.
+          properties:
+            permitted_marks:
+              description: The punctuation marks which the client is prepared to accept
+                in transcription output, or the special value 'all' (the default).
+                Unsupported marks are ignored. This value is used to guide the transcription
+                process.
+              items:
+                pattern: ^(.|all)$
+                type: string
+              type: array
+            sensitivity:
+              description: Ranges between zero and one. Higher values will produce
+                more punctuation. The default is 0.5.
+              format: float
+              maximum: 1
+              minimum: 0
+              type: number
+        speaker_change_sensitivity:
+          description: Ranges between zero and one. Controls how responsive the system
+            is for potential speaker changes. High value indicates high sensitivity.
+            Defaults to 0.4.
+          format: float
+          maximum: 1
+          minimum: 0
+          type: number
+        speaker_diarization_config:
+          description: Configuration for speaker diarization
+          properties:
+            speaker_sensitivity:
+              description: Controls how sensitive the algorithm is in terms of keeping
+                similar speakers separate, as opposed to combining them into a single
+                speaker.  Higher values will typically lead to more speakers, as the
+                degree of difference between speakers in order to allow them to remain
+                distinct will be lower.  A lower value for this parameter will conversely
+                guide the algorithm towards being less sensitive in terms of retaining
+                similar speakers, and as such may lead to fewer speakers overall.  The
+                default is 0.5.
+              format: float
+              maximum: 1
+              minimum: 0
+              type: number
+      required:
+      - language
+    BatchTranslationConfig:
+      properties:
+        target_languages:
+          items:
+            type: string
+          maxItems: 5
+          type: array
+      required:
+      - target_languages
+    Chapter:
+      properties:
+        end_time:
+          type: number
+        start_time:
+          type: number
+        summary:
+          type: string
+        title:
+          type: string
+      type: object
+    CreateJobResponse:
+      example:
+        id: a1b2c3d4e5
+      properties:
+        id:
+          description: The unique ID assigned to the job. Keep a record of this for
+            later retrieval of your completed job.
+          type: string
+      required:
+      - id
+    DataFetchConfig:
+      properties:
+        auth_headers:
+          description: A list of additional headers to be added to the input fetch
+            request when using http or https. This is intended to support authentication
+            or authorization, for example by supplying an OAuth2 bearer token.
+          items:
+            type: string
+          type: array
+          x-omitempty: true
+        url:
+          type: string
+      required:
+      - url
+    DeleteJobResponse:
+      example:
+        job:
+          created_at: 2018-01-09 12:29:01.853047+00:00
+          data_name: recording.mp3
+          duration: 244
+          id: a1b2c3d4e5
+          notification_config:
+          - auth_headers:
+            - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM'
+            contents:
+            - transcript
+            - data
+            url: https://collector.myorg.com/callback
+          status: deleted
+          tracking:
+            details:
+              client: ACME Corp
+              seg_end: 1091.481
+              seg_start: 963.201
+              segment: 8
+            reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+            tags:
+            - quick-review
+            - segment
+            title: ACME Q12018 Statement
+          transcription_config:
+            additional_vocab:
+            - content: Speechmatics
+              sounds_like:
+              - speechmatics
+            - content: gnocchi
+              sounds_like:
+              - nyohki
+              - nokey
+              - nochi
+            - content: CEO
+              sounds_like:
+              - C.E.O.
+            - content: financial crisis
+            channel_diarization_labels:
+            - Agent
+            - Caller
+            diarization: channel
+            language: en
+          type: transcription
+      properties: &id001
+        job:
+          $ref: '#/definitions/JobDetails'
+      required: &id002
+      - job
+    EndOfStream:
+      properties:
+        last_seq_no:
+          type: integer
+        message:
+          enum:
+          - EndOfStream
+      required:
+      - message
+      - last_seq_no
+      type: object
+    EndOfTranscript:
+      properties:
+        message:
+          enum:
+          - EndOfTranscript
+      required:
+      - message
+      type: object
+    Error:
+      properties:
+        code:
+          type: integer
+        message:
+          enum:
+          - Error
+        reason:
+          type: string
+        seq_no:
+          type: integer
+        type:
+          enum:
+          - invalid_message
+          - invalid_model
+          - invalid_config
+          - invalid_audio_type
+          - not_authorised
+          - insufficient_funds
+          - not_allowed
+          - job_error
+          - data_error
+          - buffer_error
+          - protocol_error
+          - unknown_error
+      required:
+      - message
+      - type
+      - reason
+      type: object
+    ErrorResponse:
+      properties:
+        code:
+          description: The HTTP status code.
+          minimum: 100
+          type: integer
+        detail:
+          description: The details of the error.
+          type: string
+        error:
+          description: The error message.
+          enum:
+          - Bad Request
+          - File Expired
+          - Forbidden
+          - Resource Locked
+          - Format Not Supported
+          - Internal Server Error
+          - Job error
+          - Job Expired
+          - Job In Progress
+          - Job is not of type alignment
+          - Job is not of type transcription
+          - Job not found
+          - Job rejected
+          - Job rejected due to invalid audio
+          - Job rejected due to invalid text
+          - Malformed request
+          - Missing callback
+          - Missing data_file
+          - Missing text_file
+          - No language selected
+          - Not Implemented
+          - Permission Denied
+          - Requested product not available
+          - Transcription not ready
+          - Log file not available
+          - Requested Early Access Release not available
+          - Unprocessable Entity
+          type: string
+      required:
+      - code
+      - error
+      type: object
+    Info:
+      properties:
+        code:
+          type: integer
+        message:
+          enum:
+          - Info
+        quality:
+          type: string
+        reason:
+          type: string
+        seq_no:
+          type: integer
+        type:
+          enum:
+          - recognition_quality
+          - model_redirect
+          - deprecated
+      required:
+      - message
+      - type
+      - reason
+      type: object
+    JobConfig:
+      description: 'JSON object that contains various groups of job configuration
+
+        parameters. Based on the value of `type`, a type-specific object
+
+        such as `transcription_config` is required to be present to
+
+        specify all configuration settings or parameters needed to
+
+        process the job inputs as expected.
+
+
+        If the results of the job are to be forwarded on completion,
+
+        `notification_config` can be provided with a list of callbacks
+
+        to be made; no assumptions should be made about the order in
+
+        which they will occur.
+
+
+        Customer specific job details or metadata can be supplied in
+
+        `tracking`, and this information will be available where
+
+        possible in the job results and in callbacks.
+
+        '
+      properties:
+        alignment_config:
+          $ref: '#/definitions/AlignmentConfig'
+        audio_events_config:
+          $ref: '#/definitions/AudioEventsConfig'
+        auto_chapters_config:
+          $ref: '#/definitions/AutoChaptersConfig'
+        fetch_data:
+          $ref: '#/definitions/DataFetchConfig'
+        fetch_text:
+          $ref: '#/definitions/DataFetchConfig'
+        language_identification_config:
+          $ref: '#/definitions/LanguageIdentificationConfig'
+        notification_config:
+          items:
+            $ref: '#/definitions/NotificationConfig'
+          type: array
+          x-omitempty: true
+        output_config:
+          $ref: '#/definitions/OutputConfig'
+        sentiment_analysis_config:
+          $ref: '#/definitions/SentimentAnalysisConfig'
+        summarization_config:
+          $ref: '#/definitions/SummarizationConfig'
+        topic_detection_config:
+          $ref: '#/definitions/TopicDetectionConfig'
+        tracking:
+          $ref: '#/definitions/TrackingData'
+        transcription_config:
+          $ref: '#/definitions/BatchTranscriptionConfig'
+        translation_config:
+          $ref: '#/definitions/BatchTranslationConfig'
+        type:
+          $ref: '#/definitions/JobType'
+      required:
+      - type
+    JobDetailError:
+      properties:
+        message:
+          example: Audio fetch error, http status 418
+          type: string
+        timestamp:
+          example: 2021-07-14 11:53:49.242000+00:00
+          type: string
+      required:
+      - timestamp
+      - message
+      type: object
+    JobDetails:
+      description: Document describing a job. JobConfig will be present in JobDetails
+        returned for GET jobs/<id> request in SaaS and in Batch Appliance, but it
+        will not be present in JobDetails returned as item in RetrieveJobsResponse
+        in case of Batch Appliance.
+      properties:
+        config:
+          $ref: '#/definitions/JobConfig'
+        created_at:
+          description: The UTC date time the job was created.
+          example: 2018-01-09 12:29:01.853047+00:00
+          format: date-time
+          type: string
+        data_name:
+          description: Name of the data file submitted for job.
+          type: string
+        duration:
+          description: The file duration (in seconds). May be missing for fetch URL
+            jobs.
+          minimum: 0
+          type: integer
+        errors:
+          description: 'Optional list of errors that have occurred in user interaction,
+            for example: audio could not be fetched or notification could not be sent.'
+          items:
+            $ref: '#/definitions/JobDetailError'
+          type: array
+          x-omitempty: true
+        id:
+          description: The unique id assigned to the job.
+          example: a1b2c3d4e5
+          type: string
+        lang:
+          description: Optional parameter used for backwards compatibility with v1
+            api
+          type: string
+        status:
+          description: The status of the job. * `running` - The job is actively running.
+            * `done` - The job completed successfully. * `rejected` - The job was
+            accepted at first, but later could not be processed by the transcriber.
+            * `deleted` - The user deleted the job. * `expired` - The system deleted
+            the job. Usually because the job was in the `done` state for a very long
+            time.
+          enum:
+          - running
+          - done
+          - rejected
+          - deleted
+          - expired
+          type: string
+        text_name:
+          description: Name of the text file submitted to be aligned to audio.
+          type: string
+      required:
+      - created_at
+      - data_name
+      - id
+      - status
+    JobInfo:
+      description: Summary information about an ASR job, to support identification
+        and tracking.
+      properties:
+        created_at:
+          description: The UTC date time the job was created.
+          example: 2018-01-09 12:29:01.853047+00:00
+          format: date-time
+          type: string
+        data_name:
+          description: Name of data file submitted for job.
+          type: string
+        duration:
+          description: The data file audio duration (in seconds).
+          minimum: 0
+          type: integer
+        id:
+          description: The unique id assigned to the job.
+          example: a1b2c3d4e5
+          type: string
+        text_name:
+          description: Name of the text file submitted to be aligned to audio.
+          type: string
+        tracking:
+          $ref: '#/definitions/TrackingData'
+      required:
+      - created_at
+      - data_name
+      - duration
+      - id
+    JobMode:
+      enum:
+      - batch
+      type: string
+    JobType:
+      enum:
+      - alignment
+      - transcription
+      type: string
+    LanguageIdentificationConfig:
+      properties:
+        default_language:
+          type: string
+        expected_languages:
+          items:
+            type: string
+          type: array
+          x-omitempty: true
+        low_confidence_action:
+          description: Action to take if all of the predicted languages are below
+            the confidence threshold
+          enum:
+          - allow
+          - reject
+          - use_default_language
+          type: string
+    LanguageIdentificationResult:
+      example:
+        results:
+        - alternatives:
+          - confidence: 0.98
+            language: en
+          - confidence: 0.02
+            language: fr
+          end_time: 5.5
+          start_time: 0
+        - alternatives:
+          - confidence: 0.95
+            language: en
+          - confidence: 0.05
+            language: fr
+          end_time: 10
+          start_time: 5.6
+      properties:
+        error:
+          enum:
+          - LOW_CONFIDENCE
+          - UNEXPECTED_LANGUAGE
+          - NO_SPEECH
+          - FILE_UNREADABLE
+          - OTHER
+          type: string
+        message:
+          type: string
+        results:
+          items:
+            $ref: '#/definitions/LanguageIdentificationResultItem'
+          type: array
+      type: object
+    LanguageIdentificationResultAlternative:
+      properties:
+        confidence:
+          type: number
+        language:
+          type: string
+      type: object
+    LanguageIdentificationResultItem:
+      properties:
+        alternatives:
+          items:
+            $ref: '#/definitions/LanguageIdentificationResultAlternative'
+          type: array
+        end_time:
+          type: number
+        start_time:
+          type: number
+      type: object
+    LanguagePackInfo:
+      description: Properties of the language pack.
+      properties:
+        adapted:
+          description: Whether or not language model adaptation has been applied to
+            the language pack.
+          type: boolean
+        itn:
+          description: Whether or not ITN (inverse text normalization) is available
+            for the language pack.
+          type: boolean
+        language_description:
+          description: Full descriptive name of the language, e.g. 'Japanese'.
+          type: string
+        word_delimiter:
+          description: The character to use to separate words.
+          type: string
+        writing_direction:
+          description: The direction that words in the language should be written
+            and read in.
+          enum:
+          - left-to-right
+          - right-to-left
+          type: string
+      required:
+      - word_delimiter
+    MaxDelayModeConfig:
+      enum:
+      - flexible
+      - fixed
+      type: string
+    NotificationConfig:
+      example:
+      - auth_headers:
+        - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM'
+        contents:
+        - transcript:json-v2
+        url: https://collector.example.org/callback
+      properties:
+        auth_headers:
+          description: A list of additional headers to be added to the notification
+            request when using http or https. This is intended to support authentication
+            or authorization, for example by supplying an OAuth2 bearer token.
+          items:
+            type: string
+          type: array
+          x-omitempty: true
+        contents:
+          description: Specifies a list of items to be attached to the notification
+            message. When multiple items are requested, they are included as named
+            file attachments.
+          items:
+            enum:
+            - jobinfo
+            - transcript
+            - transcript.json-v2
+            - transcript.txt
+            - transcript.srt
+            - alignment
+            - alignment.word_start_and_end
+            - alignment.one_per_line
+            - data
+            - text
+            type: string
+          type: array
+        method:
+          description: The method to be used with http and https urls. The default
+            is post.
+          enum:
+          - post
+          - put
+          type: string
+        url:
+          description: 'The url to which a notification message will be sent upon
+
+            completion of the job. The job `id` and `status` are added
+
+            as query parameters, and any combination of the job inputs
+
+            and outputs can be included by listing them in `contents`.
+
+
+            If `contents` is empty, the body of the request will be
+
+            empty.
+
+
+            If only one item is listed, it will be sent as the body of
+
+            the request with `Content-Type` set to an appropriate value
+
+            such as `application/octet-stream` or `application/json`.
+
+
+            If multiple items are listed they will be sent as named file
+
+            attachments using the multipart content type.
+
+
+            If `contents` is not specified, the `transcript` item will
+
+            be sent as a file attachment named `data_file`, for
+
+            backwards compatibility.
+
+
+            If the job was rejected or failed during processing, that
+
+            will be indicated by the status, and any output items that
+
+            are not available as a result will be omitted. The body
+
+            formatting rules will still be followed as if all items were
+
+            available.
+
+
+            The user-agent header is set to `Speechmatics-API/2.0`, or
+
+            `Speechmatics API V2` in older API versions.
+
+            '
+          type: string
+      required:
+      - url
+    OperatingPoint:
+      enum:
+      - standard
+      - enhanced
+      type: string
+    OutputConfig:
+      properties:
+        srt_overrides:
+          description: 'Parameters that override default values of srt conversion.
+            max_line_length: sets maximum count of characters per subtitle line including
+            white space. max_lines: sets maximum count of lines in a subtitle section.'
+          properties:
+            max_line_length:
+              type: integer
+            max_lines:
+              type: integer
+          type: object
+      type: object
+      x-omitempty: true
+    OutputLocale:
+      minLength: 1
+      type: string
+    PunctuationOverrides:
+      properties:
+        permitted_marks:
+          description: The punctuation marks which the client is prepared to accept
+            in transcription output, or the special value 'all' (the default). Unsupported
+            marks are ignored. This value is used to guide the transcription process.
+          items:
+            pattern: ^(.|all)$
+            type: string
+          type: array
+        sensitivity:
+          description: Ranges between zero and one. Higher values will produce more
+            punctuation. The default is 0.5.
+          format: float
+          maximum: 1
+          minimum: 0
+          type: number
+      type: object
+    RealtimeDiarizationConfig:
+      enum:
+      - none
+      - speaker
+      - speaker_change
+      type: string
+    RealtimeMessage:
+      properties:
+        message:
+          enum:
+          - StartRecognition
+          - AddAudio
+          - EndOfStream
+          - SetRecognitionConfig
+          - RecognitionStarted
+          - AudioAdded
+          - AddPartialTranscript
+          - AddTranscript
+          - AddPartialTranslation
+          - AddTranslation
+          - EndOfTranscript
+          - AudioEventStarted
+          - AudioEventEnded
+          - Info
+          - Warning
+          - Error
+          type: string
+      type: object
+    RealtimeRecognitionAlternative:
+      properties:
+        confidence:
+          format: float
+          type: number
+        content:
+          type: string
+        display:
+          $ref: '#/components/schemas/RealtimeRecognitionDisplay'
+        language:
+          type: string
+        speaker:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+      required:
+      - content
+      - confidence
+      type: object
+    RealtimeRecognitionDisplay:
+      properties:
+        direction:
+          enum:
+          - ltr
+          - rtl
+          type: string
+      required:
+      - direction
+    RealtimeRecognitionMetadata:
+      properties:
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        transcript:
+          type: string
+      required:
+      - start_time
+      - end_time
+      - transcript
+      type: object
+    RealtimeRecognitionResult:
+      properties:
+        alternatives:
+          items:
+            $ref: '#/components/schemas/RealtimeRecognitionAlternative'
+          type: array
+        attaches_to:
+          enum:
+          - next
+          - previous
+          - none
+          - both
+          type: string
+        channel:
+          type: string
+        end_time:
+          format: float
+          type: number
+        is_eos:
+          type: boolean
+        score:
+          format: float
+          maximum: 1
+          minimum: 0
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          enum:
+          - word
+          - punctuation
+          - speaker_change
+          type: string
+      required:
+      - type
+      - start_time
+      - end_time
+      type: object
+    RealtimeSpeakerChangeSensitivity:
+      format: float
+      maximum: 1
+      minimum: 0
+      type: number
+    RealtimeSpeakerDiarizationConfig:
+      properties:
+        max_speakers:
+          format: integer
+          maximum: 100
+          minimum: 2
+          type: number
+      type: object
+    RealtimeTranscriptionConfig:
+      properties:
+        additional_vocab:
+          $ref: '#/components/schemas/VocabList'
+        diarization:
+          $ref: '#/components/schemas/RealtimeDiarizationConfig'
+        domain:
+          description: Request a specialized model based on 'language' but optimized
+            for a particular field, e.g. "finance" or "medical".
+          type: string
+        enable_entities:
+          default: true
+          type: boolean
+        enable_partials:
+          default: false
+          type: boolean
+        language:
+          type: string
+        max_delay:
+          minimum: 0
+          type: number
+        max_delay_mode:
+          $ref: '#/components/schemas/MaxDelayModeConfig'
+        operating_point:
+          $ref: '#/components/schemas/OperatingPoint'
+        output_locale:
+          $ref: '#/components/schemas/OutputLocale'
+        punctuation_overrides:
+          $ref: '#/components/schemas/PunctuationOverrides'
+        speaker_change_sensitivity:
+          $ref: '#/components/schemas/RealtimeSpeakerChangeSensitivity'
+        speaker_diarization_config:
+          $ref: '#/components/schemas/RealtimeSpeakerDiarizationConfig'
+      required:
+      - language
+      type: object
+    RealtimeTranslationConfig:
+      properties:
+        enable_partials:
+          default: false
+          type: boolean
+        target_languages:
+          items:
+            type: string
+          type: array
+      required:
+      - target_languages
+      type: object
+    RecognitionStarted:
+      properties:
+        id:
+          type: string
+        message:
+          enum:
+          - RecognitionStarted
+      required:
+      - message
+      type: object
+    RetrieveJobResponse:
+      example:
+        job:
+          created_at: 2018-01-09 12:29:01.853047+00:00
+          data_name: recording.mp3
+          duration: 244
+          id: a1b2c3d4e5
+          notification_config:
+          - auth_headers:
+            - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM'
+            contents:
+            - transcript
+            - data
+            url: https://collector.myorg.com/callback
+          status: transcribing
+          tracking:
+            details:
+              client: ACME Corp
+              seg_end: 1091.481
+              seg_start: 963.201
+              segment: 8
+            reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+            tags:
+            - quick-review
+            - segment
+            title: ACME Q12018 Statement
+          transcription_config:
+            additional_vocab:
+            - content: Speechmatics
+              sounds_like:
+              - speechmatics
+            - content: gnocchi
+              sounds_like:
+              - nyohki
+              - nokey
+              - nochi
+            - content: CEO
+              sounds_like:
+              - C.E.O.
+            - content: financial crisis
+            channel_diarization_labels:
+            - Agent
+            - Caller
+            diarization: channel
+            language: en
+          type: transcription
+      properties: *id001
+      required: *id002
+    RetrieveJobsResponse:
+      example:
+        jobs:
+        - created_at: 2018-01-09 12:29:01.853047+00:00
+          data_name: recording.mp3
+          duration: 244
+          id: a1b2c3d4e5
+          notification_config:
+          - auth_headers:
+            - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM'
+            contents:
+            - transcript
+            - data
+            url: https://collector.example.org/callback
+          status: transcribing
+          tracking:
+            details:
+              client: ACME Corp
+              seg_end: 1091.481
+              seg_start: 963.201
+              segment: 8
+            reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+            tags:
+            - quick-review
+            - segment
+            title: ACME Q12018 Statement
+          transcription_config:
+            additional_vocab:
+            - content: Speechmatics
+              sounds_like:
+              - speechmatics
+            - content: gnocchi
+              sounds_like:
+              - nyohki
+              - nokey
+              - nochi
+            - content: CEO
+              sounds_like:
+              - C.E.O.
+            - content: financial crisis
+            channel_diarization_labels:
+            - Agent
+            - Caller
+            diarization: channel
+            language: en
+          type: transcription
+        - alignment_config:
+            language: en
+          created_at: 2018-01-09 11:23:42.984612+00:00
+          data_name: hello.wav
+          duration: 130
+          id: 084d1f86-9fe9-11e8-9c91-00155d019c0b
+          notification_config:
+          - contents: []
+            url: https://collector.example.org/trigger-fetch
+          status: aligning
+          text_name: hello.txt
+          tracking:
+            reference: /data/projects/X/overview/audio/hello.wav
+            title: Project X Intro
+          type: alignment
+      properties:
+        jobs:
+          items:
+            $ref: '#/definitions/JobDetails'
+          type: array
+      required:
+      - jobs
+    RetrieveTranscriptResponse:
+      properties:
+        audio_event_summary:
+          description: Summary statistics per event type, keyed by `type`, e.g. music
+          properties:
+            channels:
+              additionalProperties:
+                $ref: '#/definitions/AudioEventSummary'
+                type: object
+              description: Summary keyed by channel, only set if channel diarization
+                is enabled
+              type: object
+            overall:
+              $ref: '#/definitions/AudioEventSummary'
+              description: Overall summary on all channels
+              type: object
+          type: object
+        audio_events:
+          description: Timestamped audio events, only set if `audio_events_config`
+            is in the config
+          items:
+            $ref: '#/definitions/AudioEventItem'
+          type: array
+        chapters:
+          $ref: '#/definitions/AutoChaptersResult'
+        format:
+          description: Speechmatics JSON transcript format version number.
+          example: '2.1'
+          type: string
+        job:
+          $ref: '#/definitions/JobInfo'
+        metadata:
+          $ref: '#/definitions/BatchRecognitionMetadata'
+        results:
+          items:
+            $ref: '#/definitions/BatchRecognitionResult'
+          type: array
+        sentiment_analysis:
+          $ref: '#/definitions/SentimentAnalysisResult'
+        summary:
+          $ref: '#/definitions/SummarizationResult'
+        topics:
+          $ref: '#/definitions/TopicDetectionResult'
+        translations:
+          additionalProperties:
+            items:
+              $ref: '#/definitions/TranslationSentence'
+            type: array
+          description: Translations of the transcript into other languages. It is
+            a map of ISO language codes to arrays of translated sentences. Configured
+            using `translation_config`.
+          example:
+            de:
+            - content: Guten Tag, wie geht es dir?
+              end_time: 1.3
+              speaker: UU
+              start_time: 0.5
+            fr:
+            - content: "Bonjour, comment \xE7a va?"
+              end_time: 1.3
+              speaker: UU
+              start_time: 0.5
+          type: object
+      required:
+      - format
+      - job
+      - metadata
+      - results
+      type: object
+    SentimentAnalysisConfig:
+      type: object
+    SentimentAnalysisError:
+      properties:
+        message:
+          description: Human readable error message
+          type: string
+        type:
+          enum:
+          - sentiment_analysis_failed
+          - unsupported_language
+          type: string
+    SentimentAnalysisResult:
+      description: The main object that holds sentiment analysis data.
+      example:
+        segments:
+        - channel: Chat
+          confidence: 0.9
+          end_time: 5
+          sentiment: positive
+          speaker: John Doe
+          start_time: 0
+          text: I am happy with the product.
+        - channel: Chat
+          confidence: 0.8
+          end_time: 12
+          sentiment: negative
+          speaker: John Doe
+          start_time: 6
+          text: I don't like the customer service.
+        summary:
+          channels:
+          - channel: Chat
+            negative_count: 1
+            neutral_count: 0
+            positive_count: 1
+          overall:
+            negative_count: 1
+            neutral_count: 0
+            positive_count: 1
+          speakers:
+          - negative_count: 1
+            neutral_count: 0
+            positive_count: 1
+            speaker: John Doe
+      properties:
+        sentiment_analysis:
+          description: Holds the detailed sentiment analysis information.
+          properties:
+            segments:
+              description: An array of objects that represent a segment of text and
+                its associated sentiment.
+              items:
+                $ref: '#/definitions/SentimentSegment'
+                description: A an object that holds overall sentiment information,
+                  and per-speaker and per-channel sentiment data.
+              type: array
+            summary:
+              $ref: '#/definitions/SentimentSummary'
+              description: An object that holds overall sentiment information, and
+                per-speaker and per-channel sentiment data.
+          type: object
+      type: object
+    SentimentChannelSummary:
+      description: Holds sentiment information for a specific channel.
+      properties:
+        channel:
+          type: string
+        negative_count:
+          type: integer
+        neutral_count:
+          type: integer
+        positive_count:
+          type: integer
+      type: object
+    SentimentSegment:
+      description: Represents a segment of text and its associated sentiment.
+      properties:
+        channel:
+          type: string
+        confidence:
+          format: float
+          type: number
+        end_time:
+          format: float
+          type: number
+        sentiment:
+          type: string
+        speaker:
+          type: string
+        start_time:
+          format: float
+          type: number
+        text:
+          type: string
+      type: object
+    SentimentSpeakerSummary:
+      description: Holds sentiment information for a specific speaker.
+      properties:
+        negative_count:
+          type: integer
+        neutral_count:
+          type: integer
+        positive_count:
+          type: integer
+        speaker:
+          type: string
+      type: object
+    SentimentSummary:
+      description: Holds overall sentiment information, as well as detailed per-speaker
+        and per-channel sentiment data.
+      properties:
+        channels:
+          description: An array of objects that represent sentiment data for a specific
+            channel.
+          items:
+            $ref: '#/definitions/SentimentChannelSummary'
+          type: array
+        overall:
+          $ref: '#/definitions/SentimentSummaryDetail'
+          description: Summary of overall sentiment data.
+        speakers:
+          description: An array of objects that represent sentiment data for a specific
+            speaker.
+          items:
+            $ref: '#/definitions/SentimentSpeakerSummary'
+          type: array
+      type: object
+    SentimentSummaryDetail:
+      description: Holds the count of sentiment information grouped by positive, neutral
+        and negative.
+      properties:
+        negative_count:
+          type: integer
+        neutral_count:
+          type: integer
+        positive_count:
+          type: integer
+      type: object
+    SetRecognitionConfig:
+      properties:
+        message:
+          enum:
+          - SetRecognitionConfig
+        transcription_config:
+          $ref: '#/components/schemas/RealtimeTranscriptionConfig'
+      required:
+      - message
+      - transcription_config
+      type: object
+    SpokenFormRecognitionResult:
+      description: A SpokenFormRecognitionResult describes a simple object which consists
+        solely of 'word' or 'punctuation' type entries with a start and end time.
+        It can occur only inside the spoken_form property of a full "BatchRecognitionResult"
+      properties:
+        alternatives:
+          items:
+            $ref: '#/definitions/BatchRecognitionAlternative'
+          type: array
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          description: 'What kind of object this is. See #/Definitions/BatchRecognitionResult
+            for definitions of the enums.'
+          enum:
+          - word
+          - punctuation
+          type: string
+      required:
+      - start_time
+      - end_time
+      - type
+      - alternatives
+      type: object
+    StartRecognition:
+      properties:
+        audio_events_config:
+          $ref: '#/components/schemas/AudioEventsConfig'
+        audio_format:
+          $ref: '#/components/schemas/AudioFormat'
+        message:
+          enum:
+          - StartRecognition
+        transcription_config:
+          $ref: '#/components/schemas/RealtimeTranscriptionConfig'
+        translation_config:
+          $ref: '#/components/schemas/RealtimeTranslationConfig'
+      required:
+      - message
+      - audio_format
+      - transcription_config
+      type: object
+    SummarizationConfig:
+      properties:
+        content_type:
+          enum:
+          - auto
+          - informative
+          - conversational
+          type: string
+        summary_length:
+          enum:
+          - brief
+          - detailed
+          type: string
+        summary_type:
+          enum:
+          - paragraphs
+          - bullets
+          type: string
+    SummarizationError:
+      properties:
+        message:
+          description: Human readable error message
+          type: string
+        type:
+          enum:
+          - summarization_failed
+          - unsupported_language
+          type: string
+    SummarizationResult:
+      description: Summary of the transcript, configured using `summarization_config`.
+      example:
+        content: this is a summary
+      properties:
+        content:
+          type: string
+      type: object
+    TopicDetectionConfig:
+      properties:
+        topics:
+          items:
+            type: string
+          type: array
+          x-omitempty: true
+    TopicDetectionError:
+      properties:
+        message:
+          description: Human readable error message
+          type: string
+        type:
+          enum:
+          - topic_detection_failed
+          - unsupported_list_of_topics
+          - unsupported_language
+          type: string
+    TopicDetectionResult:
+      description: Main object that holds topic detection results.
+      example:
+        segments:
+        - end_time: 5
+          start_time: 0
+          text: I am happy with the product.
+          topics:
+          - topic: product
+        - end_time: 12
+          start_time: 6
+          text: We will deploy this container for Spanish.
+          topics:
+          - topic: deployment
+          - topic: languages
+        summary:
+          overall:
+            deployment: 1
+            languages: 1
+            product: 1
+      properties:
+        segments:
+          description: An array of objects that represent a segment of text and its
+            associated topic information.
+          items:
+            $ref: '#/definitions/TopicDetectionSegment'
+            description: An object that holds topic information for a single segment.
+          type: array
+        summary:
+          $ref: '#/definitions/TopicDetectionSummary'
+          description: An object that holds overall information on the topics detected.
+      type: object
+    TopicDetectionSegment:
+      description: Represents a segment of text and its associated topic information.
+      properties:
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        text:
+          type: string
+        topics:
+          items:
+            $ref: '#/definitions/TopicDetectionSegmentTopic'
+          type: array
+      type: object
+    TopicDetectionSegmentTopic:
+      description: Represents a topic and its associated information.
+      properties:
+        topic:
+          type: string
+      type: object
+    TopicDetectionSummary:
+      description: Holds overall information on the topics detected.
+      properties:
+        overall:
+          $ref: '#/definitions/TopicDetectionSummaryOverall'
+          description: Summary of overall topic detection results.
+      type: object
+    TopicDetectionSummaryOverall:
+      additionalProperties:
+        type: integer
+      description: Holds the count of topics detected.
+      type: object
+    TrackingData:
+      example:
+        details:
+          client: ACME Corp
+          seg_end: 1091.481
+          seg_start: 963.201
+          segment: 8
+        reference: /data/clients/ACME/statements/segs/2018Q1-seg8
+        tags:
+        - quick-review
+        - segment
+        title: ACME Q12018 Earnings Call
+      properties:
+        details:
+          description: Customer-defined JSON structure.
+          type: object
+        reference:
+          description: External system reference.
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+          x-omitempty: true
+        title:
+          description: The title of the job.
+          type: string
+    TranslatedSentence:
+      properties:
+        content:
+          type: string
+        end_time:
+          format: float
+          type: number
+        speaker:
+          type: string
+        start_time:
+          format: float
+          type: number
+      required:
+      - content
+      - start_time
+      - end_time
+      type: object
+    TranslationError:
+      properties:
+        message:
+          description: Human readable error message
+          type: string
+        type:
+          enum:
+          - translation_failed
+          - unsupported_translation_pair
+          type: string
+    TranslationSentence:
+      properties:
+        channel:
+          type: string
+        content:
+          type: string
+        end_time:
+          format: float
+          type: number
+        speaker:
+          type: string
+        start_time:
+          format: float
+          type: number
+      type: object
+    UsageDetails:
+      properties:
+        count:
+          description: Total number of billable jobs in this cycle
+          type: integer
+        duration_hrs:
+          description: Total duration of billable jobs (in hours) this cycle
+          format: float
+          type: number
+        language:
+          example: en
+          type: string
+        mode:
+          $ref: '#/definitions/JobMode'
+        operating_point:
+          $ref: '#/definitions/OperatingPoint'
+        type:
+          $ref: '#/definitions/JobType'
+      required:
+      - mode
+      - type
+      - count
+      - duration_hrs
+      type: object
+    UsageResponse:
+      properties:
+        details:
+          items:
+            $ref: '#/definitions/UsageDetails'
+          type: array
+        since:
+          example: 2021-10-14 00:55:00+00:00
+          format: date-time
+          type: string
+        summary:
+          items:
+            $ref: '#/definitions/UsageDetails'
+          type: array
+        until:
+          example: 2022-12-01 00:00:00+00:00
+          format: date-time
+          type: string
+      required:
+      - since
+      - until
+      - summary
+      - details
+      type: object
+    VocabList:
+      items:
+        $ref: '#/components/schemas/VocabWord'
+      type: array
+    VocabWord:
+      oneOf:
+      - properties:
+          content:
+            minLength: 1
+            type: string
+          sounds_like:
+            items:
+              minLength: 1
+              type: string
+            minItems: 1
+            type: array
+        required:
+        - content
+        type: object
+      - minLength: 1
+        type: string
+    Warning:
+      properties:
+        code:
+          type: integer
+        duration_limit:
+          type: number
+        message:
+          enum:
+          - Warning
+        reason:
+          type: string
+        seq_no:
+          type: integer
+        type:
+          enum:
+          - duration_limit_exceeded
+      required:
+      - message
+      - type
+      - reason
+      type: object
+    WrittenFormRecognitionResult:
+      description: A WrittenFormRecognitionResult describes a simple object which
+        consists solely of 'word' type entries with a start and end time. It can occur
+        only inside the written_form property of a full BatchRecognitionResult"
+      properties:
+        alternatives:
+          items:
+            $ref: '#/definitions/BatchRecognitionAlternative'
+          type: array
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          description: 'What kind of object this is. See #/Definitions/BatchRecognitionResult
+            for definitions of the enums.'
+          enum:
+          - word
+          type: string
+      required:
+      - start_time
+      - end_time
+      - type
+      - alternatives
+      type: object
+info:
+  title: OpenAPI Template
+  version: 1.0.0
+openapi: 3.0.3
+paths:
+  /sample:
+    get:
+      responses:
+        '200':
+          description: successful operation
