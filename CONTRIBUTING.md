@@ -27,6 +27,7 @@ This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can inst
 
 ```
 corepack use pnpm@latest
+corepack enable pnpm
 ```
 
 If for some reason that doesn't work, you can also just run
