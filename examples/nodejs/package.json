@@ -16,8 +16,5 @@
     "@speechmatics/real-time-client": "workspace:*",
     "@speechmatics/auth": "workspace:*",
     "dotenv": "^16.4.5"
-  },
-  "devDependencies": {
-    "tsx": "^4.19.0"
   }
 }

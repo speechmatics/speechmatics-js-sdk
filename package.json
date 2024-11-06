@@ -8,7 +8,6 @@
     "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "clean:builds": "pnpm -r exec rm -rf dist",
     "clean": "pnpm clean:deps && pnpm clean:builds",
-
     "format": "biome format --write .",
     "lint": "biome lint --write .",
 
@@ -30,6 +29,7 @@
     "rollup": "^4.21.2",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-esbuild": "^6.1.1",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   }
 }

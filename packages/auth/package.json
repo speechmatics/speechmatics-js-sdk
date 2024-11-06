@@ -8,7 +8,8 @@
   "files": ["dist/", "README.md"],
   "scripts": {
     "build": "rm -rf dist && rollup -c",
-    "prepare": "pnpm build"
+    "prepare": "pnpm build",
+    "test": "node --import tsx ./test/index.test.ts"
   },
   "keywords": [
     "Speechmatics",
@@ -17,5 +18,8 @@
     "batch",
     "real-time"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jwt-decode": "^4.0.0"
+  }
 }
