@@ -27,9 +27,7 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
-      - name: Lint check
-        run: pnpm lint
-      - name: Format check
-        run: pnpm format
+      - name: Check
+        run: "pnpm lint:check && pnpm format:check"
       - name: Test
         run: pnpm -r test

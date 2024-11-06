@@ -1,7 +1,7 @@
 //////////////////////////////////////////////
 // Incoming messages: server -> client
 //////////////////////////////////////////////
-import { RecognitionResult, RecognitionMetadata } from '../models';
+import type { RecognitionResult, RecognitionMetadata } from '../models';
 
 export type ConversationStartedMessage = {
   message: 'ConversationStarted';

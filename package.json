@@ -11,6 +11,9 @@
     "format": "biome format --write .",
     "lint": "biome lint --write .",
 
+    "format:check": "biome format .",
+    "lint:check": "biome lint .",
+
     "build:packages": "pnpm --filter '{packages/*}' build",
     "publish:packages": "pnpm --filter '{packages/*}' publish --access=public"
   },
