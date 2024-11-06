@@ -260,19 +260,3 @@ function rejectAfter<T = unknown>(timeoutMs: number, key: string): Promise<T> {
     );
   });
 }
-
-export type { StartRecognition };
-export type { SetRecognitionConfig };
-export type { EndOfStream };
-export type { RecognitionStarted };
-export type { AudioAdded };
-export type { AddPartialTranscript };
-export type { AddTranscript };
-export type { AddPartialTranslation };
-export type { AddTranslation };
-export type { EndOfTranscript };
-export type { AudioEventStarted };
-export type { AudioEventEnded };
-export type { Info };
-export type { Warning };
-export type { ModelError };

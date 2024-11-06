@@ -7,3 +7,12 @@ PROJECT_ROOT=${SCRIPT_DIR}/..
 pnpm tsx ${SCRIPT_DIR}/transform-async-to-openapi.ts
 
 openapi-generator generate -i ${SCRIPT_DIR}/openapi-transformed.yaml -g typescript-axios --global-property models  -o ${PROJECT_ROOT}/ -c ${SCRIPT_DIR}/../schema/autogen.json
+
+cd $PROJECT_ROOT/models;
+
+rm -f index.ts;
+
+for tsfile in ./*.ts; do
+    module_name=$(echo "$tsfile" | sed -e 's/\.ts$//')
+    echo "export * from '${module_name}';" >> index.ts
+done
