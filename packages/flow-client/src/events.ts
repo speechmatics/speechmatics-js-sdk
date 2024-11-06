@@ -1,6 +1,7 @@
 //////////////////////////////////////////////
 // Incoming messages: server -> client
 //////////////////////////////////////////////
+import type { RecognitionResult, RecognitionMetadata } from '../models';
 
 export type ConversationStartedMessage = {
   message: 'ConversationStarted';
@@ -31,6 +32,12 @@ export type ResponseCompletedMessage = {
   content: string;
   start_time: number;
   end_time: number;
+};
+
+export type AddTranscriptMessage = {
+  message: 'AddTranscript';
+  results: Array<RecognitionResult>;
+  metadata: RecognitionMetadata;
 };
 
 export type ResponseInterruptedMessage = {
@@ -69,6 +76,7 @@ export type FlowClientIncomingMessage =
   | ResponseStartedMessage
   | ResponseCompletedMessage
   | ResponseInterruptedMessage
+  | AddTranscriptMessage
   | ConversationEndingMessage
   | ConversationEndedMessage
   | InfoMessage

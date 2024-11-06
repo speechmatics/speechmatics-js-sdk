@@ -2,7 +2,8 @@
   "name": "speechmatics-js-sdk",
   "private": true,
   "version": "1.0.0",
-  "description": "",
+  "description": "Monorepo for Speechmatics Javascript libraries",
+  "packageManager": "pnpm@9.12.3",
   "scripts": {
     "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "clean:builds": "pnpm -r exec rm -rf dist",
@@ -10,6 +11,9 @@
 
     "format": "biome format --write .",
     "lint": "biome lint --write .",
+
+    "format:check": "biome format .",
+    "lint:check": "biome lint .",
 
     "build:packages": "pnpm --filter '{packages/*}' build",
     "publish:packages": "pnpm --filter '{packages/*}' publish --access=public"
