@@ -25,18 +25,13 @@ Welcome to the Speechmatics Javascript SDK! We're open to contributions from any
 
 This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can install it in various ways, but we would recommend using Corepack, which comes bundled with recent NodeJS versions: https://pnpm.io/installation#using-corepack
 
-```
-corepack use pnpm@latest
-corepack enable pnpm
-```
+### PNPM installation steps
 
-If for some reason that doesn't work, you can also just run
-
-```
-npm i -g pnpm
-```
-
-to install `pnpm` globally on your machine.
+- If you have PNPM installed already, we recommend removing it from your system with this command: rm -rf $PNPM_HOME
+- If using NVM, run `nvm use` in the speechmatics-js-sdk repo, to ensure you're using Node 20.17
+- In the `speechmatics-js-sdk/` folder, run `corepack use pnpm@latest`
+- Run `corepack enable pnpm`
+- Verify `pnpm --version` outputs the same version found in the `packageManager` field of [`package.json`](/package.json)
 
 ### Installing dependencies
 
