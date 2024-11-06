@@ -1,3 +1,10 @@
+import { RealtimeTranscriptionProvider } from '@speechmatics/real-time-client-react';
+import Component from './Component';
+
 export default function Page() {
-  return <h1>Coming soon!</h1>;
+  return (
+    <RealtimeTranscriptionProvider appId="nextjs-rt-example">
+      <Component />
+    </RealtimeTranscriptionProvider>
+  );
 }
