@@ -31,3 +31,5 @@ jobs:
         run: "pnpm lint:check && pnpm format:check"
       - name: Test
         run: pnpm -r test
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
