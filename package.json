@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Monorepo for Speechmatics Javascript libraries",
-  "packageManager": "pnpm@9.9.0",
+  "packageManager": "pnpm@9.12.3",
   "scripts": {
     "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
     "clean:builds": "pnpm -r exec rm -rf dist",
