@@ -1,14 +1,17 @@
+// See documentation at https://docs.speechmatics.com/introduction/authentication#temporary-key-configuration
 export async function createSpeechmaticsJWT({
   type,
   apiKey,
   clientRef,
   ttl = 60,
   managementPlatformURL = 'https://mp.speechmatics.com/v1',
+  region = 'eu',
 }: {
   type: 'batch' | 'rt' | 'flow';
   apiKey: string;
   clientRef?: string;
   ttl?: number;
+  region?: 'eu' | 'usa' | 'au';
   managementPlatformURL?: string;
 }): Promise<string> {
   if (type === 'batch' && !clientRef) {
@@ -25,6 +28,8 @@ export async function createSpeechmaticsJWT({
     },
     body: JSON.stringify({
       ttl,
+      region,
+      client_ref: clientRef,
     }),
   });
   if (!resp.ok) {
