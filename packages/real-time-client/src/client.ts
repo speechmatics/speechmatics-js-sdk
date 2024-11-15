@@ -178,8 +178,8 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
         });
 
         const startRecognitionMessage = {
-          ...config,
           audio_format: defaultAudioFormat,
+          ...config,
           message: 'StartRecognition' as const,
         };
 
