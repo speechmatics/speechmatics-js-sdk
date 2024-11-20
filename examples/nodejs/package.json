@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": "true",
   "description": "NodeJS examples showcasing the Speechmatics JS SDK",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "run:batch": "tsx batch-example.ts",
-    "run:real-time-file": "tsx real-time-file-example.ts"
+    "run:batch": "node --import tsx/esm batch-example.ts",
+    "run:real-time-file": "node --import tsx/esm real-time-file-example.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +14,7 @@
   "dependencies": {
     "@speechmatics/batch-client": "workspace:*",
     "@speechmatics/real-time-client": "workspace:*",
+    "@speechmatics/auth": "workspace:*",
     "dotenv": "^16.4.5"
-  },
-  "devDependencies": {
-    "tsx": "^4.19.0"
   }
 }

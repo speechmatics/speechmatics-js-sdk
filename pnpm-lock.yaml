@@ -32,6 +32,9 @@ importers:
       rollup-plugin-esbuild:
         specifier: ^6.1.1
         version: 6.1.1(esbuild@0.23.1)(rollup@4.21.2)
+      tsx:
+        specifier: ^4.19.0
+        version: 4.19.0
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -41,6 +44,9 @@ importers:
       '@picocss/pico':
         specifier: ^2.0.6
         version: 2.0.6
+      '@speechmatics/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@speechmatics/browser-audio-input-react':
         specifier: workspace:*
         version: link:../../packages/browser-audio-input-react
@@ -49,7 +55,7 @@ importers:
         version: link:../../packages/flow-client-react
       next:
         specifier: 15.0.1
-        version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021)(react@19.0.0-rc-69d4b800-20241021)
+        version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
       react:
         specifier: 19.0.0-rc-69d4b800-20241021
         version: 19.0.0-rc-69d4b800-20241021
@@ -75,6 +81,9 @@ importers:
 
   examples/nodejs:
     dependencies:
+      '@speechmatics/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@speechmatics/batch-client':
         specifier: workspace:*
         version: link:../../packages/batch-client
@@ -84,10 +93,12 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+
+  packages/auth:
     devDependencies:
-      tsx:
-        specifier: ^4.19.0
-        version: 4.19.0
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
 
   packages/batch-client:
     dependencies:
@@ -132,9 +143,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.12
         version: 8.5.12
-      tsx:
-        specifier: ^4.19.0
-        version: 4.19.0
 
   packages/flow-client-react:
     dependencies:
@@ -170,9 +178,6 @@ importers:
       '@rollup/plugin-inject':
         specifier: ^5.0.5
         version: 5.0.5(rollup@4.21.2)
-      tsx:
-        specifier: ^4.19.0
-        version: 4.19.0
       yaml:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1221,6 +1226,10 @@ packages:
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
   load-yaml-file@0.2.0:
     resolution: {integrity: sha512-OfCBkGEw4nN6JLtgRidPX6QxjBQGQf72q3si2uvqyFEMbycSFFHwAZeXx6cJgFM9wmLrf9zBwCP3Ivqa+LLZPw==}
     engines: {node: '>=6'}
@@ -2107,7 +2116,7 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@nestjs/axios@3.0.2(@nestjs/common@10.3.0)(axios@1.7.4)(rxjs@7.8.1)':
+  '@nestjs/axios@3.0.2(@nestjs/common@10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1))(axios@1.7.4)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1)
       axios: 1.7.4
@@ -2121,7 +2130,7 @@ snapshots:
       tslib: 2.6.2
       uid: 2.0.2
 
-  '@nestjs/core@10.3.0(@nestjs/common@10.3.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)':
+  '@nestjs/core@10.3.0(@nestjs/common@10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1))(reflect-metadata@0.1.13)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nuxtjs/opencollective': 0.3.2
@@ -2183,9 +2192,9 @@ snapshots:
 
   '@openapitools/openapi-generator-cli@2.13.5':
     dependencies:
-      '@nestjs/axios': 3.0.2(@nestjs/common@10.3.0)(axios@1.7.4)(rxjs@7.8.1)
+      '@nestjs/axios': 3.0.2(@nestjs/common@10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1))(axios@1.7.4)(rxjs@7.8.1)
       '@nestjs/common': 10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1)
-      '@nestjs/core': 10.3.0(@nestjs/common@10.3.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core': 10.3.0(@nestjs/common@10.3.0(reflect-metadata@0.1.13)(rxjs@7.8.1))(reflect-metadata@0.1.13)(rxjs@7.8.1)
       '@nuxtjs/opencollective': 0.3.2
       axios: 1.7.4
       chalk: 4.1.2
@@ -2218,6 +2227,7 @@ snapshots:
       '@rollup/pluginutils': 5.1.3(rollup@4.21.2)
       estree-walker: 2.0.2
       magic-string: 0.30.12
+    optionalDependencies:
       rollup: 4.21.2
 
   '@rollup/pluginutils@5.1.3(rollup@4.21.2)':
@@ -2225,6 +2235,7 @@ snapshots:
       '@types/estree': 1.0.6
       estree-walker: 2.0.2
       picomatch: 4.0.2
+    optionalDependencies:
       rollup: 4.21.2
 
   '@rollup/rollup-android-arm-eabi@4.21.2':
@@ -2743,6 +2754,8 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
+  jwt-decode@4.0.0: {}
+
   load-yaml-file@0.2.0:
     dependencies:
       graceful-fs: 4.2.11
@@ -2807,7 +2820,7 @@ snapshots:
 
   nanoid@3.3.7: {}
 
-  next@15.0.1(react-dom@19.0.0-rc-69d4b800-20241021)(react@19.0.0-rc-69d4b800-20241021):
+  next@15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021):
     dependencies:
       '@next/env': 15.0.1
       '@swc/counter': 0.1.3

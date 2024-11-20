@@ -12,12 +12,11 @@ import { Status } from './Status';
 import { ErrorFallback } from '../../lib/components/ErrorFallback';
 import { OutputView } from './OutputView';
 import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
+import { getJWT } from '../actions';
 
 export default function Component({
-  jwt,
   personas,
 }: {
-  jwt: string;
   personas: Record<string, { name: string }>;
 }) {
   const { startConversation, sendAudio, endConversation } = useFlow();
@@ -47,8 +46,12 @@ export default function Component({
     }: { personaId: string; deviceId?: string }) => {
       try {
         setLoading(true);
+
+        const jwt = await getJWT();
+
         const audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
         setAudioContext(audioContext);
+
         await startConversation(jwt, {
           config: {
             template_id: personaId,
@@ -60,13 +63,14 @@ export default function Component({
             sample_rate: SAMPLE_RATE,
           },
         });
+
         const mediaStream = await startRecording(audioContext, deviceId);
         setMediaStream(mediaStream);
       } finally {
         setLoading(false);
       }
     },
-    [startConversation, jwt, startRecording],
+    [startConversation, startRecording],
   );
 
   const stopSession = useCallback(async () => {

@@ -1,32 +1,26 @@
+/**
+ * This file showcases the real-time-client package being used in NodeJS.
+ *
+ * It will connect to the real-time API and transcribe a file in real-time.
+ * To run this example, you will need to have a Speechmatics API key,
+ * which can be generated from the Speechmatics Portal: https://portal.speechmatics.com/api-keys
+ *
+ * NOTE: This script is run as an ES Module via tsx, letting us use top-level await.
+ * The library also works with CommonJS, but the code would need to be wrapped in an async function.
+ */
 import { RealtimeClient } from '@speechmatics/real-time-client';
 import fs from 'node:fs';
-import path from 'node:path';
 import dotenv from 'dotenv';
+import { createSpeechmaticsJWT } from '@speechmatics/auth';
 
 dotenv.config();
 
-const client = new RealtimeClient();
-
-async function fetchJWT(): Promise<string> {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error('Please set API_KEY in .env file');
-  }
-  const resp = await fetch('https://mp.speechmatics.com/v1/api_keys?type=rt', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.API_KEY}`,
-    },
-    body: JSON.stringify({
-      ttl: 3600,
-    }),
-  });
-  if (!resp.ok) {
-    throw new Error('Bad response from API', { cause: resp });
-  }
-  return (await resp.json()).key_value;
+const apiKey = process.env.API_KEY;
+if (!apiKey) {
+  throw new Error('Please set the API_KEY environment variable');
 }
+
+const client = new RealtimeClient();
 
 let finalText = '';
 
@@ -46,30 +40,29 @@ client.addEventListener('receiveMessage', ({ data }) => {
   }
 });
 
-(async () => {
-  const jwt = await fetchJWT();
+const jwt = await createSpeechmaticsJWT({
+  type: 'rt',
+  apiKey,
+  ttl: 60, // 1 minute
+});
 
-  const fileStream = fs.createReadStream(
-    path.join(__dirname, './example.wav'),
-    {
-      highWaterMark: 4096, //avoid sending faster than realtime
-    },
-  );
+const fileStream = fs.createReadStream('./example.wav', {
+  highWaterMark: 4096, //avoid sending faster than realtime
+});
 
-  await client.start(jwt, {
-    transcription_config: {
-      language: 'en',
-      enable_partials: true,
-    },
-  });
+await client.start(jwt, {
+  transcription_config: {
+    language: 'en',
+    enable_partials: true,
+  },
+});
 
-  //send it
-  fileStream.on('data', (sample) => {
-    client.sendAudio(sample);
-  });
+//send it
+fileStream.on('data', (sample) => {
+  client.sendAudio(sample);
+});
 
-  //end the session
-  fileStream.on('end', () => {
-    client.stopRecognition();
-  });
-})();
+//end the session
+fileStream.on('end', () => {
+  client.stopRecognition();
+});

@@ -1,0 +1,25 @@
+{
+  "name": "@speechmatics/auth",
+  "version": "0.0.1",
+  "description": "Library for fetching temporary keys for Speechmatics APIs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "prepare": "pnpm build",
+    "test": "node --import tsx ./test/index.test.ts"
+  },
+  "keywords": [
+    "Speechmatics",
+    "authentication",
+    "transcription",
+    "batch",
+    "real-time"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "jwt-decode": "^4.0.0"
+  }
+}
