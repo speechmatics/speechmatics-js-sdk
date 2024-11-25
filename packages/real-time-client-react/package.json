@@ -5,7 +5,7 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "files": ["dist/", "README.md"],
+  "files": ["dist/", "src/", "README.md"],
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
     "prepare": "pnpm build",

@@ -18,6 +18,7 @@ export default function rollup() {
           format: 'es',
           sourcemap: true,
           strict: false,
+          banner: '"use client";',
         },
       ],
     },

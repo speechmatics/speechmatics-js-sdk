@@ -11,24 +11,34 @@ export function useRealtimeTranscription() {
 
   const { client, sessionId, socketState } = context;
 
-  const start = useCallback<RealtimeClient['start']>(
+  const startTranscription = useCallback<RealtimeClient['start']>(
     (jwt, config) => {
       return client.start(jwt, config);
     },
     [client],
   );
 
-  const stop = useCallback<RealtimeClient['stopRecognition']>(() => {
+  const stopTranscription = useCallback<
+    RealtimeClient['stopRecognition']
+  >(() => {
     return client.stopRecognition();
   }, [client]);
+
+  const sendAudio = useCallback<RealtimeClient['sendAudio']>(
+    (audio: ArrayBuffer) => {
+      client.sendAudio(audio);
+    },
+    [client],
+  );
 
   return useMemo(
     () => ({
       sessionId,
       socketState,
-      start,
-      stop,
+      startTranscription,
+      stopTranscription,
+      sendAudio,
     }),
-    [sessionId, socketState, start, stop],
+    [sessionId, socketState, startTranscription, stopTranscription, sendAudio],
   );
 }

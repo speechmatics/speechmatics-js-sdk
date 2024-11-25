@@ -2,17 +2,32 @@
 
 import { useRealtimeTranscription } from '@speechmatics/real-time-client-react';
 import { Controls } from './Controls';
-import { useCallback } from 'react';
+import { useEffect } from 'react';
+import {
+  usePcmAudioListener,
+  usePcmAudioRecorder,
+} from '@speechmatics/browser-audio-input-react';
+import { Output } from './Output';
 
 export default function Component() {
-  const { sessionId, start } = useRealtimeTranscription();
+  const { stopTranscription, sendAudio } = useRealtimeTranscription();
+  const { stopRecording } = usePcmAudioRecorder();
 
-  const startSession = useCallback(async (deviceId: string) => {});
+  usePcmAudioListener(sendAudio);
+
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      stopTranscription();
+      stopRecording();
+    };
+  }, [stopTranscription, stopRecording]);
 
   return (
     <section>
       <h3>Real-time Example</h3>
       <Controls />
+      <Output />
     </section>
   );
 }

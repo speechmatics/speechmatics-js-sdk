@@ -7,7 +7,7 @@ import { useContext, useEffect } from 'react';
 import type { TypedEventListenerOrEventListenerObject } from 'typescript-event-target';
 import { RealtimeContext } from './real-time-context';
 
-export function useRealtimewEventListener<
+export function useRealtimeEventListener<
   E extends keyof RealtimeClientEventMap,
 >(
   message: E,
