@@ -9,42 +9,72 @@ const name = packageJSON.main.replace(/\.js$/, '');
 
 /** @returns {import("rollup").RollupOptions[]} */
 export default function rollup() {
-  return [
-    {
-      plugins: [
-        esbuild({
-          define: {
-            SDK_VERSION: `'${packageJSON.version}'`,
-          },
-        }),
-      ],
-      input: 'src/index.ts',
-      output: [
-        {
-          file: `${name}.js`,
-          format: 'cjs',
-          sourcemap: true,
+  const esModule = {
+    plugins: [
+      esbuild({
+        define: {
+          SDK_VERSION: `'${packageJSON.version}'`,
         },
-        {
-          file: `${name}.mjs`,
-          format: 'es',
-          sourcemap: true,
-        },
-      ],
+      }),
+    ],
+    input: 'src/index.ts',
+    output: {
+      file: `${name}.mjs`,
+      format: 'es',
+      sourcemap: true,
     },
+  };
 
-    {
-      plugins: [
-        dts({
-          compilerOptions: {
-            removeComments: true,
-          },
-        }),
-      ],
-      input: 'src/index.ts',
-      output: {
-        file: `${name}.d.ts`,
-      },
+  const cjs = {
+    plugins: [
+      esbuild({
+        define: {
+          SDK_VERSION: `'${packageJSON.version}'`,
+        },
+      }),
+    ],
+    input: 'src/index.ts',
+    output: {
+      file: `${name}.js`,
+      format: 'cjs',
+      sourcemap: true,
     },
-  ];
+  };
+
+  const typeDefinitions = {
+    plugins: [
+      dts({
+        compilerOptions: {
+          removeComments: true,
+        },
+      }),
+    ],
+    input: 'src/index.ts',
+    output: {
+      file: `${name}.d.ts`,
+    },
+  };
+
+  const minified = {
+    plugins: [
+      esbuild({
+        define: {
+          SDK_VERSION: `'${packageJSON.version}'`,
+        },
+        minify: true,
+        optimizeDeps: {
+          include: ['zod'],
+        },
+      }),
+    ],
+    input: 'src/index.ts',
+    output: {
+      file: `${name}.min.js`,
+      format: 'umd',
+      name: 'SpeechmaticsBatchClient',
+      sourceMap: false,
+    },
+  };
+
+  return [esModule, cjs, typeDefinitions, minified];
 }

@@ -58,5 +58,28 @@ export default function rollup() {
     },
   };
 
-  return [browserESM, nodeCJS, typeDefinitions];
+  const minified = {
+    plugins: [
+      esbuild({
+        define: {
+          SDK_VERSION: `'${packageJSON.version}'`,
+        },
+        minify: true,
+        optimizeDeps: {
+          include: ['typescript-event-target'],
+        },
+      }),
+    ],
+    input: 'src/index.ts',
+    output: [
+      {
+        file: `${name}.min.js`,
+        format: 'umd',
+        name: 'SpeechmaticsFlowClient',
+        sourceMap: false,
+      },
+    ],
+  };
+
+  return [browserESM, nodeCJS, typeDefinitions, minified];
 }
