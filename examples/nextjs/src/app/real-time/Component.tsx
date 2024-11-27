@@ -8,6 +8,7 @@ import {
   usePcmAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import { Output } from './Output';
+import { Status } from './Status';
 
 export default function Component() {
   const { stopTranscription, sendAudio } = useRealtimeTranscription();
@@ -26,8 +27,13 @@ export default function Component() {
   return (
     <section>
       <h3>Real-time Example</h3>
-      <Controls />
-      <Output />
+      <section className="grid">
+        <Controls />
+        <Status />
+      </section>
+      <section>
+        <Output />
+      </section>
     </section>
   );
 }

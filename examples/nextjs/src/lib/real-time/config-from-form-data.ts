@@ -13,6 +13,7 @@ export function configFromFormData(
   return {
     transcription_config: {
       language,
+      max_delay: 1,
     },
   };
 }

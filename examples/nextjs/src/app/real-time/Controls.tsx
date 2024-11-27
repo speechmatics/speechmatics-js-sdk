@@ -82,7 +82,7 @@ function StartStopButton() {
     );
   }
 
-  return <button type="submit">Start transcription</button>;
+  return <button type="submit">Transcribe audio</button>;
 }
 
 function MicrophoneSelect({
