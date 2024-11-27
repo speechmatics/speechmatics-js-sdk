@@ -1,4 +1,4 @@
-import type { StartConversationMessage } from '@speechmatics/flow-client';
+import type { FlowClientOutgoingMessage, StartConversationMessage } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
 import { FlowContext } from './flow-context';
 
@@ -32,14 +32,20 @@ export function useFlow() {
     [client],
   );
 
+  const sendWebsocketMessage = useCallback(
+    (wsMessage: FlowClientOutgoingMessage) => client.sendWebsocketMessage(wsMessage),
+    [client],
+  )
+
   return useMemo(
     () => ({
       startConversation,
       endConversation,
       sendAudio,
+      sendWebsocketMessage,
       socketState,
       sessionId,
     }),
-    [startConversation, endConversation, sendAudio, socketState, sessionId],
+    [startConversation, endConversation, sendAudio, socketState, sessionId, sendWebsocketMessage],
   );
 }

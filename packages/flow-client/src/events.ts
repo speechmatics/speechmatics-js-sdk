@@ -70,6 +70,27 @@ export type ErrorMessage = {
   [k: string]: unknown;
 };
 
+export type Speakers = {
+  [key: string]: string[];
+};
+
+export type RememberSpeakersMessage = {
+  message: "RememberSpeakers";
+  request_id: string;
+  speakers: Speakers;
+};
+
+export type ForgetSpeakersMessage = {
+  message: "ForgetSpeakers";
+  request_id: string;
+  speakers: string[];
+};
+
+export type ForgetAllSpeakersMessage = {
+  message: "ForgetAllSpeakers";
+  request_id: string;
+};
+
 export type FlowClientIncomingMessage =
   | ConversationStartedMessage
   | AudioAddedMessage
@@ -81,7 +102,10 @@ export type FlowClientIncomingMessage =
   | ConversationEndedMessage
   | InfoMessage
   | WarningMessage
-  | ErrorMessage;
+  | ErrorMessage
+  | RememberSpeakersMessage
+  | ForgetSpeakersMessage
+  | ForgetAllSpeakersMessage;
 
 //////////////////////////////////////////////
 // Outgoing messages: client -> server
@@ -98,6 +122,7 @@ export interface StartConversationMessage {
   conversation_config: {
     template_id: string;
     template_variables: { [key: string]: string };
+    speakers?: Speakers;
   };
   audio_format: AudioFormat;
 }
@@ -113,10 +138,25 @@ export interface AudioEndedMessage {
   last_seq_no: number;
 }
 
+export type RememberSpeakersResultMessage = {
+  message: "RememberSpeakersResult";
+  request_id: string;
+  status: "ok" | "failed" | "rejected";
+};
+
+export type ForgetAllSpeakersResultMessage = {
+  message: "ForgetAllSpeakersResult";
+  request_id: string;
+  status: "ok" | "failed";
+  content?: string;
+};
+
 export type FlowClientOutgoingMessage =
   | StartConversationMessage
   | AudioReceivedMessage
-  | AudioEndedMessage;
+  | AudioEndedMessage
+  | RememberSpeakersResultMessage
+  | ForgetAllSpeakersResultMessage;
 
 /////////////////////////////////////////////
 // Event Map

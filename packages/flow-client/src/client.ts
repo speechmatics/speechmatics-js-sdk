@@ -206,7 +206,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
   }
 
-  private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
+  public sendWebsocketMessage(message: FlowClientOutgoingMessage) {
     if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
