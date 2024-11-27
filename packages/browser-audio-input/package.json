@@ -8,16 +8,27 @@
   },
   "module": "./dist/index.js",
   "type": "module",
-  "files": ["dist/", "README.md"],
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "scripts": {
     "build": "rollup -c",
     "prepare": "pnpm build",
     "format": "biome format --write .",
     "lint": "biome lint --write ."
   },
-  "keywords": ["Audio", "Browser", "device", "selection"],
+  "keywords": [
+    "Audio",
+    "Browser",
+    "device",
+    "selection"
+  ],
   "license": "MIT",
   "dependencies": {
     "typescript-event-target": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/audioworklet": "^0.0.64"
   }
 }

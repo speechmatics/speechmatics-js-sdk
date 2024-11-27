@@ -120,6 +120,10 @@ importers:
       typescript-event-target:
         specifier: ^1.1.1
         version: 1.1.1
+    devDependencies:
+      '@types/audioworklet':
+        specifier: ^0.0.64
+        version: 0.0.64
 
   packages/browser-audio-input-react:
     dependencies:
@@ -839,6 +843,9 @@ packages:
 
   '@swc/helpers@0.5.13':
     resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
+
+  '@types/audioworklet@0.0.64':
+    resolution: {integrity: sha512-CoxtXsvqrpqJgkEwqgWDlGjtvzCbmI+PpegN0thNBY/x+gYkwCDT6dDAo8qOGfe6fNTCGiOj6ZgfLq4kmd/yew==}
 
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -2646,6 +2653,8 @@ snapshots:
   '@swc/helpers@0.5.13':
     dependencies:
       tslib: 2.8.0
+
+  '@types/audioworklet@0.0.64': {}
 
   '@types/eslint-scope@3.7.7':
     dependencies:
