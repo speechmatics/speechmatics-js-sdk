@@ -51,15 +51,34 @@ export interface RealtimeClientEventMap {
   socketStateChange: Event;
 }
 
+export interface RealtimeClientOptions {
+  /**
+   * URL of the Speechmatics Realtime API, see options here: https://docs.speechmatics.com/introduction/authentication#supported-endpoints
+    defaults to `wss://eu2.rt.speechmatics.com/v2`
+  */
+  url?: string;
+  /**
+   * String identifying your app to the Speechmatics API. Can be any unique ID
+   */
+  appId?: string;
+  /**
+   * Optionally enable legacy mode for the Realtime API. This opts out of incremental rescoring.
+   * Only set this if you're sure you need it.
+   */
+  enableLegacy?: boolean;
+}
+
 export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
-  constructor(config: { url?: string; appId?: string } = {}) {
+  constructor(config: RealtimeClientOptions = {}) {
     super();
     this.url = config.url ?? 'wss://eu2.rt.speechmatics.com/v2';
     this.appId = config.appId;
+    this.enableLegacy = config.enableLegacy ?? false;
   }
 
-  private readonly url: string;
+  readonly url: string;
   private readonly appId?: string;
+  private readonly enableLegacy: boolean;
 
   private socket?: WebSocket;
 
@@ -83,6 +102,10 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       url.searchParams.append('jwt', jwt);
       if (this.appId) {
         url.searchParams.append('sm-app', this.appId);
+      }
+
+      if (this.enableLegacy) {
+        url.searchParams.append('sm-enable-legacy-rt', 'true');
       }
 
       this.socket = new WebSocket(url.toString());
