@@ -2,7 +2,7 @@ import { TypedEventTarget } from 'typescript-event-target';
 import {
   AgentAudioEvent,
   FlowIncomingMessageEvent,
-  Speakers,
+  type Speakers,
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
