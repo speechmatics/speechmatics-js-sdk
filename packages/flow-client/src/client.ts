@@ -2,6 +2,7 @@ import { TypedEventTarget } from 'typescript-event-target';
 import {
   AgentAudioEvent,
   FlowIncomingMessageEvent,
+  Speakers,
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
@@ -257,11 +258,11 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
         },
       };
 
-      const startMessage: StartConversationMessage = {
+      const startMessage: StartConversationMessage & { speakers?: Speakers} = {
         message: 'StartConversation',
         conversation_config,
         audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
-        speakers: conversation_config["speakers"],
+        speakers: conversation_config.speakers,
       };
       this.sendWebsocketMessage(startMessage);
     });
