@@ -261,6 +261,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
         message: 'StartConversation',
         conversation_config,
         audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
+        speakers: conversation_config["speakers"],
       };
       this.sendWebsocketMessage(startMessage);
     });
