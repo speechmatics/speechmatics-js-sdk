@@ -1,3 +1,4 @@
+'use client';
 import type {
   AddPartialTranscriptMessage,
   AddTranscriptMessage,
@@ -5,15 +6,23 @@ import type {
   ResponseStartedMessage,
   ResponseInterruptedMessage,
 } from '@speechmatics/flow-client';
-import { useReducer } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 
 export function useFlowTranscript() {
   const [state, dispatch] = useReducer(messagesReducer, []);
 
-  return {
-    messages: state,
-    handleEvent: dispatch,
-  };
+  const handleEvent = useCallback((ev: IncomingEvent) => {
+    if (!eventIsEmpty(ev)) {
+      dispatch(ev);
+    }
+  }, []);
+
+  return useMemo(() => {
+    return {
+      messages: state,
+      handleEvent,
+    };
+  }, [state, handleEvent]);
 }
 
 export type Message = {
