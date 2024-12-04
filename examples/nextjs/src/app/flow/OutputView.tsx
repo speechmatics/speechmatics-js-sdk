@@ -1,6 +1,6 @@
 import { useErrorBoundary } from 'react-error-boundary';
 import { useFlowEventListener } from '@speechmatics/flow-client-react';
-import { useFlowTranscript } from './useFlowTranscript';
+import { useFlowTranscript } from '@speechmatics/flow-client-react';
 
 export function OutputView() {
   useErrorView();

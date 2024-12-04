@@ -4,7 +4,7 @@ import type {
   ResponseCompletedMessage,
   ResponseStartedMessage,
   ResponseInterruptedMessage,
-} from '@speechmatics/flow-client-react';
+} from '@speechmatics/flow-client';
 import { useReducer } from 'react';
 
 export function useFlowTranscript() {
