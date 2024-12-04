@@ -1,7 +1,7 @@
 {
   "name": "nextjs-example",
   "description": "NextJS app showcasing the Speechmatics JS SDK",
-  "version": "0.1.0",
+  "version": "0.2.0-rc1",
   "private": true,
   "scripts": {
     "dev": "next dev",
