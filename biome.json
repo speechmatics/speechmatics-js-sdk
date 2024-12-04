@@ -6,7 +6,12 @@
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": ["./packages/*/dist/**", "*/**/.next/**", "*/**/node_modules/*"]
+    "ignore": [
+      "./packages/*/dist/**",
+      "*/**/.next/**",
+      "*/**/node_modules/*",
+      "./examples/nextjs/public/*"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -18,6 +23,11 @@
     "rules": {
       "recommended": true
     },
-    "ignore": ["./packages/*/dist/**", "*/**/.next/**", "*/**/node_modules/*"]
+    "ignore": [
+      "./packages/*/dist/**",
+      "*/**/.next/**",
+      "*/**/node_modules/*",
+      "./examples/nextjs/public/*"
+    ]
   }
 }

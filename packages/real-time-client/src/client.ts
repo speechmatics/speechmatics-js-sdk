@@ -67,6 +67,11 @@ export interface RealtimeClientOptions {
    */
   enableLegacy?: boolean;
 }
+export type RealtimeTranscriptionConfig = Omit<
+  StartRecognition,
+  'message' | 'audio_format'
+> &
+  Partial<Pick<StartRecognition, 'audio_format'>>;
 
 export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   constructor(config: RealtimeClientOptions = {}) {
@@ -183,8 +188,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
   async start(
     jwt: string,
-    config: Omit<StartRecognition, 'message' | 'audio_format'> &
-      Partial<Pick<StartRecognition, 'audio_format'>>,
+    config: RealtimeTranscriptionConfig,
   ): Promise<RecognitionStarted> {
     await this.connect(jwt);
 

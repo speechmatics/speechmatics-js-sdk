@@ -2,6 +2,8 @@ import esbuild from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
 import packageJSON from './package.json' assert { type: 'json' };
+import preserveDirectives from 'rollup-plugin-preserve-directives';
+const CJS_TARGET = packageJSON.main;
 
 // Based on gist
 //https://gist.github.com/aleclarson/9900ed2a9a3119d865286b218e14d226
@@ -10,15 +12,26 @@ import packageJSON from './package.json' assert { type: 'json' };
 export default function rollup() {
   return [
     {
-      plugins: [esbuild()],
+      plugins: [
+        esbuild(),
+        preserveDirectives({
+          suppressPreserveModulesWarning: true,
+        }),
+      ],
       input: 'src/index.ts',
       output: [
         {
-          file: packageJSON.module,
+          file: CJS_TARGET,
+          format: 'cjs',
+          sourcemap: true,
+        },
+        {
+          // For the ESM output we preserve modules because some will need the "use client" directive
+          dir: 'dist/',
           format: 'es',
           sourcemap: true,
+          preserveModules: true,
           strict: false,
-          banner: '"use client";',
         },
       ],
     },
@@ -33,7 +46,7 @@ export default function rollup() {
       ],
       input: 'src/index.ts',
       output: {
-        file: `${packageJSON.module.replace('.js', '')}.d.ts`,
+        file: `${CJS_TARGET.replace('.cjs', '')}.d.ts`,
       },
     },
   ];
