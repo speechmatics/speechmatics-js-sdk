@@ -37,6 +37,7 @@ type IncomingEvent =
 export function messagesReducer(
   oldMessages: ReadonlyArray<Message>,
   event: IncomingEvent,
+  debug?: true,
 ) {
   if (eventIsEmpty(event)) {
     return oldMessages;
@@ -44,7 +45,7 @@ export function messagesReducer(
 
   const messages = [...oldMessages];
 
-  debugString(event);
+  debug && debugString(event);
 
   switch (event.message) {
     case 'AddPartialTranscript':
