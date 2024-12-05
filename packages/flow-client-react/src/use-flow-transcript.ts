@@ -1,7 +1,7 @@
 'use client';
 import {
   useSpeakerDiarizedTranscription,
-  type SpeakeriarizedTranscriptionItem,
+  type SpeakerDiarizedTranscriptionItem,
   type SpeakerDiarizedTranscriptionChunk,
 } from '@speechmatics/use-diarized-transcription';
 import { useFlowEventListener } from './use-flow-event-listener';
@@ -42,6 +42,6 @@ export function useFlowTranscript() {
 }
 
 export type {
-  SpeakeriarizedTranscriptionItem,
+  SpeakerDiarizedTranscriptionItem,
   SpeakerDiarizedTranscriptionChunk,
 };
