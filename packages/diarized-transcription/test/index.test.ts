@@ -49,7 +49,7 @@ test('single speaker (partials)', () => {
   expect(diarizedTranscription.items[0].text).undefined;
 });
 
-test("single speaker (partials and final's)", () => {
+test('single speaker (partials and finals)', () => {
   const diarizedTranscription = new SpeakerDiarizedTranscription();
   const onChange = mock.fn();
   diarizedTranscription.addEventListener('change', onChange);

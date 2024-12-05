@@ -195,6 +195,28 @@ importers:
         specifier: ^2.5.0
         version: 2.5.0
 
+  packages/use-diarized-transcription:
+    dependencies:
+      '@speechmatics/diarized-transcription':
+        specifier: workspace:*
+        version: link:../diarized-transcription
+      react:
+        specifier: ^18 || ^19
+        version: 18.0.0
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
+    devDependencies:
+      '@types/chai':
+        specifier: ^5.0.1
+        version: 5.0.1
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      chai:
+        specifier: ^5.1.2
+        version: 5.1.2
+
 packages:
 
   '@babel/code-frame@7.26.0':
