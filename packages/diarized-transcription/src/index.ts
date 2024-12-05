@@ -1,6 +1,6 @@
 import { TypedEventTarget } from 'typescript-event-target';
 
-export interface DiarizedTranscriptionItem {
+export interface SpeakeriarizedTranscriptionItem {
   speaker: string;
   partialText?: string;
   text?: string;
@@ -8,15 +8,17 @@ export interface DiarizedTranscriptionItem {
   endTime?: number;
 }
 
-export interface TranscriptionChunk {
+export interface SpeakerDiarizedTranscriptionChunk {
   text: string;
   startTime: number;
   endTime?: number;
   speaker: string;
 }
 
-export class DiarizedTranscription extends TypedEventTarget<{ change: Event }> {
-  private _items: DiarizedTranscriptionItem[] = [];
+export class SpeakerDiarizedTranscription extends TypedEventTarget<{
+  change: Event;
+}> {
+  private _items: SpeakeriarizedTranscriptionItem[] = [];
 
   get items() {
     return this._items;
@@ -24,7 +26,7 @@ export class DiarizedTranscription extends TypedEventTarget<{ change: Event }> {
 
   handleTranscriptionChunk(
     type: 'partial' | 'final',
-    chunk: TranscriptionChunk,
+    chunk: SpeakerDiarizedTranscriptionChunk,
   ) {
     // Ignore if there is no text transcribed in this chunk
     if (chunk.text === '') {

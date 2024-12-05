@@ -5,18 +5,14 @@ import {
   useFlowEventListener,
 } from '@speechmatics/flow-client-react';
 import { useFlowTranscript } from '@speechmatics/flow-client-react';
-import { useRef } from 'react';
 
 export function OutputView() {
   useErrorView();
 
-  console.log('RENDER');
+  // const renderCount = useRef(0);
+  // console.log('RENDER', renderCount.current++);
 
   const { messages, handleEvent } = useFlowTranscript();
-  // lastMessagesRef.current ??= messages;
-  // console.log(messages === lastMessagesRef.current);
-
-  // console.log('messages=', messages);
 
   useFlowEventListener('message', ({ data }) => {
     if (
@@ -32,7 +28,7 @@ export function OutputView() {
   return (
     <article>
       <header>Output</header>
-      {/* <section>
+      <section>
         {messages.map((message) => (
           <article key={`${message.startTime}-${message.endTime}`}>
             <header>{message.speaker}</header>
@@ -42,7 +38,7 @@ export function OutputView() {
             </span>
           </article>
         ))}
-      </section> */}
+      </section>
     </article>
   );
 }

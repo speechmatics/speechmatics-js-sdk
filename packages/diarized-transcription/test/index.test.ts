@@ -1,10 +1,10 @@
 import { test, mock } from 'node:test';
 import { expect } from 'chai';
-import { DiarizedTranscription } from '../src';
+import { SpeakerDiarizedTranscription } from '../src';
 import { speakerAgentConversation } from './fixtures/speaker-agent-conversation';
 
 test('empty messages', () => {
-  const diarizedTranscription = new DiarizedTranscription();
+  const diarizedTranscription = new SpeakerDiarizedTranscription();
   const onChange = mock.fn();
   diarizedTranscription.addEventListener('change', onChange);
 
@@ -24,7 +24,7 @@ test('empty messages', () => {
 });
 
 test('single speaker (partials)', () => {
-  const diarizedTranscription = new DiarizedTranscription();
+  const diarizedTranscription = new SpeakerDiarizedTranscription();
   const onChange = mock.fn();
   diarizedTranscription.addEventListener('change', onChange);
 
@@ -50,7 +50,7 @@ test('single speaker (partials)', () => {
 });
 
 test("single speaker (partials and final's)", () => {
-  const diarizedTranscription = new DiarizedTranscription();
+  const diarizedTranscription = new SpeakerDiarizedTranscription();
   const onChange = mock.fn();
   diarizedTranscription.addEventListener('change', onChange);
 

@@ -46,7 +46,6 @@ type IncomingEvent =
 export function messagesReducer(
   oldMessages: ReadonlyArray<Message>,
   event: IncomingEvent,
-  debug?: true,
 ) {
   if (eventIsEmpty(event)) {
     return oldMessages;
@@ -54,7 +53,7 @@ export function messagesReducer(
 
   const messages = [...oldMessages];
 
-  debug && debugString(event);
+  logEvent(event);
 
   switch (event.message) {
     case 'AddPartialTranscript':
@@ -84,7 +83,7 @@ export function messagesReducer(
       } else {
         let text = message.text ?? '';
         if (!isPartial) {
-          text += ` ${event.metadata.transcript}`;
+          text += `${event.metadata.transcript}`;
         }
         messages[index] = {
           ...message,
@@ -152,47 +151,47 @@ function eventIsEmpty(event: IncomingEvent): boolean {
   );
 }
 
-// https://stackoverflow.com/questions/3269434/whats-the-most-efficient-way-to-test-if-two-ranges-overlap
-export function rangesOverlap(
-  [a1, a2]: [number, number],
-  [b1, b2]: [number, number],
-) {
-  return Math.max(a1, b1) <= Math.min(a2, b2);
-}
-
-function debugString(event: IncomingEvent) {
+function logEvent(event: IncomingEvent) {
   switch (event.message) {
     case 'AddPartialTranscript':
-      console.log(
-        `%c${event.metadata.transcript}\t${event.metadata.start_time} - ${event.metadata.end_time}`,
-        'color: gray;',
-      );
+      console.debug('partial', {
+        speaker: event.results[0]?.alternatives?.[0]?.speaker ?? 'Unknown',
+        startTime: event.metadata.start_time,
+        endTime: event.metadata.end_time,
+        text: event.metadata.transcript,
+      });
       break;
     case 'AddTranscript':
-      console.log(
-        `${event.metadata.transcript}\t${event.metadata.start_time} - ${event.metadata.end_time}`,
-      );
+      console.debug('final', {
+        speaker: event.results[0]?.alternatives?.[0]?.speaker ?? 'Unknown',
+        startTime: event.metadata.start_time,
+        endTime: event.metadata.end_time,
+        text: event.metadata.transcript,
+      });
       break;
     case 'ResponseStarted':
-      console.log(
-        `%c${event.content}\t${event.start_time} - ???`,
-        'color: green;',
-      );
+      console.debug('partial', {
+        speaker: 'agent',
+        startTime: event.start_time,
+        text: event.content,
+      });
       break;
     case 'ResponseCompleted':
-      console.log(
-        `%c${event.content}\t${event.start_time} - ${event.end_time}`,
-        'color: green;',
-      );
+      console.debug('final', {
+        speaker: 'agent',
+        startTime: event.start_time,
+        endTime: event.end_time,
+        text: event.content,
+      });
       break;
     case 'ResponseInterrupted':
-      console.log(
+      console.debug(
         `INTERRUPTION: %c${event.content}\t${event.start_time} - ${event.end_time}`,
         'color: red;',
       );
       break;
     default:
       event satisfies never;
-      throw new Error('Unexpected input event');
+      console.debug('Unexpected input event!');
   }
 }
