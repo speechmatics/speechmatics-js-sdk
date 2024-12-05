@@ -258,11 +258,10 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
         },
       };
 
-      const startMessage: StartConversationMessage & { speakers?: Speakers} = {
+      const startMessage: StartConversationMessage = {
         message: 'StartConversation',
         conversation_config,
         audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
-        speakers: conversation_config.speakers,
       };
       this.sendWebsocketMessage(startMessage);
     });
