@@ -2,15 +2,10 @@
   "name": "@speechmatics/diarized-transcription",
   "version": "0.0.1-rc1",
   "description": "Utility for grouping transcribed text according to diarization",
-  "exports": [
-    "./dist/index.js"
-  ],
+  "exports": ["./dist/index.js"],
   "module": "./dist/index.js",
   "type": "module",
-  "files": [
-    "dist/",
-    "README.md"
-  ],
+  "files": ["dist/", "README.md"],
   "scripts": {
     "build": "rollup -c",
     "prepare": "pnpm build",

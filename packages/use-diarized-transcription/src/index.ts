@@ -1,12 +1,16 @@
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
-import { SpeakerDiarizedTranscription } from '@speechmatics/diarized-transcription';
+import {
+  SpeakerDiarizedTranscription,
+  type SpeakeriarizedTranscriptionItem,
+  type SpeakerDiarizedTranscriptionChunk,
+} from '@speechmatics/diarized-transcription';
 
 export function useSpeakerDiarizedTranscription() {
   const [diarizedTranscription] = useState(
     () => new SpeakerDiarizedTranscription(),
   );
 
-  const messages = useSyncExternalStore(
+  const transcriptionItems = useSyncExternalStore(
     (onChange: () => void) => {
       diarizedTranscription.addEventListener('change', onChange);
       return () => {
@@ -25,8 +29,19 @@ export function useSpeakerDiarizedTranscription() {
     [diarizedTranscription],
   );
 
+  const clearTranscript = useCallback<
+    SpeakerDiarizedTranscription['clearTranscript']
+  >(() => {
+    diarizedTranscription.clearTranscript();
+  }, [diarizedTranscription]);
+
   return useMemo(
-    () => ({ messages, handleTranscriptionChunk }),
-    [messages, handleTranscriptionChunk],
+    () => ({ transcriptionItems, handleTranscriptionChunk, clearTranscript }),
+    [transcriptionItems, handleTranscriptionChunk, clearTranscript],
   );
 }
+
+export type {
+  SpeakeriarizedTranscriptionItem,
+  SpeakerDiarizedTranscriptionChunk,
+};

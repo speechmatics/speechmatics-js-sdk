@@ -1,27 +1,18 @@
 'use client';
 import { useErrorBoundary } from 'react-error-boundary';
 import {
-  type Message,
   useFlowEventListener,
+  useFlowTranscript,
 } from '@speechmatics/flow-client-react';
-import { useFlowTranscript } from '@speechmatics/flow-client-react';
 
 export function OutputView() {
   useErrorView();
 
-  // const renderCount = useRef(0);
-  // console.log('RENDER', renderCount.current++);
-
-  const { messages, handleEvent } = useFlowTranscript();
+  const { transcript, clearTranscript } = useFlowTranscript();
 
   useFlowEventListener('message', ({ data }) => {
-    if (
-      data.message === 'AddTranscript' ||
-      data.message === 'AddPartialTranscript' ||
-      data.message === 'ResponseStarted' ||
-      data.message === 'ResponseCompleted'
-    ) {
-      handleEvent(data);
+    if (data.message === 'ConversationStarted' && transcript.length) {
+      clearTranscript();
     }
   });
 
@@ -29,12 +20,12 @@ export function OutputView() {
     <article>
       <header>Output</header>
       <section>
-        {messages.map((message) => (
-          <article key={`${message.startTime}-${message.endTime}`}>
-            <header>{message.speaker}</header>
+        {transcript.map((item) => (
+          <article key={`${item.startTime}-${item.endTime}`}>
+            <header>{item.speaker}</header>
             <span>
-              {message.text}
-              <i style={{ color: 'gray' }}>{message.partialText}</i>
+              {item.text}
+              <i style={{ color: 'gray' }}>{item.partialText}</i>
             </span>
           </article>
         ))}

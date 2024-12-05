@@ -2,6 +2,7 @@ import { test, mock } from 'node:test';
 import { expect } from 'chai';
 import { SpeakerDiarizedTranscription } from '../src';
 import { speakerAgentConversation } from './fixtures/speaker-agent-conversation';
+import { crossTalkConversation } from './fixtures/cross-talk';
 
 test('empty messages', () => {
   const diarizedTranscription = new SpeakerDiarizedTranscription();
@@ -37,7 +38,7 @@ test('single speaker (partials)', () => {
       speaker: 'Unknown',
       text,
       startTime: time,
-      endTime: time++,
+      endTime: ++time,
     });
   }
 
@@ -75,4 +76,25 @@ test('single speaker (partials and finals)', () => {
   expect(diarizedTranscription.items[1].text).equal(
     "I'm sorry, I can't do that. But I'm here to help with anything else you need!",
   );
+});
+
+test('clear partials from all previous messages', () => {
+  const diarizedTranscription = new SpeakerDiarizedTranscription();
+  const onChange = mock.fn();
+  diarizedTranscription.addEventListener('change', onChange);
+
+  for (const [type, chunk] of crossTalkConversation) {
+    diarizedTranscription.handleTranscriptionChunk(type, chunk);
+  }
+
+  console.log(diarizedTranscription.items);
+
+  expect(onChange.mock.calls.length).equal(crossTalkConversation.length);
+  expect(diarizedTranscription.items.length).equal(7);
+
+  for (const item of diarizedTranscription.items) {
+    if (item !== diarizedTranscription.items.at(-1)) {
+      expect(item.partialText).undefined;
+    }
+  }
 });

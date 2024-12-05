@@ -12,6 +12,7 @@
   "dependencies": {
     "@speechmatics/flow-client-react": "workspace:*",
     "@speechmatics/browser-audio-input-react": "workspace:*",
+    "@speechmatics/use-diarized-transcription": "workspace:*",
     "@speechmatics/auth": "workspace:*",
     "@picocss/pico": "^2.0.6",
     "next": "15.0.1",

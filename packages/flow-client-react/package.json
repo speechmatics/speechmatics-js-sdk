@@ -22,7 +22,8 @@
     "intelligence"
   ],
   "dependencies": {
-    "@speechmatics/flow-client": "workspace:*"
+    "@speechmatics/flow-client": "workspace:*",
+    "@speechmatics/use-diarized-transcription": "workspace:*"
   },
   "author": "",
   "license": "MIT",

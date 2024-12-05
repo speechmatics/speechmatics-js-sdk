@@ -53,6 +53,9 @@ importers:
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react
+      '@speechmatics/use-diarized-transcription':
+        specifier: workspace:*
+        version: link:../../packages/use-diarized-transcription
       next:
         specifier: 15.0.1
         version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
@@ -162,6 +165,9 @@ importers:
       '@speechmatics/flow-client':
         specifier: workspace:*
         version: link:../flow-client
+      '@speechmatics/use-diarized-transcription':
+        specifier: workspace:*
+        version: link:../use-diarized-transcription
       react:
         specifier: ^18 || ^19
         version: 18.0.0
