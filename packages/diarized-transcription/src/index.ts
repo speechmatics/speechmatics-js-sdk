@@ -1,6 +1,6 @@
 import { TypedEventTarget } from 'typescript-event-target';
 
-export interface SpeakeriarizedTranscriptionItem {
+export interface SpeakerDiarizedTranscriptionItem {
   speaker: string;
   partialText?: string;
   text?: string;
@@ -18,7 +18,7 @@ export interface SpeakerDiarizedTranscriptionChunk {
 export class SpeakerDiarizedTranscription extends TypedEventTarget<{
   change: Event;
 }> {
-  private _items: ReadonlyArray<SpeakeriarizedTranscriptionItem> = [];
+  private _items: ReadonlyArray<SpeakerDiarizedTranscriptionItem> = [];
 
   get items() {
     return this._items;

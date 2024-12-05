@@ -1,10 +1,11 @@
 {
   "name": "@speechmatics/use-diarized-transcription",
-  "version": "0.0.1-rc1",
+  "version": "0.0.1-rc2",
   "description": "React wrapper for @speechmatics/diarized-transcription",
-  "exports": ["./dist/index.js"],
+  "main": "dist/index.cjs",
   "module": "./dist/index.js",
   "type": "module",
+  "typings": "dist/index.d.ts",
   "files": ["dist/", "README.md"],
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../diarized-transcription build && pnpm rollup -c",

@@ -222,6 +222,9 @@ importers:
       chai:
         specifier: ^5.1.2
         version: 5.1.2
+      rollup-plugin-preserve-directives:
+        specifier: ^0.4.0
+        version: 0.4.0(rollup@4.21.2)
 
 packages:
 

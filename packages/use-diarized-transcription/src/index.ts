@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import {
   SpeakerDiarizedTranscription,
-  type SpeakeriarizedTranscriptionItem,
+  type SpeakerDiarizedTranscriptionItem,
   type SpeakerDiarizedTranscriptionChunk,
 } from '@speechmatics/diarized-transcription';
 
@@ -42,6 +42,6 @@ export function useSpeakerDiarizedTranscription() {
 }
 
 export type {
-  SpeakeriarizedTranscriptionItem,
+  SpeakerDiarizedTranscriptionItem,
   SpeakerDiarizedTranscriptionChunk,
 };
