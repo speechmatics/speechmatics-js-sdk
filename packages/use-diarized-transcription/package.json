@@ -11,8 +11,7 @@
     "build": "rm -rf dist/ && pnpm -C ../diarized-transcription build && pnpm rollup -c",
     "prepare": "pnpm build",
     "format": "biome format --write .",
-    "lint": "biome lint --write .",
-    "test": "node --import tsx ./test/index.test.ts"
+    "lint": "biome lint --write ."
   },
   "keywords": [
     "react",
