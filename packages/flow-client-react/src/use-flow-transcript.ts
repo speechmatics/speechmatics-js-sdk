@@ -7,6 +7,7 @@ import {
 import { useFlowEventListener } from './use-flow-event-listener';
 import { useCallback } from 'react';
 import type { FlowIncomingMessageEvent } from '@speechmatics/flow-client';
+import type { FlowMessageCallback } from '@speechmatics/flow-client';
 
 export function useFlowTranscript() {
   const { transcriptionItems, handleTranscriptionChunk, clearTranscript } =
@@ -14,7 +15,7 @@ export function useFlowTranscript() {
 
   useFlowEventListener(
     'message',
-    useCallback<(ev: FlowIncomingMessageEvent) => void>(
+    useCallback<FlowMessageCallback>(
       ({ data }) => {
         if (
           data.message === 'AddPartialTranscript' ||

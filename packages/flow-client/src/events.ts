@@ -1,6 +1,7 @@
 //////////////////////////////////////////////
 // Incoming messages: server -> client
 //////////////////////////////////////////////
+import type { TypedEventListener } from 'typescript-event-target';
 import type { RecognitionResult, RecognitionMetadata } from '../models';
 
 export type ConversationStartedMessage = {
@@ -154,3 +155,38 @@ export interface FlowClientEventMap {
   socketClose: Event;
   socketError: Event;
 }
+
+export type FlowMessageCallback = TypedEventListener<
+  FlowClientEventMap,
+  'message'
+>;
+
+export type FlowAgentAudioCallback = TypedEventListener<
+  FlowClientEventMap,
+  'agentAudio'
+>;
+
+export type FlowSocketInitializedCallback = TypedEventListener<
+  FlowClientEventMap,
+  'socketInitialized'
+>;
+
+export type FlowSocketOpenCallback = TypedEventListener<
+  FlowClientEventMap,
+  'socketOpen'
+>;
+
+export type FlowSocketClosingCallback = TypedEventListener<
+  FlowClientEventMap,
+  'socketClosing'
+>;
+
+export type FlowSocketCloseCallback = TypedEventListener<
+  FlowClientEventMap,
+  'socketClose'
+>;
+
+export type FlowSocketErrorCallback = TypedEventListener<
+  FlowClientEventMap,
+  'socketError'
+>;

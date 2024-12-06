@@ -33,47 +33,62 @@ export class SpeakerDiarizedTranscription extends TypedEventTarget<{
       return;
     }
 
-    console.log(type, JSON.stringify(chunk));
+    console.debug(type, JSON.stringify(chunk));
 
     const items = [...this._items];
 
-    const itemBelongingToThisChunk = items.findLast((item) => {
-      if (item.speaker !== chunk.speaker) return false;
-      if (item.startTime > chunk.startTime) return false;
-      if (
-        item.endTime !== undefined &&
-        chunk.endTime !== undefined &&
-        item.endTime < chunk.startTime
-      )
-        return false;
-      return true;
-    });
+    const lastItemWithCurrentSpeakerIndex = items.findLastIndex(
+      (item) => item.speaker === chunk.speaker,
+    );
 
-    // If there is no item belonging to this chunk, insert a new item at the right chronological index
-    if (!itemBelongingToThisChunk) {
-      let indexToInsert = items.length;
-      while (items[indexToInsert - 1]?.startTime > chunk.startTime) {
-        indexToInsert--;
-      }
-      items.splice(indexToInsert, 0, {
-        speaker: chunk.speaker,
-        partialText: type === 'partial' ? chunk.text : undefined,
-        text: type === 'final' ? chunk.text : undefined,
-        startTime: chunk.startTime,
-        endTime: chunk.endTime,
-      });
-    } else {
-      // Else, update existing item
-      const index = items.indexOf(itemBelongingToThisChunk);
-      items[index] = {
-        ...items[index],
+    // Clear partials for item with last speaker, regardless of whatever else we do to it.
+    if (lastItemWithCurrentSpeakerIndex >= 0) {
+      items[lastItemWithCurrentSpeakerIndex] = {
+        ...items[lastItemWithCurrentSpeakerIndex],
+        partialText: undefined,
+      };
+    }
+    const lastItemWithCurrentSpeaker =
+      lastItemWithCurrentSpeakerIndex >= 0
+        ? items.at(lastItemWithCurrentSpeakerIndex)
+        : undefined;
+
+    const shouldAppendToLastSpeakerItem =
+      lastItemWithCurrentSpeaker &&
+      (lastItemWithCurrentSpeaker === items.at(-1) ||
+        !lastItemWithCurrentSpeaker.endTime ||
+        lastItemWithCurrentSpeaker.endTime >= chunk.startTime);
+
+    if (shouldAppendToLastSpeakerItem) {
+      items[lastItemWithCurrentSpeakerIndex] = {
+        ...items[lastItemWithCurrentSpeakerIndex],
         partialText: type === 'partial' ? chunk.text : undefined,
         text:
           type === 'final'
-            ? `${items[index].text ?? ''}${chunk.text}`
-            : items[index].text,
+            ? `${items[lastItemWithCurrentSpeakerIndex].text ?? ''}${chunk.text}`
+            : items[lastItemWithCurrentSpeakerIndex].text,
         endTime: chunk.endTime,
       };
+    } else {
+      let i = items.length - 1;
+      do {
+        const item = items.at(i);
+
+        // If this chunk starts after the current item does, keep looking
+        if (item && item.startTime > chunk.startTime) {
+          i--;
+          continue;
+        }
+
+        items.splice(i + 1, 0, {
+          speaker: chunk.speaker,
+          partialText: type === 'partial' ? chunk.text : undefined,
+          text: type === 'final' ? chunk.text : undefined,
+          startTime: chunk.startTime,
+          endTime: chunk.endTime,
+        });
+        break;
+      } while (i >= 0);
     }
 
     this._items = items;

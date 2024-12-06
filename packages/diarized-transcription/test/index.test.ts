@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { SpeakerDiarizedTranscription } from '../src';
 import { speakerAgentConversation } from './fixtures/speaker-agent-conversation';
 import { crossTalkConversation } from './fixtures/cross-talk';
+import { threeSpeakerConversation } from './fixtures/three-speaker-conversation';
 
 test('empty messages', () => {
   const diarizedTranscription = new SpeakerDiarizedTranscription();
@@ -15,7 +16,7 @@ test('empty messages', () => {
     diarizedTranscription.handleTranscriptionChunk('partial', {
       speaker: 'Unknown',
       text: '',
-      startTime: time,
+      startTime: 0,
       endTime: time++,
     });
   }
@@ -37,7 +38,7 @@ test('single speaker (partials)', () => {
     diarizedTranscription.handleTranscriptionChunk('partial', {
       speaker: 'Unknown',
       text,
-      startTime: time,
+      startTime: 0,
       endTime: ++time,
     });
   }
@@ -50,14 +51,16 @@ test('single speaker (partials)', () => {
   expect(diarizedTranscription.items[0].text).undefined;
 });
 
-test('single speaker (partials and finals)', () => {
+test('partials and finals', () => {
   const diarizedTranscription = new SpeakerDiarizedTranscription();
   const onChange = mock.fn();
   diarizedTranscription.addEventListener('change', onChange);
 
-  for (const event of speakerAgentConversation) {
-    diarizedTranscription.handleTranscriptionChunk(event[0], event[1]);
+  for (const [type, chunk] of speakerAgentConversation) {
+    diarizedTranscription.handleTranscriptionChunk(type, chunk);
   }
+
+  // console.log(diarizedTranscription.items);
 
   expect(onChange.mock.calls.length).equal(speakerAgentConversation.length);
   expect(diarizedTranscription.items.length).equal(2);
@@ -87,8 +90,6 @@ test('clear partials from all previous messages', () => {
     diarizedTranscription.handleTranscriptionChunk(type, chunk);
   }
 
-  console.log(diarizedTranscription.items);
-
   expect(onChange.mock.calls.length).equal(crossTalkConversation.length);
   expect(diarizedTranscription.items.length).equal(7);
 
@@ -97,4 +98,17 @@ test('clear partials from all previous messages', () => {
       expect(item.partialText).undefined;
     }
   }
+});
+
+test('3 speakers', () => {
+  const diarizedTranscription = new SpeakerDiarizedTranscription();
+  const onChange = mock.fn();
+  diarizedTranscription.addEventListener('change', onChange);
+
+  for (const [type, chunk] of threeSpeakerConversation) {
+    diarizedTranscription.handleTranscriptionChunk(type, chunk);
+  }
+
+  expect(onChange.mock.calls.length).equal(threeSpeakerConversation.length);
+  expect(diarizedTranscription.items.length).equal(4);
 });
