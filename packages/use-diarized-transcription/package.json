@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/use-diarized-transcription",
-  "version": "0.0.1-rc3",
+  "version": "0.0.1-rc4",
   "description": "React wrapper for @speechmatics/diarized-transcription",
   "main": "dist/index.cjs",
   "module": "./dist/index.js",
@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/chai": "^5.0.1",
     "@types/react": "^18.3.12",
-    "chai": "^5.1.2"
+    "chai": "^5.1.2",
+    "rollup-plugin-preserve-directives": "^0.4.0"
   }
 }

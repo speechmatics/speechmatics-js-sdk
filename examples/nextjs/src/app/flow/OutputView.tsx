@@ -3,6 +3,7 @@ import { useErrorBoundary } from 'react-error-boundary';
 import {
   useFlowEventListener,
   useFlowTranscript,
+  type SpeakerDiarizedTranscriptionItem,
 } from '@speechmatics/flow-client-react';
 
 export function OutputView() {

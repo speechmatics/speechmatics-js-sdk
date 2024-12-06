@@ -18,6 +18,15 @@ export default function rollup() {
     },
   };
 
+  const cjs = {
+    plugins: [esbuild()],
+    input: 'src/index.ts',
+    output: {
+      file: packageJSON.main,
+      format: 'cjs',
+    },
+  };
+
   const minified = {
     plugins: [
       esbuild({
@@ -50,5 +59,5 @@ export default function rollup() {
     },
   };
 
-  return [esm, minified, typeDefinitions];
+  return [esm, minified, cjs, typeDefinitions];
 }
