@@ -1,0 +1,39 @@
+{
+  "name": "@speechmatics/real-time-client-react",
+  "version": "0.0.1",
+  "description": "React hooks for interacting with the Speechmatics Real-Time API",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "src/", "README.md"],
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
+    "prepare": "pnpm build",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": [
+    "real-time",
+    "API",
+    "ASR",
+    "React",
+    "hooks",
+    "transcription",
+    "speech",
+    "intelligence"
+  ],
+  "dependencies": {
+    "@speechmatics/real-time-client": "workspace:*"
+  },
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
+    "@types/react": "^18.3.12",
+    "rollup-plugin-preserve-directives": "^0.4.0",
+    "typescript-event-target": "^1.1.1"
+  }
+}
