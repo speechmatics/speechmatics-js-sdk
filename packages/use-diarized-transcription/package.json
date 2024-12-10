@@ -1,0 +1,40 @@
+{
+  "name": "@speechmatics/use-diarized-transcription",
+  "version": "0.0.1-rc6",
+  "description": "React wrapper for @speechmatics/diarized-transcription",
+  "main": "dist/index.cjs",
+  "module": "./dist/index.js",
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "files": ["dist/", "README.md"],
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm -C ../diarized-transcription build && pnpm rollup -c",
+    "prepare": "pnpm build",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": [
+    "react",
+    "transcription",
+    "diarization",
+    "speaker",
+    "recognition",
+    "speech",
+    "intelligence",
+    "audio"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@speechmatics/diarized-transcription": "workspace:*",
+    "typescript-event-target": "^1.1.1"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/chai": "^5.0.1",
+    "@types/react": "^18.3.12",
+    "chai": "^5.1.2",
+    "rollup-plugin-preserve-directives": "^0.4.0"
+  }
+}
