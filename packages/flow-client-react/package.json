@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/flow-client-react",
-  "version": "0.1.1",
+  "version": "0.1.2-rc11",
   "description": "React hooks for interacting with the Speechmatics Flow API",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -22,7 +22,8 @@
     "intelligence"
   ],
   "dependencies": {
-    "@speechmatics/flow-client": "workspace:*"
+    "@speechmatics/flow-client": "workspace:*",
+    "@speechmatics/use-diarized-transcription": "workspace:*"
   },
   "author": "",
   "license": "MIT",

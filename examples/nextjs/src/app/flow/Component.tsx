@@ -8,7 +8,11 @@ import { Controls } from './Controls';
 import { Status } from './Status';
 import { ErrorFallback } from '../../lib/components/ErrorFallback';
 import { OutputView } from './OutputView';
-import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
+import {
+  type FlowAgentAudioCallback,
+  useFlow,
+  useFlowEventListener,
+} from '@speechmatics/flow-client-react';
 import { getJWT } from '../actions';
 import {
   usePcmAudioListener,
@@ -26,9 +30,15 @@ export default function Component({
 
   const playAudio = usePlayPcm16Audio(audioContext);
 
-  useFlowEventListener('agentAudio', (audio) => {
-    playAudio(audio.data);
-  });
+  useFlowEventListener(
+    'agentAudio',
+    useCallback<FlowAgentAudioCallback>(
+      (audio) => {
+        playAudio(audio.data);
+      },
+      [playAudio],
+    ),
+  );
 
   const [loading, setLoading] = useState(false);
 
