@@ -152,7 +152,7 @@ See [Webpack documentation](https://webpack.js.org/plugins/copy-webpack-plugin) 
 
 Then use `/js/pcm-audio-worklet.min.js` (or whatever other path you define) as the path to the script:
 
-```typescript
+```TSX
 // WEBPACK EXAMPLE
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
@@ -170,7 +170,7 @@ function App() {
 Vite supports referencing bundled code by URL for use in Workers. This can be used like so:
 
 
-```typescript
+```TSX
 // VITE EXAMPLE
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import workletScriptURL from '@speechmatics/browser-audio-input/pcm-audio-worklet.min.js?url';
