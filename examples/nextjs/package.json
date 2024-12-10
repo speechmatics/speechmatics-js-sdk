@@ -10,10 +10,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@speechmatics/flow-client-react": "workspace:*",
-    "@speechmatics/browser-audio-input-react": "workspace:*",
-    "@speechmatics/auth": "workspace:*",
     "@picocss/pico": "^2.0.6",
+    "@speechmatics/auth": "workspace:*",
+    "@speechmatics/browser-audio-input": "workspace:*",
+    "@speechmatics/browser-audio-input-react": "workspace:*",
+    "@speechmatics/flow-client-react": "workspace:*",
     "next": "15.0.1",
     "react": "19.0.0-rc-69d4b800-20241021",
     "react-dom": "19.0.0-rc-69d4b800-20241021",
@@ -23,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "copy-webpack-plugin": "^12.0.2",
     "typescript": "^5"
   }
 }

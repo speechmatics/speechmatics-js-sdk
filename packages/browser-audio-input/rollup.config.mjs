@@ -1,4 +1,4 @@
-import esbuild from 'rollup-plugin-esbuild';
+import esbuildPlugin from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
 import packageJSON from './package.json' assert { type: 'json' };
@@ -9,7 +9,7 @@ import packageJSON from './package.json' assert { type: 'json' };
 /** @returns {import("rollup").RollupOptions[]} */
 export default function rollup() {
   const esm = {
-    plugins: [esbuild()],
+    plugins: [esbuildPlugin()],
     input: 'src/index.ts',
     output: {
       file: packageJSON.module,
@@ -20,7 +20,7 @@ export default function rollup() {
 
   const minified = {
     plugins: [
-      esbuild({
+      esbuildPlugin({
         minify: true,
         optimizeDeps: {
           include: ['typescript-event-target'],
@@ -32,6 +32,21 @@ export default function rollup() {
       file: packageJSON.module.replace(/\.js$/, '.min.js'),
       name: 'BrowserAudioInput',
       format: 'umd',
+      strict: false,
+    },
+  };
+
+  const audioWorklet = {
+    plugins: [
+      esbuildPlugin({
+        minify: true,
+      }),
+    ],
+    input: 'src/worklets/pcm-audio-worklet.ts',
+    output: {
+      file: 'dist/pcm-audio-worklet.min.js',
+      format: 'umd',
+      name: 'PcmAudioProcessor',
       strict: false,
     },
   };
@@ -50,5 +65,5 @@ export default function rollup() {
     },
   };
 
-  return [esm, minified, typeDefinitions];
+  return [esm, minified, audioWorklet, typeDefinitions];
 }
