@@ -1,11 +1,8 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { use, useCallback, useState } from 'react';
 
-import {
-  usePcmMicrophoneAudio,
-  usePlayPcm16Audio,
-} from '../../lib/audio-hooks';
+import { usePlayPcm16Audio } from '../../lib/audio-hooks';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Controls } from './Controls';
 import { Status } from './Status';
@@ -13,6 +10,10 @@ import { ErrorFallback } from '../../lib/components/ErrorFallback';
 import { OutputView } from './OutputView';
 import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 import { getJWT } from '../actions';
+import {
+  usePcmAudioListener,
+  usePcmAudioRecorder,
+} from '@speechmatics/browser-audio-input-react';
 
 export default function Component({
   personas,
@@ -31,13 +32,12 @@ export default function Component({
 
   const [loading, setLoading] = useState(false);
 
-  const [mediaStream, setMediaStream] = useState<MediaStream>();
+  const { startRecording, stopRecording, mediaStream, isRecording } =
+    usePcmAudioRecorder();
 
-  const { startRecording, stopRecording, isRecording } = usePcmMicrophoneAudio(
-    (audio) => {
-      sendAudio(audio);
-    },
-  );
+  usePcmAudioListener((audio) => {
+    sendAudio(audio);
+  });
 
   const startSession = useCallback(
     async ({
@@ -47,7 +47,7 @@ export default function Component({
       try {
         setLoading(true);
 
-        const jwt = await getJWT();
+        const jwt = await getJWT('flow');
 
         const audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
         setAudioContext(audioContext);
@@ -64,8 +64,7 @@ export default function Component({
           },
         });
 
-        const mediaStream = await startRecording(audioContext, deviceId);
-        setMediaStream(mediaStream);
+        await startRecording({ audioContext, deviceId });
       } finally {
         setLoading(false);
       }
