@@ -40,6 +40,13 @@ export type AddTranscriptMessage = {
   metadata: RecognitionMetadata;
 };
 
+export interface AddPartialTranscriptMessage {
+  message: 'AddPartialTranscript';
+  format?: string;
+  metadata: RecognitionMetadata;
+  results: Array<RecognitionResult>;
+}
+
 export type ResponseInterruptedMessage = {
   message: 'ResponseInterrupted';
   content: string;
@@ -98,6 +105,7 @@ export type FlowClientIncomingMessage =
   | ResponseCompletedMessage
   | ResponseInterruptedMessage
   | AddTranscriptMessage
+  | AddPartialTranscriptMessage
   | ConversationEndingMessage
   | ConversationEndedMessage
   | InfoMessage
