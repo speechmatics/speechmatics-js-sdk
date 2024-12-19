@@ -56,6 +56,9 @@ importers:
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react
+      '@speechmatics/real-time-client-react':
+        specifier: workspace:*
+        version: link:../../packages/real-time-client-react
       next:
         specifier: 15.0.1
         version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
@@ -191,6 +194,28 @@ importers:
       yaml:
         specifier: ^2.5.0
         version: 2.5.0
+
+  packages/real-time-client-react:
+    dependencies:
+      '@speechmatics/real-time-client':
+        specifier: workspace:*
+        version: link:../real-time-client
+      react:
+        specifier: ^18 || ^19
+        version: 18.0.0
+    devDependencies:
+      '@rollup/plugin-inject':
+        specifier: ^5.0.5
+        version: 5.0.5(rollup@4.21.2)
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
+      rollup-plugin-preserve-directives:
+        specifier: ^0.4.0
+        version: 0.4.0(rollup@4.21.2)
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
 
 packages:
 
