@@ -1,10 +1,11 @@
 export function LanguageSelect({
   languages,
-}: { languages: [code: string, displayName: string][] }) {
+  disabled,
+}: { languages: [code: string, displayName: string][]; disabled?: boolean }) {
   return (
     <label>
       Select language
-      <select defaultValue="en" name="language">
+      <select defaultValue="en" name="language" disabled={disabled}>
         {languages.map(([code, displayName]) => (
           <option key={code} value={code} label={displayName} />
         ))}

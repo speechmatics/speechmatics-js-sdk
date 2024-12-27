@@ -17,7 +17,7 @@ import { LanguageSelect } from './LanguageSelect';
 export function Controls({
   languages,
 }: { languages: [code: string, displayName: string][] }) {
-  const { startTranscription, stopTranscription, sendAudio } =
+  const { startTranscription, stopTranscription, sendAudio, socketState } =
     useRealtimeTranscription();
 
   const { isRecording, startRecording, stopRecording } = usePcmAudioRecorder();
@@ -64,7 +64,7 @@ export function Controls({
       <form onSubmit={handleSubmit}>
         <div className="grid">
           <MicrophoneSelect disabled={isRecording} />
-          <LanguageSelect languages={languages} />
+          <LanguageSelect languages={languages} disabled={isRecording} />
         </div>
         <div className="grid">
           <StartStopButton />

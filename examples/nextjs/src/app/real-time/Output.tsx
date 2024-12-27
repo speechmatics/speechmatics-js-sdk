@@ -16,22 +16,61 @@ export function Output() {
 }
 
 export function Component() {
-  const [transcription, dispatch] = useReducer(transcriptReducer, '');
+  const [transcription, dispatch] = useReducer(transcriptReducer, []);
 
   useRealtimeEventListener('receiveMessage', (e) => dispatch(e.data));
 
   return (
     <article>
       <header>Output</header>
-      <p>{transcription}</p>
+      <p>
+        {transcription.map(({ text, startTime, endTime, punctuation }) => (
+          <span key={`${text}-${startTime}-${endTime}`}>
+            {!punctuation && ' '}
+            {text}
+          </span>
+        ))}
+      </p>
     </article>
   );
 }
 
-function transcriptReducer(acc: string, event: RealtimeServerMessage) {
+interface Word {
+  text: string;
+  startTime: number;
+  endTime: number;
+  punctuation: boolean;
+  partial?: boolean;
+}
+
+function transcriptReducer(
+  words: readonly Word[],
+  event: RealtimeServerMessage,
+): readonly Word[] {
   if (event.message === 'AddTranscript') {
-    return `${acc} ${event.results.map((result) => result.alternatives?.[0].content).join(' ')}`;
+    return [
+      ...words.filter((w) => !w.partial),
+      ...event.results.map((result) => ({
+        text: result.alternatives?.[0].content ?? '',
+        startTime: result.start_time ?? 0,
+        endTime: result.end_time ?? 0,
+        punctuation: result.type === 'punctuation',
+      })),
+    ];
   }
 
-  return acc;
+  if (event.message === 'AddPartialTranscript') {
+    return [
+      ...words.filter((w) => !w.partial),
+      ...event.results.map((result) => ({
+        text: result.alternatives?.[0].content ?? '',
+        startTime: result.start_time ?? 0,
+        endTime: result.end_time ?? 0,
+        punctuation: result.type === 'punctuation',
+        partial: true,
+      })),
+    ];
+  }
+
+  return words;
 }
