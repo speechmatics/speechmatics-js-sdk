@@ -1,6 +1,14 @@
-import { type ChangeEvent, type FormEvent, useCallback, useState } from 'react';
+'use client';
+import {
+  type ChangeEvent,
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import {
   useAudioDevices,
+  usePcmAudioListener,
   usePcmAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import {
@@ -11,9 +19,20 @@ import { getJWT } from '../actions';
 import { configFromFormData } from '@/lib/real-time/config-from-form-data';
 import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
 
-export function Controls() {
-  const { startTranscription } = useRealtimeTranscription();
-  const { startRecording } = usePcmAudioRecorder();
+export function Controls({ children }: React.PropsWithChildren) {
+  const { startTranscription, stopTranscription, sendAudio } =
+    useRealtimeTranscription();
+
+  const { startRecording, stopRecording } = usePcmAudioRecorder();
+
+  usePcmAudioListener(sendAudio);
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      stopTranscription();
+      stopRecording();
+    };
+  }, [stopTranscription, stopRecording]);
 
   const [deviceId, setDeviceId] = useState<string>();
 
@@ -44,17 +63,7 @@ export function Controls() {
   return (
     <article>
       <form onSubmit={handleSubmit}>
-        <div className="grid">
-          <MicrophoneSelect setDeviceId={setDeviceId} />
-          <label>
-            Select language
-            <select name="language">
-              <option value="en" label="English" defaultChecked />
-              <option value="es" label="Spanish" />
-              <option value="ar" label="Arabic" />
-            </select>
-          </label>
-        </div>
+        <div className="grid">{children}</div>
         <div className="grid">
           <StartStopButton />
         </div>

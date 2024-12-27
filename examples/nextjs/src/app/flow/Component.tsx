@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { usePlayPcm16Audio } from '../../lib/audio-hooks';
 import { ErrorBoundary } from 'react-error-boundary';

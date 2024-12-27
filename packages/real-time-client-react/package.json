@@ -2,9 +2,9 @@
   "name": "@speechmatics/real-time-client-react",
   "version": "0.0.1",
   "description": "React hooks for interacting with the Speechmatics Real-Time API",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "files": ["dist/", "src/", "README.md"],
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",

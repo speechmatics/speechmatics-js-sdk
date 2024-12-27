@@ -1,3 +1,4 @@
+'use client';
 import { usePcmAudioRecorder } from '@speechmatics/browser-audio-input-react';
 import { useRealtimeTranscription } from '@speechmatics/real-time-client-react';
 

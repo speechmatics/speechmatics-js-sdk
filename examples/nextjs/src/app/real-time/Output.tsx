@@ -1,3 +1,4 @@
+'use client';
 import { useReducer } from 'react';
 import {
   type RealtimeServerMessage,

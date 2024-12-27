@@ -1,14 +1,28 @@
-import { fetchPersonas, FlowProvider } from '@speechmatics/flow-client-react';
-import Component from './Component';
+import { FlowProvider } from '@speechmatics/flow-client-react';
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { Controls } from './Controls';
+import { Status } from './Status';
+import { OutputView } from './OutputView';
+import { PersonaSelect } from './PersonaSelect';
+import { MicrophoneSelect } from '@/lib/components/MicrophoneSelect';
 
-export default async function Home() {
-  const personas = await fetchPersonas();
-
+export default function Home() {
   return (
     <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <FlowProvider appId="nextjs-example">
-        <Component personas={personas} />
+        <section>
+          <h3>Flow Example</h3>
+          <section className="grid">
+            <Controls>
+              <MicrophoneSelect />
+              <PersonaSelect />
+            </Controls>
+            <Status />
+          </section>
+          <section>
+            <OutputView />
+          </section>
+        </section>
       </FlowProvider>
     </PcmAudioRecorderProvider>
   );
