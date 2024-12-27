@@ -1,12 +1,14 @@
 'use client';
 import { type FormEventHandler, useCallback, useState } from 'react';
 import { useFlow } from '@speechmatics/flow-client-react';
+import { MicrophoneSelect } from '@/lib/components/MicrophoneSelect';
+import { PersonaSelect } from './PersonaSelect';
 
-export function Controls({ children }: React.PropsWithChildren) {
+export function Controls({
+  personas,
+}: { personas: Record<string, { name: string }> }) {
   const { socketState } = useFlow();
   const connected = socketState === 'open';
-
-  const [deviceId, setDeviceId] = useState<string>();
 
   const startSession = useCallback<FormEventHandler>((e) => {
     e.preventDefault();
@@ -15,7 +17,10 @@ export function Controls({ children }: React.PropsWithChildren) {
   return (
     <article>
       <form onSubmit={startSession}>
-        <div className="grid">{children}</div>
+        <div className="grid">
+          <MicrophoneSelect />
+          <PersonaSelect personas={personas} />
+        </div>
         <div className="grid">
           <button type="submit">Start conversation</button>
         </div>

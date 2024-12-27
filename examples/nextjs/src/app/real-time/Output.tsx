@@ -4,8 +4,18 @@ import {
   type RealtimeServerMessage,
   useRealtimeEventListener,
 } from '@speechmatics/real-time-client-react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '@/lib/components/ErrorFallback';
 
 export function Output() {
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Component />
+    </ErrorBoundary>
+  );
+}
+
+export function Component() {
   const [transcription, dispatch] = useReducer(transcriptReducer, '');
 
   useRealtimeEventListener('receiveMessage', (e) => dispatch(e.data));

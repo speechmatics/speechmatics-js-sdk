@@ -3,7 +3,7 @@
 import { useAudioDevices } from '@speechmatics/browser-audio-input-react';
 import type { ChangeEvent } from 'react';
 
-export function MicrophoneSelect() {
+export function MicrophoneSelect({ disabled }: { disabled?: boolean }) {
   const devices = useAudioDevices();
 
   switch (devices.permissionState) {
@@ -28,7 +28,7 @@ export function MicrophoneSelect() {
       return (
         <label>
           Select audio device
-          <select>
+          <select name="deviceId" disabled={disabled}>
             {devices.deviceList.map((d) => (
               <option key={d.deviceId} value={d.deviceId}>
                 {d.label}

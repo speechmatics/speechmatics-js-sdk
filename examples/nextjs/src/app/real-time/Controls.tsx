@@ -1,13 +1,6 @@
 'use client';
+import { type FormEvent, useCallback, useEffect } from 'react';
 import {
-  type ChangeEvent,
-  type FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
-import {
-  useAudioDevices,
   usePcmAudioListener,
   usePcmAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
@@ -18,12 +11,16 @@ import {
 import { getJWT } from '../actions';
 import { configFromFormData } from '@/lib/real-time/config-from-form-data';
 import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
+import { MicrophoneSelect } from '@/lib/components/MicrophoneSelect';
+import { LanguageSelect } from './LanguageSelect';
 
-export function Controls({ children }: React.PropsWithChildren) {
+export function Controls({
+  languages,
+}: { languages: [code: string, displayName: string][] }) {
   const { startTranscription, stopTranscription, sendAudio } =
     useRealtimeTranscription();
 
-  const { startRecording, stopRecording } = usePcmAudioRecorder();
+  const { isRecording, startRecording, stopRecording } = usePcmAudioRecorder();
 
   usePcmAudioListener(sendAudio);
   // Cleanup
@@ -34,15 +31,16 @@ export function Controls({ children }: React.PropsWithChildren) {
     };
   }, [stopTranscription, stopRecording]);
 
-  const [deviceId, setDeviceId] = useState<string>();
-
   const startSession = useCallback(
-    async (config: RealtimeTranscriptionConfig) => {
+    async ({
+      deviceId,
+      ...config
+    }: RealtimeTranscriptionConfig & { deviceId?: string }) => {
       const jwt = await getJWT('rt');
       await startTranscription(jwt, config);
       await startRecording({ deviceId, sampleRate: RECORDING_SAMPLE_RATE });
     },
-    [startTranscription, startRecording, deviceId],
+    [startTranscription, startRecording],
   );
 
   const handleSubmit = useCallback(
@@ -50,12 +48,13 @@ export function Controls({ children }: React.PropsWithChildren) {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
       const config = configFromFormData(formData);
+      const deviceId = formData.get('deviceId')?.toString();
       config.audio_format = {
         type: 'raw',
         encoding: 'pcm_f32le',
         sample_rate: RECORDING_SAMPLE_RATE,
       };
-      startSession(config);
+      startSession({ deviceId, ...config });
     },
     [startSession],
   );
@@ -63,7 +62,10 @@ export function Controls({ children }: React.PropsWithChildren) {
   return (
     <article>
       <form onSubmit={handleSubmit}>
-        <div className="grid">{children}</div>
+        <div className="grid">
+          <MicrophoneSelect disabled={isRecording} />
+          <LanguageSelect languages={languages} />
+        </div>
         <div className="grid">
           <StartStopButton />
         </div>
@@ -92,57 +94,4 @@ function StartStopButton() {
   }
 
   return <button type="submit">Transcribe audio</button>;
-}
-
-function MicrophoneSelect({
-  setDeviceId,
-}: { setDeviceId: (deviceId: string) => void }) {
-  const devices = useAudioDevices();
-
-  switch (devices.permissionState) {
-    case 'prompt':
-      return (
-        <label>
-          Enable mic permissions
-          <select
-            onClick={devices.promptPermissions}
-            onKeyDown={devices.promptPermissions}
-          />
-        </label>
-      );
-    case 'prompting':
-      return (
-        <label>
-          Enable mic permissions
-          <select aria-busy="true" />
-        </label>
-      );
-    case 'granted': {
-      const onChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setDeviceId(e.target.value);
-      };
-      return (
-        <label>
-          Select audio device
-          <select onChange={onChange}>
-            {devices.deviceList.map((d) => (
-              <option key={d.deviceId} value={d.deviceId}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      );
-    }
-    case 'denied':
-      return (
-        <label>
-          Microphone permission disabled
-          <select disabled />
-        </label>
-      );
-    default:
-      devices satisfies never;
-      return null;
-  }
 }
