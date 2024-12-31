@@ -273,7 +273,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     );
 
     this.jitterBuffer = new JitterBuffer(
-      getBytesPerMs() * this.audioBufferingMs,
+      TTS_BYTES_PER_MS * this.audioBufferingMs,
     );
 
     this.jitterBuffer.addEventListener('flush', ({ data }) => {
@@ -365,8 +365,8 @@ const DEFAULT_AUDIO_FORMAT = {
   sample_rate: 16000,
 } as const;
 
-function getBytesPerMs() {
-  const sampleRate = 16_000; // TODO see if this can ever be different
-  const bytesPerSample = 2; // Int16 = 2 bytes
-  return (sampleRate * bytesPerSample) / 1000;
-}
+// TTS from the server uses fixed sample rate of 16_000 samples/sec
+// The encoding is always pcm16sle (2 bytes per sample)
+const TTS_SAMPLE_RATE = 16_000;
+const TTS_BYTES_PER_SAMPLE = 2;
+const TTS_BYTES_PER_MS = (TTS_SAMPLE_RATE * TTS_BYTES_PER_SAMPLE) / 1000;
