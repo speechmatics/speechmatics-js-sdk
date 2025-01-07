@@ -26,6 +26,7 @@ function Component() {
     showBoundary(e);
   });
 
+  // TODO show transcript/other output here
   return (
     <article>
       <header>Output</header>
