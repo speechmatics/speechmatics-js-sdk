@@ -7,27 +7,20 @@ import {
   type FlowClientOutgoingMessage,
   type StartConversationMessage,
 } from './events';
+import { JitterBuffer } from './jitter-buffer';
 
 export interface FlowClientOptions {
   appId: string;
   audioBufferingMs?: number;
   // Sometimes it's useful to override the default Websocket binary type
   // e.g. in React Native
-  websocketBinaryType?: 'blob' | 'arraybuffer';
+  websocketBinaryType?: WebSocket['binaryType'];
 }
 
 export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
   public readonly appId: string;
   private readonly audioBufferingMs: number;
-
-  // Buffer for audio received from server, rather than playing it back immediately.
-  // This makes playback more resilient to poor network conditions.
-  //
-  // More sophisticated buffering strategies will likely be implemented soon,
-  // but for now we have a configurable initial delay.
-  private agentAudioQueue:
-    | { type: 'blob'; queue: Blob[] }
-    | { type: 'arraybuffer'; queue: ArrayBuffer[] };
+  private readonly websocketBinaryType: WebSocket['binaryType'];
 
   constructor(
     public readonly server: string,
@@ -40,18 +33,16 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     super();
     this.appId = appId;
     this.audioBufferingMs = audioBufferingMs;
-
-    this.agentAudioQueue = {
-      type: websocketBinaryType,
-      queue: [],
-    };
+    this.websocketBinaryType = websocketBinaryType;
   }
 
   // active websocket
   private ws: WebSocket | null = null;
 
-  private serverSeqNo = 0;
-  private clientSeqNo = 0;
+  private serverSeqNo = 0; // tracks sequence of server sent audio
+  private clientSeqNo = 0; // tracks sequence of client sent audio
+
+  private jitterBuffer: JitterBuffer | null = null;
 
   get socketState() {
     if (!this.ws) return undefined;
@@ -78,7 +69,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       wsUrl.searchParams.append('sm-app', this.appId);
 
       this.ws = new WebSocket(wsUrl.toString());
-      this.ws.binaryType = this.agentAudioQueue.type;
+      this.ws.binaryType = this.websocketBinaryType;
 
       this.dispatchTypedEvent(
         'socketInitialized',
@@ -151,37 +142,26 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       buffering: this.audioBufferingMs / 1000,
     });
 
-    if (data instanceof Blob && this.agentAudioQueue.type === 'blob') {
-      this.agentAudioQueue.queue.push(data);
+    if (data instanceof Blob && this.websocketBinaryType === 'blob') {
+      data
+        .arrayBuffer()
+        .then((b) => this.jitterBuffer?.enqueue(new Int16Array(b)))
+        .catch((e) => {
+          throw new SpeechmaticsFlowError(
+            'BadBinaryMessage',
+            'Failed to decode array buffer',
+            { cause: e },
+          );
+        });
     } else if (
       data instanceof ArrayBuffer &&
-      this.agentAudioQueue.type === 'arraybuffer'
+      this.websocketBinaryType === 'arraybuffer'
     ) {
-      this.agentAudioQueue.queue.push(data);
+      this.jitterBuffer?.enqueue(new Int16Array(data));
     } else {
       throw new SpeechmaticsFlowError(
         'BadBinaryMessage',
-        `Could not process audio: expecting audio to be ${this.agentAudioQueue.type} but got ${data.constructor.name}`,
-      );
-    }
-
-    // Flush audio queue and dispatch play events after buffer delay
-    setTimeout(() => {
-      this.flushAgentAudioQueue();
-    }, this.audioBufferingMs);
-  }
-
-  private async flushAgentAudioQueue() {
-    while (this.agentAudioQueue.queue.length) {
-      const data = this.agentAudioQueue.queue.shift();
-      if (!data) continue;
-
-      const arrayBuffer =
-        data instanceof Blob ? await data.arrayBuffer() : data;
-
-      this.dispatchTypedEvent(
-        'agentAudio',
-        new AgentAudioEvent(new Int16Array(arrayBuffer)),
+        `Could not process audio: expecting audio to be ${this.websocketBinaryType} but got ${data.constructor.name}`,
       );
     }
   }
@@ -203,6 +183,13 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.clientSeqNo = data.seq_no;
     }
 
+    if (
+      data.message === 'ResponseCompleted' ||
+      data.message === 'ResponseInterrupted'
+    ) {
+      this.jitterBuffer?.flush();
+    }
+
     this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
   }
 
@@ -212,10 +199,9 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }
   }
 
-  public sendAudio(pcm16Data: ArrayBufferLike) {
-    if (this.socketState === 'open') {
-      this.ws?.send(pcm16Data);
-    }
+  public sendAudio(pcmData: ArrayBufferLike) {
+    if (this.socketState !== 'open') return;
+    this.ws?.send(pcmData);
   }
 
   async startConversation(
@@ -229,6 +215,20 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     },
   ) {
     await this.connect(jwt);
+
+    const conversation_config = {
+      ...config,
+      template_variables: {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        ...config.template_variables,
+      },
+    };
+
+    const startMessage: StartConversationMessage = {
+      message: 'StartConversation',
+      conversation_config,
+      audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
+    };
 
     const waitForConversationStarted = new Promise<void>((resolve, reject) => {
       const client = this;
@@ -249,19 +249,6 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
         }
       });
 
-      const conversation_config = {
-        ...config,
-        template_variables: {
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          ...config.template_variables,
-        },
-      };
-
-      const startMessage: StartConversationMessage = {
-        message: 'StartConversation',
-        conversation_config,
-        audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
-      };
       this.sendWebsocketMessage(startMessage);
     });
 
@@ -285,6 +272,16 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       'conversation start',
     );
 
+    this.jitterBuffer = new JitterBuffer(
+      TTS_BYTES_PER_MS * this.audioBufferingMs,
+    );
+
+    this.jitterBuffer.addEventListener('flush', ({ data }) => {
+      for (const buffer of data) {
+        this.dispatchTypedEvent('agentAudio', new AgentAudioEvent(buffer));
+      }
+    });
+
     try {
       await Promise.race([
         waitForConversationStarted,
@@ -302,7 +299,6 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       last_seq_no: this.clientSeqNo,
     });
     this.disconnectSocket();
-    this.flushAgentAudioQueue();
   }
 
   private disconnectSocket() {
@@ -368,3 +364,9 @@ const DEFAULT_AUDIO_FORMAT = {
   encoding: 'pcm_s16le',
   sample_rate: 16000,
 } as const;
+
+// TTS from the server uses fixed sample rate of 16_000 samples/sec
+// The encoding is always pcm16sle (2 bytes per sample)
+const TTS_SAMPLE_RATE = 16_000;
+const TTS_BYTES_PER_SAMPLE = 2;
+const TTS_BYTES_PER_MS = (TTS_SAMPLE_RATE * TTS_BYTES_PER_SAMPLE) / 1000;

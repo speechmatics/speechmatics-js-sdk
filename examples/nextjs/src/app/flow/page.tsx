@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
-      <FlowProvider appId="nextjs-example">
+      <FlowProvider appId="nextjs-example" audioBufferingMs={500}>
         <section>
           <h3>Flow Example</h3>
           <section className="grid">
