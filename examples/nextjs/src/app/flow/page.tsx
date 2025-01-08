@@ -14,6 +14,9 @@ export default async function Home() {
   const personas = await fetchPersonas();
 
   return (
+    // Two context providers:
+    // 1. For the audio recorder (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/browser-audio-input-react/README.md)
+    // 2. For the Flow API client (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/flow-client-react/README.md)
     <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <FlowProvider appId="nextjs-example" audioBufferingMs={500}>
         <section>

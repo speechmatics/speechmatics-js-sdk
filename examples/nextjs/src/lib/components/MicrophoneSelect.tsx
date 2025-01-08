@@ -1,7 +1,6 @@
 'use client';
 
 import { useAudioDevices } from '@speechmatics/browser-audio-input-react';
-import type { ChangeEvent } from 'react';
 
 export function MicrophoneSelect({ disabled }: { disabled?: boolean }) {
   const devices = useAudioDevices();
