@@ -22,10 +22,19 @@ Below is an example of usage in the browser.
 
     ```JSX
     import { RealtimeTranscriptionProvider } from "@speechmatics/real-time-client-react";
+    import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
     function RootLayout({children}) {
-      <RealtimeTranscriptionProvider appId="your-app-id">
-        {children}
+      /*
+        Two context providers wrapping the app:
+          - One for the Speechmatics Real time transcription client
+          - One for capturing PCM microphone audio in the browser
+            see https://www.npmjs.com/package/@speechmatics/browser-audio-input-react
+      */
+      return <RealtimeTranscriptionProvider appId="your-app-id">
+        <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
+          {children}
+        </PcmAudioRecorderProvider>
       </RealtimeTranscriptionProvider>
     }
     ```
@@ -38,8 +47,6 @@ Below is an example of usage in the browser.
       useRealtimeTranscription,
     } from '@speechmatics/real-time-client-react';
     
-    // If targetting the browser, this package is useful for capturing audio
-    // See https://www.npmjs.com/package/@speechmatics/browser-audio-input-react
     import {
       usePcmAudioListener,
       usePcmAudioRecorder,
@@ -59,18 +66,14 @@ Below is an example of usage in the browser.
       usePcmAudioListener(sendAudio);
 
       const startSession = useCallback(
-        async ({
-          deviceId,
-          ...config
-        }: RealtimeTranscriptionConfig & { deviceId?: string }) => {
-
+        async (config: RealtimeTranscriptionConfig) => {
           // getJWT can fetch an ephemeral key based on your setup
           // See our NextJS example: https://github.com/speechmatics/speechmatics-js-sdk/blob/main/examples/nextjs/src/app/actions.ts
           const jwt = await getJWT('rt');
 
           // Start a Speechmatics session, then start recording to stream the audio
           await startTranscription(jwt, config);
-          await startRecording({ deviceId, sampleRate: RECORDING_SAMPLE_RATE });
+          await startRecording({ sampleRate: RECORDING_SAMPLE_RATE });
         },
         [startTranscription, startRecording],
       );
