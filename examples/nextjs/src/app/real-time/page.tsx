@@ -1,4 +1,7 @@
-import { RealtimeTranscriptionProvider } from '@speechmatics/real-time-client-react';
+import {
+  getFeatures,
+  RealtimeTranscriptionProvider,
+} from '@speechmatics/real-time-client-react';
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import { Controls } from './Controls';
 import { Status } from './Status';
@@ -11,15 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const resp = await fetch(
-    'https://asr.api.speechmatics.com/v1/discovery/features',
-  );
-
+  const features = await getFeatures();
   const displayNames = new Intl.DisplayNames(['en'], { type: 'language' });
-
-  // TODO figure out if there's an RT specific discovery endpoint
-  const languages = (await resp.json()).batch.transcription[0].languages.map(
-    (code: string) => [code, displayNames.of(code)] as const,
+  const languages = features.realtime.transcription[0].languages.map(
+    (code) => [code, displayNames.of(code) ?? code] as const,
   );
 
   return (

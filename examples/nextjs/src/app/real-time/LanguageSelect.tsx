@@ -1,7 +1,10 @@
 export function LanguageSelect({
   languages,
   disabled,
-}: { languages: [code: string, displayName: string][]; disabled?: boolean }) {
+}: {
+  languages: (readonly [code: string, displayName: string])[];
+  disabled?: boolean;
+}) {
   return (
     <label>
       Select language

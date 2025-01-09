@@ -16,20 +16,13 @@ import { LanguageSelect } from './LanguageSelect';
 
 export function Controls({
   languages,
-}: { languages: [code: string, displayName: string][] }) {
-  const { startTranscription, stopTranscription, sendAudio, socketState } =
+}: { languages: (readonly [code: string, displayName: string])[] }) {
+  const { startTranscription, stopTranscription, sendAudio } =
     useRealtimeTranscription();
 
   const { isRecording, startRecording, stopRecording } = usePcmAudioRecorder();
 
   usePcmAudioListener(sendAudio);
-  // Cleanup
-  useEffect(() => {
-    return () => {
-      stopTranscription();
-      stopRecording();
-    };
-  }, [stopTranscription, stopRecording]);
 
   const startSession = useCallback(
     async ({
@@ -58,6 +51,14 @@ export function Controls({
     },
     [startSession],
   );
+
+  // Cleanup
+  useEffect(() => {
+    return () => {
+      stopTranscription();
+      stopRecording();
+    };
+  }, [stopTranscription, stopRecording]);
 
   return (
     <article>
