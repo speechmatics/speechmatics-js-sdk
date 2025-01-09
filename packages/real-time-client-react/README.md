@@ -31,8 +31,6 @@ Below is an example of usage in the browser.
     ```
     Note that`RealtimeTranscriptionProvider` is a [client component](https://nextjs.org/docs/app/building-your-application/rendering/client-components), like any other context provider. In NextJS, it's best to put this either in a root layout, or inside another client component. For frameworks like Remix which don't use React Server Components, it should work anywhere.
 
-    _Note for React Native_: Pass `websocketBinaryType="arraybuffer"` to the `FlowProvider` as it is more reliable than the Blob implementation.
-
 1. Inside a component below the `RealtimeTranscriptionProvider`:
     ```JSX
     import {
@@ -46,6 +44,10 @@ Below is an example of usage in the browser.
       usePcmAudioListener,
       usePcmAudioRecorder,
     } from '@speechmatics/browser-audio-input-react';
+
+    // We recommend 16_000Hz sample rate for speech audio.
+    // Anything higher will be downsampled server-side
+    const RECORDING_SAMPLE_RATE = 16_000;
 
     function MyComponent() {
       const { startTranscription, stopTranscription, sendAudio, socketState } =
