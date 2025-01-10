@@ -25,8 +25,10 @@ export function Component() {
 
   return (
     <article>
-      <header>Output</header>
-      <AudioVisualizer analyser={analyser} />
+      <header>
+        Output &nbsp;&nbsp;
+        <AudioVisualizer analyser={analyser} />
+      </header>
       <p>
         {transcription.map(({ text, startTime, endTime, punctuation }) => (
           <span key={`${text}-${startTime}-${endTime}`}>
