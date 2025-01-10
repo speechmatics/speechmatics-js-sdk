@@ -1,6 +1,6 @@
 import {
   type InputAudioEvent,
-  PcmRecorder,
+  PCMRecorder,
 } from '@speechmatics/browser-audio-input';
 import {
   createContext,
@@ -8,89 +8,91 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
   useSyncExternalStore,
 } from 'react';
 
-export interface IPcmAudioRecorderContext {
-  startRecording: PcmRecorder['startRecording'];
-  stopRecording: PcmRecorder['stopRecording'];
-  addEventListener: PcmRecorder['addEventListener'];
-  removeEventListener: PcmRecorder['removeEventListener'];
-  mediaStream: PcmRecorder['mediaStream'];
-  isRecording: PcmRecorder['isRecording'];
+export interface IPCMAudioRecorderContext {
+  startRecording: PCMRecorder['startRecording'];
+  stopRecording: PCMRecorder['stopRecording'];
+  addEventListener: PCMRecorder['addEventListener'];
+  removeEventListener: PCMRecorder['removeEventListener'];
+  analyser: PCMRecorder['analyser'];
+  isRecording: PCMRecorder['isRecording'];
 }
 
-const context = createContext<IPcmAudioRecorderContext | null>(null);
+const context = createContext<IPCMAudioRecorderContext | null>(null);
 
-export function usePcmAudioRecorder() {
+export function usePCMAudioRecorder() {
   const ctx = useContext(context);
   if (!ctx) {
-    throw new Error('Pcm audio recorder context must be provided');
+    throw new Error('PCM audio recorder context must be provided');
   }
 
   return ctx;
 }
 
-export function PcmAudioRecorderProvider({
+export function PCMAudioRecorderProvider({
   workletScriptURL,
   children,
 }: {
   workletScriptURL: string;
   children: React.ReactNode;
 }) {
-  const [pcmRecorder] = useState(() => new PcmRecorder(workletScriptURL));
-
-  const startRecording = useCallback<PcmRecorder['startRecording']>(
-    (options) => pcmRecorder.startRecording(options),
-    [pcmRecorder],
+  const recorder = useMemo(
+    () => new PCMRecorder(workletScriptURL),
+    [workletScriptURL],
   );
 
-  const stopRecording = useCallback<PcmRecorder['stopRecording']>(
-    () => pcmRecorder.stopRecording(),
-    [pcmRecorder],
+  useEffect(() => {
+    return () => recorder.stopRecording();
+  }, [recorder]);
+
+  const startRecording = useCallback<PCMRecorder['startRecording']>(
+    (options) => recorder.startRecording(options),
+    [recorder],
   );
 
-  const addEventListener = useCallback<
-    (typeof pcmRecorder)['addEventListener']
-  >(
-    (type, listener) => pcmRecorder.addEventListener(type, listener),
-    [pcmRecorder],
+  const stopRecording = useCallback<PCMRecorder['stopRecording']>(
+    () => recorder.stopRecording(),
+    [recorder],
   );
 
-  const removeEventListener = useCallback<
-    (typeof pcmRecorder)['removeEventListener']
-  >(
-    (type, listener) => pcmRecorder.removeEventListener(type, listener),
-    [pcmRecorder],
+  const addEventListener = useCallback<PCMRecorder['addEventListener']>(
+    (type, listener) => recorder.addEventListener(type, listener),
+    [recorder],
   );
 
-  const mediaStream = useSyncExternalStore(
+  const removeEventListener = useCallback<PCMRecorder['removeEventListener']>(
+    (type, listener) => recorder.removeEventListener(type, listener),
+    [recorder],
+  );
+
+  const analyser = useSyncExternalStore(
     (onChange: () => void) => {
-      pcmRecorder.addEventListener('recordingStarted', onChange);
-      pcmRecorder.addEventListener('recordingStopped', onChange);
+      recorder.addEventListener('recordingStarted', onChange);
+      recorder.addEventListener('recordingStopped', onChange);
 
       return () => {
-        pcmRecorder.removeEventListener('recordingStarted', onChange);
-        pcmRecorder.removeEventListener('recordingStopped', onChange);
+        recorder.removeEventListener('recordingStarted', onChange);
+        recorder.removeEventListener('recordingStopped', onChange);
       };
     },
-    () => pcmRecorder.mediaStream,
-    () => pcmRecorder.mediaStream,
+    () => recorder.analyser,
+    () => recorder.analyser,
   );
 
   const isRecording = useSyncExternalStore(
     (onChange: () => void) => {
-      pcmRecorder.addEventListener('recordingStarted', onChange);
-      pcmRecorder.addEventListener('recordingStopped', onChange);
+      recorder.addEventListener('recordingStarted', onChange);
+      recorder.addEventListener('recordingStopped', onChange);
 
       return () => {
-        pcmRecorder.removeEventListener('recordingStarted', onChange);
-        pcmRecorder.removeEventListener('recordingStopped', onChange);
+        recorder.removeEventListener('recordingStarted', onChange);
+        recorder.removeEventListener('recordingStopped', onChange);
       };
     },
-    () => pcmRecorder.isRecording,
-    () => pcmRecorder.isRecording,
+    () => recorder.isRecording,
+    () => recorder.isRecording,
   );
 
   const value = useMemo(
@@ -99,7 +101,7 @@ export function PcmAudioRecorderProvider({
       stopRecording,
       addEventListener,
       removeEventListener,
-      mediaStream,
+      analyser,
       isRecording,
     }),
     [
@@ -107,7 +109,7 @@ export function PcmAudioRecorderProvider({
       stopRecording,
       addEventListener,
       removeEventListener,
-      mediaStream,
+      analyser,
       isRecording,
     ],
   );
@@ -115,10 +117,10 @@ export function PcmAudioRecorderProvider({
   return <context.Provider value={value}>{children}</context.Provider>;
 }
 
-export function usePcmAudioListener(cb: (audio: Float32Array) => void) {
+export function usePCMAudioListener(cb: (audio: Float32Array) => void) {
   const ctx = useContext(context);
   if (!ctx) {
-    throw new Error('Pcm audio recorder context must be provided');
+    throw new Error('PCM audio recorder context must be provided');
   }
 
   const { addEventListener, removeEventListener } = ctx;

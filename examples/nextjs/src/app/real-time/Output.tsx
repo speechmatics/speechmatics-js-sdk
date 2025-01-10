@@ -6,6 +6,8 @@ import {
 } from '@speechmatics/real-time-client-react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '@/lib/components/ErrorFallback';
+import { AudioVisualizer } from '@/lib/components/AudioVisualizer';
+import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
 
 export function Output() {
   return (
@@ -19,10 +21,12 @@ export function Component() {
   const [transcription, dispatch] = useReducer(transcriptReducer, []);
 
   useRealtimeEventListener('receiveMessage', (e) => dispatch(e.data));
+  const { analyser } = usePCMAudioRecorder();
 
   return (
     <article>
       <header>Output</header>
+      <AudioVisualizer analyser={analyser} />
       <p>
         {transcription.map(({ text, startTime, endTime, punctuation }) => (
           <span key={`${text}-${startTime}-${endTime}`}>

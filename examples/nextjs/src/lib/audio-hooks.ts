@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect } from 'react';
 
-export function usePlayPcm16Audio(audioContext: AudioContext | undefined) {
+export function usePlayPCM16Audio(audioContext: AudioContext | undefined) {
   const playbackStartTime = useRef(0);
 
   useEffect(() => {

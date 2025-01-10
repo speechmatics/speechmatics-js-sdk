@@ -9,11 +9,11 @@ import { MicrophoneSelect } from '@/lib/components/MicrophoneSelect';
 import { PersonaSelect } from './PersonaSelect';
 import { getJWT } from '../actions';
 import {
-  usePcmAudioListener,
-  usePcmAudioRecorder,
+  usePCMAudioListener,
+  usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
-import { usePlayPcm16Audio } from '@/lib/audio-hooks';
+import { usePlayPCM16Audio } from '@/lib/audio-hooks';
 
 export function Controls({
   personas,
@@ -73,12 +73,12 @@ export function Controls({
 // Hook to set up two way audio between the browser and Flow
 function useFlowWithBrowserAudio() {
   const { startConversation, endConversation, sendAudio } = useFlow();
-  const { startRecording, stopRecording } = usePcmAudioRecorder();
+  const { startRecording, stopRecording } = usePCMAudioRecorder();
   const [audioContext, setAudioContext] = useState<AudioContext>();
-  const playAudio = usePlayPcm16Audio(audioContext);
+  const playAudio = usePlayPCM16Audio(audioContext);
 
   // Send audio to Flow when we receive it from the active input device
-  usePcmAudioListener(sendAudio);
+  usePCMAudioListener(sendAudio);
 
   // Play back audio when we receive it from flow
   useFlowEventListener(
@@ -115,7 +115,7 @@ function useFlowWithBrowserAudio() {
       });
       setAudioContext(audioContext);
 
-      await startRecording({ deviceId, sampleRate: RECORDING_SAMPLE_RATE });
+      await startRecording({ deviceId, audioContext });
     },
     [startConversation, startRecording],
   );

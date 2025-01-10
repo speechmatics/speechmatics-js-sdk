@@ -91,9 +91,9 @@ function App() {
 
 function Component() {
   const { startRecording, stopRecording, mediaStream, isRecording } =
-    usePcmAudioRecorder();
+    usePCMAudioRecorder();
 
-  usePcmAudioListener((audio) => {
+  usePCMAudioListener((audio) => {
     // Handle Float32Array of audio however you like
   });
 }

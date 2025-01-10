@@ -23,16 +23,16 @@ We will add non-React examples soon. If you'd like to request a specific one, fe
 ```typescript
 import {
   type InputAudioEvent,
-  PcmRecorder,
+  PCMRecorder,
 } from '@speechmatics/browser-audio-input';
 
-const pcmRecorder = new PcmRecorder("/path/to/pcm-audio-worklet.min.js"); // <- (see note below about this)
+const PCMRecorder = new PCMRecorder("/path/to/pcm-audio-worklet.min.js"); // <- (see note below about this)
 
-pcmRecorder.addEventListener('recordingStarted', () => {
+PCMRecorder.addEventListener('recordingStarted', () => {
   console.log("Recording started!");
 });
 
-pcmRecorder.startRecording()
+PCMRecorder.startRecording()
 
 ```
 
@@ -86,9 +86,9 @@ Vite supports referencing bundled code by URL for use in Workers. This can be us
 ```typescript
 import {
   type InputAudioEvent,
-  PcmRecorder,
+  PCMRecorder,
 } from '@speechmatics/browser-audio-input';
-import pcmAudioWorkletUrl from "@speechmatics/browser-audio-input/pcm-audio-worklet.min.js?url";
+import PCMAudioWorkletUrl from "@speechmatics/browser-audio-input/pcm-audio-worklet.min.js?url";
 
-const pcmRecorder = new PcmRecorder(pcmAudioWorkletUrl);
+const PCMRecorder = new PCMRecorder(PCMAudioWorkletUrl);
 ```
