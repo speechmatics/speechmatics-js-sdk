@@ -183,3 +183,16 @@ function App() {
   );
 }
 ```
+
+### Creating audio visualizers
+
+The hook `usePCMAudioRecorder` provides an `analyser` object, which is an instance of [`AnalyserNode`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode).
+
+```typescript
+const { analyser } = usePCMAudioRecorder();
+
+```
+
+MDN has a [great guide on audio visualizers for the WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API). The basic idea though is that you can use `requestAnimationFrame` to repeatedly read the [`analyser.getFloatFrequencyData`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatFrequencyData) method to animate whatever DOM elements you like.
+
+See the [`AudioVisualizer`](../../examples/nextjs/src/lib/components/AudioVisualizer.tsx) in the NextJS demo app for a complete example.
