@@ -74,7 +74,7 @@ function MicrophoneSelect({
 
 ### PCM recording
 
-This package exposes a context provider that can be used like so:
+This package exposes a context provider that can be used to share a **single PCM recorder across the app**. This is quite handy, as you can control and the recorder from any component in your app!
 
 ```TSX
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
