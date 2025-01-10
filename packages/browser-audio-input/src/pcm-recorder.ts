@@ -108,10 +108,3 @@ export class AudioModuleRegistrationError extends Error {
     this.name = 'AudioModuleRegistrationError';
   }
 }
-
-export class AnalyserCreationError extends Error {
-  constructor(message: string) {
-    super(`Failed to create analyser: ${message}`);
-    this.name = 'AnalyserCreationError';
-  }
-}
