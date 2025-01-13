@@ -1,21 +1,21 @@
 {
-  "name": "@speechmatics/browser-audio-input-react",
-  "version": "0.1.1",
-  "description": "React hooks for managing audio inputs and permissions across browsers",
-  "type": "module",
-  "exports": ["./dist/index.js"],
+  "name": "@speechmatics/real-time-client-react",
+  "version": "0.0.1",
+  "description": "React hooks for interacting with the Speechmatics Real-Time API",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
-  "files": ["dist/", "README.md"],
+  "files": ["dist/", "src/", "README.md"],
   "scripts": {
-    "build": "rm -rf dist/ && pnpm -C ../browser-audio-input build && pnpm rollup -c",
+    "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
     "prepare": "pnpm build",
     "format": "biome format --write .",
     "lint": "biome lint --write ."
   },
   "keywords": [
-    "Flow",
+    "real-time",
     "API",
+    "ASR",
     "React",
     "hooks",
     "transcription",
@@ -23,7 +23,7 @@
     "intelligence"
   ],
   "dependencies": {
-    "@speechmatics/browser-audio-input": "workspace:*"
+    "@speechmatics/real-time-client": "workspace:*"
   },
   "author": "",
   "license": "MIT",
@@ -31,7 +31,9 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
     "@types/react": "^18.3.12",
+    "rollup-plugin-preserve-directives": "^0.4.0",
     "typescript-event-target": "^1.1.1"
   }
 }
