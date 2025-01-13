@@ -52,7 +52,7 @@ The code for this PCM audio processor is provided by this library at `/dist/pcm-
 
 ### Webpack
 
-At the moment, Webpack doesn't have a great story for `AudioWorklet` scripts (see [Github issue](https://github.com/webpack/webpack/issues/11543)). Instead, we recommend using the `copy-webpack-plugin` to copy our `pcm-audio-worklet.min.js` directly into your `/public` folder:
+At the moment, Webpack doesn't have a great story for `AudioWorklet` scripts (see [Github issue](https://github.com/webpack/webpack/issues/11543)). Instead, we recommend installing the `copy-webpack-plugin` package to be able to copy our `pcm-audio-worklet.min.js` directly into your `/public` folder:
 
 ```javascript
 const CopyPlugin = require("copy-webpack-plugin");

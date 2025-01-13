@@ -1,4 +1,5 @@
 packages:
   - "packages/*"
   - "examples/nextjs"
+  - "examples/nextjs-flow"
   - "examples/nodejs"
