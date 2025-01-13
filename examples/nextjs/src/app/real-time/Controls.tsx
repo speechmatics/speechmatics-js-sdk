@@ -1,8 +1,8 @@
 'use client';
 import { type FormEvent, useCallback, useEffect } from 'react';
 import {
-  usePcmAudioListener,
-  usePcmAudioRecorder,
+  usePCMAudioListener,
+  usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import {
   type RealtimeTranscriptionConfig,
@@ -20,9 +20,9 @@ export function Controls({
   const { startTranscription, stopTranscription, sendAudio } =
     useRealtimeTranscription();
 
-  const { isRecording, startRecording, stopRecording } = usePcmAudioRecorder();
+  const { isRecording, startRecording, stopRecording } = usePCMAudioRecorder();
 
-  usePcmAudioListener(sendAudio);
+  usePCMAudioListener(sendAudio);
 
   const startSession = useCallback(
     async ({
@@ -31,7 +31,10 @@ export function Controls({
     }: RealtimeTranscriptionConfig & { deviceId?: string }) => {
       const jwt = await getJWT('rt');
       await startTranscription(jwt, config);
-      await startRecording({ deviceId, sampleRate: RECORDING_SAMPLE_RATE });
+      const audioContext = new AudioContext({
+        sampleRate: RECORDING_SAMPLE_RATE,
+      });
+      await startRecording({ deviceId, audioContext });
     },
     [startTranscription, startRecording],
   );
@@ -76,7 +79,7 @@ export function Controls({
 }
 
 function StartStopButton() {
-  const { stopRecording } = usePcmAudioRecorder();
+  const { stopRecording } = usePCMAudioRecorder();
   const { stopTranscription } = useRealtimeTranscription();
 
   const stopSession = useCallback(() => {

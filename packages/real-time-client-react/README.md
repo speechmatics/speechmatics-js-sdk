@@ -48,8 +48,8 @@ Below is an example of usage in the browser.
     } from '@speechmatics/real-time-client-react';
     
     import {
-      usePcmAudioListener,
-      usePcmAudioRecorder,
+      usePCMAudioListener,
+      usePCMAudioRecorder,
     } from '@speechmatics/browser-audio-input-react';
 
     // We recommend 16_000Hz sample rate for speech audio.
@@ -60,10 +60,10 @@ Below is an example of usage in the browser.
       const { startTranscription, stopTranscription, sendAudio, socketState } =
         useRealtimeTranscription();
 
-      const { isRecording, startRecording, stopRecording } = usePcmAudioRecorder();
+      const { isRecording, startRecording, stopRecording } = usePCMAudioRecorder();
 
       // Send audio to Speechmatics when captured
-      usePcmAudioListener(sendAudio);
+      usePCMAudioListener(sendAudio);
 
       const startSession = useCallback(
         async (config: RealtimeTranscriptionConfig) => {
