@@ -20,7 +20,7 @@ export function RealtimeTranscriptionProvider({
   // Clean up on unmount (or if the client somehow changes)
   useEffect(() => {
     return () => {
-      if (client.socketState === 'open') {
+      if (client.socketState && client.socketState !== 'closed') {
         client.stopRecognition();
       }
     };
