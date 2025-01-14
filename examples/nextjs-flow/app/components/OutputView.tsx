@@ -29,13 +29,13 @@ function Component() {
       showBoundary(data);
     }
 
-    if (
-      data.message === 'AddTranscript' ||
-      data.message === 'AddPartialTranscript'
-    ) {
-      // TODO update transcript
-      console.log('HEre: ', data);
-    }
+    // Another possible example of how to handle transcript data
+    // if (
+    //   data.message === 'AddTranscript' ||
+    //   data.message === 'AddPartialTranscript'
+    // ) {
+    //   console.log(data);
+    // }
   });
 
   useFlowEventListener('socketError', (e) => {
