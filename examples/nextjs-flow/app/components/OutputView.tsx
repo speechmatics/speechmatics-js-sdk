@@ -9,6 +9,7 @@ import {
   useFlowTranscript,
 } from '../hooks/useFlowTranscript';
 import { wordsToText } from '../hooks/partials';
+import Card from './Card';
 
 export function OutputView() {
   // TODO show transcript/other output here
@@ -43,12 +44,9 @@ function Component() {
   });
 
   return (
-    <div className="card bg-base-100 shadow-lg">
-      <div className="card-body">
-        <h3 className="card-title">Output</h3>
-        <TranscriptContainer transcripts={transcriptGroups} />
-      </div>
-    </div>
+    <Card heading="Output">
+      <TranscriptContainer transcripts={transcriptGroups} />
+    </Card>
   );
 }
 

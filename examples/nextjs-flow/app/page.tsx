@@ -15,7 +15,7 @@ export default async function Home() {
       <FlowProvider appId="nextjs-example" audioBufferingMs={500}>
         <div className="container p-4 mx-auto max-xl:container">
           <h1 className="text-2xl font-bold">Flow Example</h1>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4 my-6">
             <Controls personas={personas} />
             <Status />
           </div>

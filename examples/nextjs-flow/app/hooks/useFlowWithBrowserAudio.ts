@@ -44,7 +44,9 @@ export function useFlowWithBrowserAudio() {
       await startConversation(jwt, {
         config: {
           template_id: personaId,
-          template_variables: {},
+          template_variables: {
+            // We can set up any template variables here
+          },
         },
         audioFormat: {
           type: 'raw',
@@ -58,7 +60,14 @@ export function useFlowWithBrowserAudio() {
       });
       setAudioContext(audioContext);
 
-      await startRecording({ deviceId, sampleRate: RECORDING_SAMPLE_RATE });
+      await startRecording({
+        deviceId,
+        sampleRate: RECORDING_SAMPLE_RATE,
+        audioContext,
+        recordingOptions: {
+          echoCancellation: true,
+        },
+      });
     },
     [startConversation, startRecording],
   );

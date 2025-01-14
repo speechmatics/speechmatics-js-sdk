@@ -1,15 +1,16 @@
 'use client';
 import { useFlow } from '@speechmatics/flow-client-react';
-import { useCallback, useMemo, type FormEventHandler } from 'react';
+import { act, useCallback, useMemo, type FormEventHandler } from 'react';
 import { useFlowWithBrowserAudio } from '../hooks/useFlowWithBrowserAudio';
 import { MicrophoneSelect, Select } from './MicrophoneSelect';
+import Card from './Card';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
 const Button = ({ children, className, ...props }: ButtonProps) => (
-  <button className={`btn btn-block ${className || ''}`} {...props}>
+  <button className={`btn flex-1 text-md ${className || ''}`} {...props}>
     {children}
   </button>
 );
@@ -38,10 +39,10 @@ export function Controls({
     [startSession],
   );
 
-  const actionButton = useMemo(() => {
+  const startButton = useMemo(() => {
     if (socketState === 'open' && sessionId) {
       return (
-        <Button className="btn-secondary" type="button" onClick={stopSession}>
+        <Button className="btn-accent" type="button" onClick={stopSession}>
           End conversation
         </Button>
       );
@@ -65,20 +66,21 @@ export function Controls({
   }, [socketState, stopSession, sessionId]);
 
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <Card>
       <form onSubmit={handleSubmit}>
-        <div className="card-body">
-          <div className="grid grid-cols-2 gap-2">
-            <MicrophoneSelect />
-            <Select label="Select a persona" name="personaId">
-              {Object.entries(personas).map(([id, persona]) => (
-                <option key={id} value={id} label={persona.name} />
-              ))}
-            </Select>
-          </div>
-          <div className="card-actions">{actionButton}</div>
+        <div className="grid grid-cols-2 gap-4">
+          <MicrophoneSelect />
+          <Select label="Select a persona" name="personaId">
+            {Object.entries(personas).map(([id, persona]) => (
+              <option key={id} value={id} label={persona.name} />
+            ))}
+          </Select>
+        </div>
+        <div className="card-actions mt-4">
+          {startButton}
+          <Button className="btn-outline">Clear transcript</Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 }
