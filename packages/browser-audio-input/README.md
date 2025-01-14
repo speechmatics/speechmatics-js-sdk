@@ -32,7 +32,9 @@ PCMRecorder.addEventListener('recordingStarted', () => {
   console.log("Recording started!");
 });
 
-PCMRecorder.startRecording()
+// Later in your app...
+const context = new AudioContext({sampleRate: 16_000})
+PCMRecorder.startRecording({ audioContext })
 
 ```
 

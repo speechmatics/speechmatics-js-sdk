@@ -13,7 +13,6 @@ import {
   usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
-import { usePlayPCM16Audio } from '@/lib/audio-hooks';
 
 export function Controls({
   personas,
@@ -72,30 +71,45 @@ export function Controls({
 
 // Hook to set up two way audio between the browser and Flow
 function useFlowWithBrowserAudio() {
-  const { startConversation, endConversation, sendAudio } = useFlow();
+  const {
+    startConversation,
+    endConversation,
+    sendAudio,
+    createAgentAudioPlaybackNode,
+  } = useFlow();
   const { startRecording, stopRecording } = usePCMAudioRecorder();
   const [audioContext, setAudioContext] = useState<AudioContext>();
-  const playAudio = usePlayPCM16Audio(audioContext);
+  const [playbackAudioContext, setPlaybackAudioContext] =
+    useState<AudioContext>();
 
   // Send audio to Flow when we receive it from the active input device
   usePCMAudioListener(sendAudio);
 
   // Play back audio when we receive it from flow
-  useFlowEventListener(
-    'agentAudio',
-    useCallback(
-      ({ data }: AgentAudioEvent) => {
-        playAudio(data);
-      },
-      [playAudio],
-    ),
-  );
 
   const startSession = useCallback(
     async ({
       personaId,
       deviceId,
     }: { personaId: string; deviceId: string }) => {
+      const audioContext = new AudioContext({
+        sampleRate: RECORDING_SAMPLE_RATE,
+      });
+      setAudioContext(audioContext);
+
+      const playbackAudioContext =
+        navigator.userAgent.search('Firefox') > 0
+          ? new AudioContext({ sampleRate: 16000 })
+          : audioContext;
+
+      setPlaybackAudioContext(playbackAudioContext);
+
+      const playbackNode = await createAgentAudioPlaybackNode({
+        context: playbackAudioContext,
+        processorScriptURL: '/js/agent-audio-processor.js',
+      });
+      playbackNode.connect(playbackAudioContext.destination);
+
       const jwt = await getJWT('flow');
 
       await startConversation(jwt, {
@@ -110,20 +124,17 @@ function useFlowWithBrowserAudio() {
         },
       });
 
-      const audioContext = new AudioContext({
-        sampleRate: RECORDING_SAMPLE_RATE,
-      });
-      setAudioContext(audioContext);
-
       await startRecording({ deviceId, audioContext });
     },
-    [startConversation, startRecording],
+    [startConversation, startRecording, createAgentAudioPlaybackNode],
   );
 
   const stopSession = useCallback(async () => {
     endConversation();
     stopRecording();
-  }, [endConversation, stopRecording]);
+    audioContext?.close();
+    playbackAudioContext?.close();
+  }, [endConversation, stopRecording, audioContext, playbackAudioContext]);
 
   return { startSession, stopSession };
 }

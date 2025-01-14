@@ -53,6 +53,7 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
       echoCancellation: false,
       noiseSuppression: false,
       autoGainControl: false,
+      sampleRate: this.audioContext.sampleRate,
       ...(options.recordingOptions ?? {}),
     };
 
