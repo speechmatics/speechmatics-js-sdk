@@ -12,7 +12,6 @@ import { wordsToText } from '../hooks/partials';
 import Card from './Card';
 
 export function OutputView() {
-  // TODO show transcript/other output here
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Component />
@@ -29,14 +28,6 @@ function Component() {
     if (data.message === 'Error') {
       showBoundary(data);
     }
-
-    // Another possible example of how to handle transcript data
-    // if (
-    //   data.message === 'AddTranscript' ||
-    //   data.message === 'AddPartialTranscript'
-    // ) {
-    //   console.log(data);
-    // }
   });
 
   useFlowEventListener('socketError', (e) => {
