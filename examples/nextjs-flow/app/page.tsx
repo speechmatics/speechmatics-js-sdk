@@ -2,7 +2,7 @@ import { fetchPersonas, FlowProvider } from '@speechmatics/flow-client-react';
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import { Controls } from './components/Controls';
 import { Status } from './components/Status';
-import { OutputView } from './OutputView';
+import { OutputView } from './components/OutputView';
 
 export default async function Home() {
   const personas = await fetchPersonas();
