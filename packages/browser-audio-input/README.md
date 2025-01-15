@@ -12,13 +12,28 @@ npm i @speechmatics/browser-audio-input
 
 ## Usage
 
-### Selecting and managing input devices
+### Querying input devices
+
+```typescript
+import { getAudioDevicesStore } from "@speechmatics/browser-audio-input";
+const audioDevices = getAudioDevicesStore();
+
+audioDevices.addEventListener("changeDevices", (e) => {
+  if (audioDevices.permissionState === "granted") {
+    // This will print all available devices
+    console.log(audioDevices.devices)
+  }
+});
+```
+
 
 See the README for [`@speechmatics/browser-audio-input-react`](https://www.npmjs.com/package/@speechmatics/browser-audio-input-react) for a complete example.
 
 We will add non-React examples soon. If you'd like to request a specific one, feel free to [file an issue](https://github.com/speechmatics/speechmatics-js-sdk/issues)!
 
 ## Capturing PCM audio
+
+To capture PCM audio, you must supply an `AudioContext`. From there, this library deals with dispatching audio events which can be subscribed to:
 
 ```typescript
 import {
@@ -32,9 +47,52 @@ PCMRecorder.addEventListener('recordingStarted', () => {
   console.log("Recording started!");
 });
 
-PCMRecorder.startRecording()
-
+// Later in your app...
+const audioContext = new AudioContext();
+pcmRecorder.startRecording({ audioContext });
 ```
+
+#### Specifying input device
+
+You can also pass a device ID like so:
+
+```typescript
+import { getAudioDevicesStore } from "@speechmatics/browser-audio-input";
+
+const audioContext = new AudioContext();
+
+// This picks the first device ID (assuming permission has been granted)
+const audioDevices = getAudioDevicesStore();
+const deviceId = audioDevices.permissionState === "granted" ? audioDevices.devices[0] : undefined;
+pcmRecorder.startRecording({ audioContext, deviceId });
+```
+
+#### Recording options
+
+You can pass whatever ['MediaTrackSettings'](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings) you want through the `recordingOptions` property:
+
+```typescript
+pcmRecorder.startRecording({
+  audioContext,
+  deviceId,
+  recordingOptions: {
+    noiseSuppression: false,
+  },
+});
+```
+
+By default we enable the following to optimize for speech:
+
+```javascript
+{
+  noiseSuppression: true,
+  echoCancellation: true,
+  autoGainControl: true,
+}
+```
+
+Note that the last two [may not be supported in Safari](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/autoGainControl#browser_compatibility)
+
 
 ### Note about `AudioWorklet` script URL
 

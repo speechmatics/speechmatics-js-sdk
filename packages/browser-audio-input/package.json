@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/browser-audio-input",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Manage audio input devices and persmissions across browsers",
   "exports": {
     ".": "./dist/index.js",
