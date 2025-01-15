@@ -89,28 +89,30 @@ function App() {
 }
 
 ```
-Now all child components can use the `usePCMAudioRecorder()` hook:
+Now all child components can use the provided hooks:
 
-```TSX
-function Component() {
-  const { startRecording, stopRecording, mediaStream, isRecording } =
-    usePCMAudioRecorder();
-
-  usePCMAudioListener((audio) => {
-    // Handle Float32Array of audio however you like
-  });
-}
-
-```
-
-### Start recording
+### Start/stop recording
 
 The only required argument to `startRecording` is an [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext).Note that 
 
+`stopRecording` stops the active `MediaStream` source, but leaves the `AudioContext` open, so it can be re-used.
+
 ```TSX
-function handleStartRecording() {
-  const audioContext = new AudioContext();
-  pcmRecorder.startRecording({ audioContext });
+function RecordingButton() {
+  const { startRecording, stopRecording, isRecording } = usePCMAudioRecorder();
+
+  const onClick = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      const audioContext = new AudioContext();
+      startRecording({ audioContext });
+    }
+  }
+
+  return <button onClick={onClick}>
+    {isRecording ? "Stop recording" : "Start recording" }
+  </button>
 }
 ```
 You can specify the device for recording by passing the `deviceId`option to `startRecording`.
@@ -121,13 +123,13 @@ You can specify the device for recording by passing the `deviceId`option to `sta
 You can pass whatever ['MediaTrackSettings'](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings) you want through the `recordingOptions` property:
 
 ```typescript
-pcmRecorder.startRecording({
-  audioContext,
-  deviceId,
-  recordingOptions: {
-    noiseSuppression: false,
-  },
-});
+    pcmRecorder.startRecording({
+      audioContext,
+      deviceId,
+      recordingOptions: {
+        noiseSuppression: false,
+      },
+    });
 ```
 
 By default we enable the following to optimize for speech:
@@ -142,6 +144,19 @@ By default we enable the following to optimize for speech:
 
 Note that the last two [may not be supported in Safari](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/autoGainControl#browser_compatibility)
 
+### Read recorded data
+
+Recorded data can be read from any child component of the context provider with the `usePCMAudioListener` hook:
+
+```TSX
+
+function Component() {
+  usePCMAudioListener((audio: Float32Array) => {
+    // Handle Float32Array of audio however you like
+  });
+}
+
+```
 
 ### Note about `AudioWorklet` script URL
 
