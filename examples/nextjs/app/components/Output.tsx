@@ -5,7 +5,7 @@ import {
   useRealtimeEventListener,
 } from '@speechmatics/real-time-client-react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ErrorFallback } from '@/lib/components/ErrorFallback';
+import { ErrorFallback } from './ErrorFallback';
 
 export function Output() {
   return (

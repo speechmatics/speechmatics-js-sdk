@@ -2,7 +2,7 @@ import { fetchPersonas, FlowProvider } from '@speechmatics/flow-client-react';
 import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import { Controls } from './components/Controls';
 import { Status } from './components/Status';
-import { OutputView } from './components/OutputView';
+import { TranscriptView } from './components/TranscriptView';
 
 export default async function Home() {
   const personas = await fetchPersonas();
@@ -14,12 +14,14 @@ export default async function Home() {
     <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <FlowProvider appId="nextjs-example" audioBufferingMs={500}>
         <div className="container p-4 mx-auto max-xl:container">
-          <h1 className="text-2xl font-bold">Flow Example</h1>
+          <h1 className="text-2xl font-bold">
+            Speechmatics ❤️ NextJS Flow Example
+          </h1>
           <div className="grid grid-cols-2 gap-4 my-6">
             <Controls personas={personas} />
             <Status />
           </div>
-          <OutputView />
+          <TranscriptView />
         </div>
       </FlowProvider>
     </PcmAudioRecorderProvider>

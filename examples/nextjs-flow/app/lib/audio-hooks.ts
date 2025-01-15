@@ -1,25 +1,23 @@
 import { useRef, useCallback, useEffect } from 'react';
 
 export function usePlayPcm16Audio(audioContext: AudioContext | undefined) {
+  // For browser privacy reasons, the browser doesn't keep track of the current playback
+  // time precisely, so we need to track it ourselves and reset it when done.
   const playbackStartTime = useRef(0);
+
+  // You can call this function to reset the playback start time on button click when stopping the audio
+  const resetPlaybackStartTime = useCallback(() => {
+    playbackStartTime.current = 0;
+  }, []);
 
   useEffect(() => {
     // Reset if audio context is cleared for some reason
     if (!audioContext) {
-      playbackStartTime.current = 0;
+      resetPlaybackStartTime();
     }
-    // Otherwise reset on context close
-    const onStateChange = () => {
-      if (audioContext?.state === 'closed') {
-        playbackStartTime.current = 0;
-      }
-    };
-    audioContext?.addEventListener('statechange', onStateChange);
-    return () =>
-      audioContext?.removeEventListener('statechange', onStateChange);
-  }, [audioContext]);
+  }, [audioContext, resetPlaybackStartTime]);
 
-  return useCallback(
+  const playAudio = useCallback(
     (pcmData: Int16Array) => {
       if (!audioContext) {
         console.warn('Audio context not initialized for playback!');
@@ -53,6 +51,11 @@ export function usePlayPcm16Audio(audioContext: AudioContext | undefined) {
     },
     [audioContext],
   );
+
+  return {
+    playAudio,
+    resetPlaybackStartTime,
+  };
 }
 
 const pcm16ToFloat32 = (pcm16: Int16Array) => {

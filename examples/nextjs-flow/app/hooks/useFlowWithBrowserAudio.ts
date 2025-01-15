@@ -18,7 +18,7 @@ export function useFlowWithBrowserAudio() {
   const { startConversation, endConversation, sendAudio } = useFlow();
   const { startRecording, stopRecording } = usePcmAudioRecorder();
   const [audioContext, setAudioContext] = useState<AudioContext>();
-  const playAudio = usePlayPcm16Audio(audioContext);
+  const { playAudio, resetPlaybackStartTime } = usePlayPcm16Audio(audioContext);
 
   // Send audio to Flow when we receive it from the active input device
   usePcmAudioListener(sendAudio);
@@ -75,7 +75,8 @@ export function useFlowWithBrowserAudio() {
   const stopSession = useCallback(async () => {
     endConversation();
     stopRecording();
-  }, [endConversation, stopRecording]);
+    resetPlaybackStartTime();
+  }, [endConversation, stopRecording, resetPlaybackStartTime]);
 
   return { startSession, stopSession };
 }

@@ -1,6 +1,6 @@
 'use client';
 import { useFlow } from '@speechmatics/flow-client-react';
-import { act, useCallback, useMemo, type FormEventHandler } from 'react';
+import { useCallback, useMemo, type FormEventHandler } from 'react';
 import { useFlowWithBrowserAudio } from '../hooks/useFlowWithBrowserAudio';
 import { MicrophoneSelect, Select } from './MicrophoneSelect';
 import Card from './Card';
@@ -76,10 +76,7 @@ export function Controls({
             ))}
           </Select>
         </div>
-        <div className="card-actions mt-4">
-          {startButton}
-          <Button className="btn-outline">Clear transcript</Button>
-        </div>
+        <div className="card-actions mt-4">{startButton}</div>
       </form>
     </Card>
   );

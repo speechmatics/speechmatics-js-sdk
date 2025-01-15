@@ -2,7 +2,7 @@
 import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 import { useFlowEventListener } from '@speechmatics/flow-client-react';
 import { ErrorFallback } from '../ErrorFallback';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   type TranscriptGroup,
   transcriptGroupKey,
@@ -11,7 +11,7 @@ import {
 import { wordsToText } from '../hooks/partials';
 import Card from './Card';
 
-export function OutputView() {
+export function TranscriptView() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Component />
