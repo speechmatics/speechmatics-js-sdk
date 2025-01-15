@@ -1,100 +1,103 @@
 import { TypedEventTarget } from 'typescript-event-target';
 
+const RECORDING_STARTED = 'recordingStarted';
+const RECORDING_STOPPED = 'recordingStopped';
+const AUDIO = 'audio';
+
 export class InputAudioEvent extends Event {
   constructor(public readonly data: Float32Array) {
-    super('audio');
+    super(AUDIO);
   }
 }
 
-interface PcmRecorderEventMap {
-  recordingStarted: Event;
-  recordingStopped: Event;
-  audio: InputAudioEvent;
+interface PCMRecorderEventMap {
+  [RECORDING_STARTED]: Event;
+  [RECORDING_STOPPED]: Event;
+  [AUDIO]: InputAudioEvent;
 }
 
 export type StartRecordingOptions = {
   deviceId?: string;
   recordingOptions?: MediaTrackConstraints;
-} & ({ audioContext: AudioContext } | { sampleRate: number });
+  audioContext: AudioContext;
+};
 
-export class PcmRecorder extends TypedEventTarget<PcmRecorderEventMap> {
+export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
   constructor(readonly workletScriptURL: string) {
     super();
   }
 
-  private _mediaStream: MediaStream | undefined;
-  public get mediaStream() {
-    return this._mediaStream;
+  private mediaStream: MediaStream | undefined;
+  private audioContext: AudioContext | undefined = undefined;
+  private inputSourceNode: MediaStreamAudioSourceNode | undefined = undefined;
+  private _analyser: AnalyserNode | undefined = undefined;
+
+  get analyser() {
+    return this._analyser;
   }
 
-  private selfManagedAudioContext: AudioContext | undefined = undefined;
-
   get isRecording() {
-    return this._mediaStream?.active ?? false;
+    return this.mediaStream?.active ?? false;
   }
 
   async startRecording(options: StartRecordingOptions) {
-    let audioContext: AudioContext;
-
-    if ('audioContext' in options) {
-      audioContext = options.audioContext;
-    } else {
-      try {
-        audioContext = new AudioContext({ sampleRate: options.sampleRate });
-        this.selfManagedAudioContext = audioContext;
-      } catch (err) {
-        throw new AudioContextCreationError(err);
-      }
-    }
+    this.audioContext = options.audioContext;
 
     try {
-      await audioContext.audioWorklet.addModule(this.workletScriptURL);
+      await this.audioContext.audioWorklet.addModule(this.workletScriptURL);
     } catch (err) {
       throw new AudioModuleRegistrationError(this.workletScriptURL, err);
     }
 
     const constraints = {
-      echoCancellation: false,
-      noiseSuppression: false,
-      autoGainControl: false,
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
       ...(options.recordingOptions ?? {}),
     };
 
-    this._mediaStream = await navigator.mediaDevices.getUserMedia({
+    this.mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         deviceId: options.deviceId,
         ...constraints,
       },
     });
 
-    const input = audioContext.createMediaStreamSource(this._mediaStream);
-    const processor = new AudioWorkletNode(audioContext, 'pcm-audio-processor');
+    this.inputSourceNode = this.audioContext.createMediaStreamSource(
+      this.mediaStream,
+    );
+    const processor = new AudioWorkletNode(
+      this.audioContext,
+      'pcm-audio-processor',
+    );
 
     processor.port.onmessage = (event) => {
       const inputBuffer = event.data;
-      this.dispatchTypedEvent('audio', new InputAudioEvent(inputBuffer));
+      this.dispatchTypedEvent(AUDIO, new InputAudioEvent(inputBuffer));
     };
 
-    input.connect(processor);
-    processor.connect(audioContext.destination);
+    this.inputSourceNode.connect(processor);
+    processor.connect(this.audioContext.destination);
 
-    this.dispatchTypedEvent('recordingStarted', new Event('recordingStarted'));
+    this._analyser = this.audioContext.createAnalyser();
+    this.inputSourceNode.connect(this._analyser);
+
+    this.dispatchTypedEvent(RECORDING_STARTED, new Event(RECORDING_STARTED));
   }
 
   stopRecording() {
-    if (this._mediaStream) {
-      for (const track of this._mediaStream.getTracks()) {
+    if (this.mediaStream) {
+      for (const track of this.mediaStream.getTracks()) {
         track.stop();
       }
-      this._mediaStream = undefined;
+      this.inputSourceNode?.disconnect();
 
-      this.selfManagedAudioContext?.close();
-      this.selfManagedAudioContext = undefined;
+      this.mediaStream = undefined;
+      this.inputSourceNode = undefined;
+      this._analyser = undefined;
+      this.audioContext = undefined;
 
-      this.dispatchTypedEvent(
-        'recordingStopped',
-        new Event('recordingStopped'),
-      );
+      this.dispatchTypedEvent(RECORDING_STOPPED, new Event(RECORDING_STOPPED));
     }
   }
 }
@@ -103,12 +106,5 @@ export class AudioModuleRegistrationError extends Error {
   constructor(moduleUrl: string, error: unknown) {
     super(`Failed to register module from ${moduleUrl}`, { cause: error });
     this.name = 'AudioModuleRegistrationError';
-  }
-}
-
-export class AudioContextCreationError extends Error {
-  constructor(error: unknown) {
-    super('Failed to create audio context', { cause: error });
-    this.name = 'AudioContextCreationError';
   }
 }

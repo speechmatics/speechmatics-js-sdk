@@ -2,7 +2,7 @@ import {
   getFeatures,
   RealtimeTranscriptionProvider,
 } from '@speechmatics/real-time-client-react';
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import type { Metadata } from 'next';
 import { Controls } from './components/Controls';
 import { Output } from './components/Output';
@@ -21,7 +21,7 @@ export default async function Page() {
   );
 
   return (
-    <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
+    <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <RealtimeTranscriptionProvider appId="nextjs-rt-example">
         <section>
           <h3>Real-time Example</h3>
@@ -34,6 +34,6 @@ export default async function Page() {
           </section>
         </section>
       </RealtimeTranscriptionProvider>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }

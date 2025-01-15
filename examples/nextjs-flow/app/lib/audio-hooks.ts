@@ -1,6 +1,6 @@
 import { useRef, useCallback, useEffect } from 'react';
 
-export function usePlayPcm16Audio(audioContext: AudioContext | undefined) {
+export function usePlayPCM16Audio(audioContext: AudioContext | undefined) {
   // For browser privacy reasons, the browser doesn't keep track of the current playback
   // time precisely, so we need to track it ourselves and reset it when done.
   const playbackStartTime = useRef(0);

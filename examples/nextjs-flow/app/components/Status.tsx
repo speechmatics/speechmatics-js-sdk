@@ -1,11 +1,11 @@
 'use client';
-import { usePcmAudioRecorder } from '@speechmatics/browser-audio-input-react';
+import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
 import { useFlow } from '@speechmatics/flow-client-react';
 import Card from './Card';
 
 export function Status() {
   const { socketState, sessionId } = useFlow();
-  const { isRecording } = usePcmAudioRecorder();
+  const { isRecording } = usePCMAudioRecorder();
 
   return (
     <Card heading="Status">
