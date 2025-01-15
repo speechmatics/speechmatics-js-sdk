@@ -93,7 +93,7 @@ Now all child components can use the provided hooks:
 
 ### Start/stop recording
 
-The only required argument to `startRecording` is an [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext).Note that 
+The only required argument to `startRecording` is an [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext). Note that 
 
 `stopRecording` stops the active `MediaStream` source, but leaves the `AudioContext` open, so it can be re-used.
 
