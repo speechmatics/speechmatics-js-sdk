@@ -77,18 +77,21 @@ function MicrophoneSelect({
 This package exposes a context provider that can be used to share a **single PCM recorder across the app**. This is quite handy, as you can control and the recorder from any component in your app!
 
 ```TSX
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL="/path/to/pcm-audio-worklet.min.js">
+    // See note in the next section about the AudioWorklet script
+    <PCMAudioRecorderProvider workletScriptURL="/path/to/pcm-audio-worklet.min.js">
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 
-// Now all child components can use the provided hooks
+```
+Now all child components can use the `usePCMAudioRecorder()` hook:
 
+```TSX
 function Component() {
   const { startRecording, stopRecording, mediaStream, isRecording } =
     usePCMAudioRecorder();
@@ -99,6 +102,46 @@ function Component() {
 }
 
 ```
+
+### Start recording
+
+The only required argument to `startRecording` is an [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext).Note that 
+
+```TSX
+function handleStartRecording() {
+  const audioContext = new AudioContext();
+  pcmRecorder.startRecording({ audioContext });
+}
+```
+You can specify the device for recording by passing the `deviceId`option to `startRecording`.
+
+
+#### Recording options
+
+You can pass whatever ['MediaTrackSettings'](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings) you want through the `recordingOptions` property:
+
+```typescript
+pcmRecorder.startRecording({
+  audioContext,
+  deviceId,
+  recordingOptions: {
+    noiseSuppression: false,
+  },
+});
+```
+
+By default we enable the following to optimize for speech:
+
+```javascript
+{
+  noiseSuppression: true,
+  echoCancellation: true,
+  autoGainControl: true,
+}
+```
+
+Note that the last two [may not be supported in Safari](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/autoGainControl#browser_compatibility)
+
 
 ### Note about `AudioWorklet` script URL
 
@@ -154,13 +197,13 @@ Then use `/js/pcm-audio-worklet.min.js` (or whatever other path you define) as t
 
 ```TSX
 // WEBPACK EXAMPLE
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
+    <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 ```
@@ -172,14 +215,14 @@ Vite supports referencing bundled code by URL for use in Workers. This can be us
 
 ```TSX
 // VITE EXAMPLE
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import workletScriptURL from '@speechmatics/browser-audio-input/pcm-audio-worklet.min.js?url';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL={workletScriptURL}>
+    <PCMAudioRecorderProvider workletScriptURL={workletScriptURL}>
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 ```
