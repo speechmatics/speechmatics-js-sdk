@@ -3,13 +3,9 @@ import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 import { useFlowEventListener } from '@speechmatics/flow-client-react';
 import { ErrorFallback } from '../ErrorFallback';
 import { useEffect, useRef } from 'react';
-import {
-  type TranscriptGroup,
-  transcriptGroupKey,
-  useFlowTranscript,
-} from '../hooks/useFlowTranscript';
-import { wordsToText } from '../hooks/partials';
 import Card from './Card';
+import { type TranscriptGroup, TranscriptManager } from '../hooks/newPartials';
+import { useTranscriptManager } from '../hooks/useTranscriptManager';
 
 export function TranscriptView() {
   return (
@@ -21,7 +17,7 @@ export function TranscriptView() {
 
 function Component() {
   const { showBoundary } = useErrorBoundary();
-  const transcriptGroups = useFlowTranscript();
+  const transcriptGroups = useTranscriptManager();
 
   // Show error boundary on both socket errors and error messages from server
   useFlowEventListener('message', ({ data }) => {
@@ -65,7 +61,14 @@ const TranscriptContainer = ({
       }}
     >
       {transcripts.map((group) => (
-        <div key={transcriptGroupKey(group)} className="mb-2 animate-fade-in">
+        <div
+          key={`${group.type}-${
+            group.type === 'agent'
+              ? group.data[0].startTime
+              : group.data[0].startTime
+          }-${group.type === 'speaker' ? group.speaker : 'agent'}`}
+          className="mb-2 animate-fade-in"
+        >
           {group.type === 'speaker' ? (
             <div className="flex flex-col">
               <div className="flex items-center space-x-2">
@@ -73,7 +76,9 @@ const TranscriptContainer = ({
                   {group.speaker}
                 </span>
               </div>
-              <p className="text-lg">{wordsToText(group.data)}</p>
+              <p className="text-lg">
+                {TranscriptManager.wordsToText(group.data)}
+              </p>
             </div>
           ) : (
             <div className="flex flex-col bg-blue-50 p-2 rounded">

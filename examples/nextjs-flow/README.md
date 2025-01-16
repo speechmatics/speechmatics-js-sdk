@@ -6,6 +6,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 The app is styled using [Tailwind](https://tailwindcss.com/) classnames, along with [DaisyUI](https://daisyui.com/) component library.
 
+## Packages used
+In order to build a React/NextJS app and have Flow working in a browser, this example utilises some of the Speechmatics SDK packages:
+
+- 
+
 # Installation and setup
 
 ## Generate an API key

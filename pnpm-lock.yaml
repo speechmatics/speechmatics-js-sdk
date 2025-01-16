@@ -39,55 +39,6 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  examples/nextjs:
-    dependencies:
-      '@picocss/pico':
-        specifier: ^2.0.6
-        version: 2.0.6
-      '@speechmatics/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@speechmatics/browser-audio-input':
-        specifier: workspace:*
-        version: link:../../packages/browser-audio-input
-      '@speechmatics/browser-audio-input-react':
-        specifier: workspace:*
-        version: link:../../packages/browser-audio-input-react
-      '@speechmatics/flow-client-react':
-        specifier: workspace:*
-        version: link:../../packages/flow-client-react
-      '@speechmatics/real-time-client-react':
-        specifier: workspace:*
-        version: link:../../packages/real-time-client-react
-      next:
-        specifier: 15.0.1
-        version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
-      react:
-        specifier: 19.0.0-rc-69d4b800-20241021
-        version: 19.0.0-rc-69d4b800-20241021
-      react-dom:
-        specifier: 19.0.0-rc-69d4b800-20241021
-        version: 19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021)
-      react-error-boundary:
-        specifier: ^4.1.2
-        version: 4.1.2(react@19.0.0-rc-69d4b800-20241021)
-    devDependencies:
-      '@types/node':
-        specifier: ^20
-        version: 20.0.0
-      '@types/react':
-        specifier: ^18
-        version: 18.3.12
-      '@types/react-dom':
-        specifier: ^18
-        version: 18.0.0
-      copy-webpack-plugin:
-        specifier: ^12.0.2
-        version: 12.0.2(webpack@5.96.1(esbuild@0.23.1))
-      typescript:
-        specifier: ^5
-        version: 5.5.4
-
   examples/nextjs-flow:
     dependencies:
       '@speechmatics/auth':
@@ -145,6 +96,55 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17
+      typescript:
+        specifier: ^5
+        version: 5.5.4
+
+  examples/nextjs-real-time-transcription:
+    dependencies:
+      '@picocss/pico':
+        specifier: ^2.0.6
+        version: 2.0.6
+      '@speechmatics/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@speechmatics/browser-audio-input':
+        specifier: workspace:*
+        version: link:../../packages/browser-audio-input
+      '@speechmatics/browser-audio-input-react':
+        specifier: workspace:*
+        version: link:../../packages/browser-audio-input-react
+      '@speechmatics/flow-client-react':
+        specifier: workspace:*
+        version: link:../../packages/flow-client-react
+      '@speechmatics/real-time-client-react':
+        specifier: workspace:*
+        version: link:../../packages/real-time-client-react
+      next:
+        specifier: 15.0.1
+        version: 15.0.1(react-dom@19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021))(react@19.0.0-rc-69d4b800-20241021)
+      react:
+        specifier: 19.0.0-rc-69d4b800-20241021
+        version: 19.0.0-rc-69d4b800-20241021
+      react-dom:
+        specifier: 19.0.0-rc-69d4b800-20241021
+        version: 19.0.0-rc-69d4b800-20241021(react@19.0.0-rc-69d4b800-20241021)
+      react-error-boundary:
+        specifier: ^4.1.2
+        version: 4.1.2(react@19.0.0-rc-69d4b800-20241021)
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.0.0
+      '@types/react':
+        specifier: ^18
+        version: 18.3.12
+      '@types/react-dom':
+        specifier: ^18
+        version: 18.0.0
+      copy-webpack-plugin:
+        specifier: ^12.0.2
+        version: 12.0.2(webpack@5.96.1(esbuild@0.23.1))
       typescript:
         specifier: ^5
         version: 5.5.4
