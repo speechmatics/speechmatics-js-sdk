@@ -3,7 +3,7 @@ import { createSpeechmaticsJWT } from '@speechmatics/auth';
 // WARNING: This function is used for the purpose of this example only.
 // In a real-world scenario, you should not expose your API key in your client-side code.
 // Instead, you should create a server-side endpoint that generates the JWT for you.
-export default async function getFlowAPIJwt(apiKey: string) {
+export default async function getFlowAPIJwt(apiKey: string | undefined) {
   if (!apiKey) {
     throw new Error('API key is required.');
   }

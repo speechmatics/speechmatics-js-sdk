@@ -21,7 +21,7 @@ import {
 } from '@speechmatics/flow-client-react';
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
-import { getFlowAPIJwt } from '@/app/auth';
+import getFlowAPIJwt from '@/app/auth';
 import VolumeDisplay from '@/app/volume-display';
 
 export default function Index() {
