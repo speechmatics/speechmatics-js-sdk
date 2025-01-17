@@ -176,7 +176,6 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
     >,
   ): Word[] {
     if (!message.results) return [];
-    message.message;
 
     return message.results.map((r) => {
       const word = {
