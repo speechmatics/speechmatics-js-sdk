@@ -44,13 +44,12 @@ const TranscriptContainer = ({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new content arrives
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (scrollRef.current) {
       const element = scrollRef.current;
       element.scrollTop = element.scrollHeight;
     }
-  }, [transcripts]);
+  });
 
   return (
     <div
@@ -58,7 +57,7 @@ const TranscriptContainer = ({
       className="overflow-y-auto"
       style={{
         scrollBehavior: 'smooth',
-        height: '400px',
+        height: '300px',
       }}
     >
       {transcripts.map((group) => (
