@@ -1,33 +1,39 @@
-import { useFlowEventListener } from '@speechmatics/flow-client-react';
-import { useState, useRef, useEffect } from 'react';
-import { type TranscriptGroup, TranscriptManager } from './newPartials';
+import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
+import { useState, useMemo, useEffect } from 'react';
+import TranscriptManager from '../lib/transcript-manager';
+import type {
+  TranscriptGroup,
+  TranscriptUpdateEvent,
+} from '../lib/transcript-types';
 
-// Custom hook to manage TranscriptManager instance
 export function useTranscriptManager() {
   const [transcriptGroups, setTranscriptGroups] = useState<TranscriptGroup[]>(
     [],
   );
-  const managerRef = useRef<TranscriptManager | null>(null);
+  const { sessionId } = useFlow();
+
+  const transcriptManager = useMemo(() => new TranscriptManager(), []);
+
+  // Clear transcripts when session changes
+  useEffect(() => {
+    if (sessionId) {
+      transcriptManager.clearTranscripts();
+    }
+  }, [sessionId, transcriptManager]);
 
   useEffect(() => {
-    const manager = new TranscriptManager();
-    managerRef.current = manager;
-
-    const handleUpdate = (event: CustomEvent<TranscriptGroup[]>) => {
-      setTranscriptGroups(event.detail);
+    const handleUpdate = (event: TranscriptUpdateEvent) => {
+      setTranscriptGroups(event.transcriptGroups);
     };
 
-    manager.addEventListener('update', handleUpdate as EventListener);
+    transcriptManager.addEventListener('update', handleUpdate);
     return () => {
-      manager.removeEventListener('update', handleUpdate as EventListener);
-      managerRef.current = null;
+      transcriptManager.removeEventListener('update', handleUpdate);
     };
-  }, []);
+  }, [transcriptManager]);
 
   useFlowEventListener('message', ({ data }) => {
-    if (managerRef.current) {
-      managerRef.current.handleMessage(data);
-    }
+    transcriptManager.handleMessage(data);
   });
 
   return transcriptGroups;

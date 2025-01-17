@@ -1,77 +1,20 @@
-// types.ts
-
-import type { FlowClientIncomingMessage } from '@speechmatics/flow-client-react';
-
-/**
- * Represents incoming messages from the speech-to-text service
- * These messages can be transcripts, partial transcripts, or agent responses
- */
-export interface FlowMessage {
-  message:
-    | 'AddPartialTranscript'
-    | 'AddTranscript'
-    | 'ResponseStarted'
-    | 'ResponseCompleted'
-    | 'ResponseInterrupted';
-  results?: Array<{
-    start_time: number;
-    end_time: number;
-    type?: 'punctuation';
-    is_eos?: boolean; // end of sentence marker
-    attaches_to?: 'previous' | 'next'; // indicates how punctuation attaches to words
-    alternatives?: Array<{
-      content: string; // the actual text content
-      speaker: string; // speaker identifier
-    }>;
-  }>;
-  start_time?: number;
-  end_time?: number;
-  content?: string;
-}
-
-/**
- * Represents a single word in the transcript
- * Can be either a regular word or punctuation
- */
-export type Word = {
-  startTime: number;
-  endTime: number;
-  speaker: string;
-  text: string;
-  partial: boolean; // indicates if this is from a partial transcript
-} & (
-  | { punctuation: false }
-  | {
-      punctuation: true;
-      eos: boolean; // end of sentence marker
-      attachesTo?: 'previous' | 'next';
-    }
-);
-
-/**
- * Represents a response from an AI agent in the conversation
- */
-export type AgentResponse = {
-  speaker: 'agent';
-  agent: true;
-  startTime: number;
-  endTime?: number;
-  text: string;
-};
-
-/**
- * Groups of transcript data, either from a human speaker or an AI agent
- */
-export type TranscriptGroup =
-  | {
-      type: 'speaker';
-      speaker: string;
-      data: Word[];
-    }
-  | {
-      type: 'agent';
-      data: AgentResponse[];
-    };
+import type {
+  AddPartialTranscriptMessage,
+  AddTranscriptMessage,
+  FlowClientIncomingMessage,
+  ResponseCompletedMessage,
+  ResponseInterruptedMessage,
+  ResponseStartedMessage,
+} from '@speechmatics/flow-client-react';
+import { TypedEventTarget } from 'typescript-event-target';
+import {
+  type FlowMessage,
+  type Word,
+  type AgentResponse,
+  type TranscriptGroup,
+  type TranscriptManagerEvents,
+  TranscriptUpdateEvent,
+} from './transcript-types';
 
 // transcript-manager.ts
 /**
@@ -79,7 +22,7 @@ export type TranscriptGroup =
  * Handles both human speech transcription and AI agent responses
  * Uses EventTarget to notify listeners of updates
  */
-export class TranscriptManager extends EventTarget {
+class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
   // Store final transcribed words
   private finals: Word[] = [];
   // Store partial (in-progress) transcribed words
@@ -87,9 +30,14 @@ export class TranscriptManager extends EventTarget {
   // Store AI agent responses
   private agentResponses: AgentResponse[] = [];
 
-  constructor() {
-    super();
-    this.handleMessage = this.handleMessage.bind(this);
+  /**
+   * Clears all transcript data and notifies listeners
+   */
+  public clearTranscripts(): void {
+    this.finals = [];
+    this.partials = [];
+    this.agentResponses = [];
+    this.notifyUpdate();
   }
 
   /**
@@ -104,7 +52,7 @@ export class TranscriptManager extends EventTarget {
       case 'ResponseStarted':
       case 'ResponseCompleted':
       case 'ResponseInterrupted':
-        this.processMessage(message as FlowMessage);
+        this.processMessage(message);
         break;
       // Ignore other message types
       default:
@@ -134,7 +82,7 @@ export class TranscriptManager extends EventTarget {
    * Processes partial transcripts (in-progress speech)
    * These are temporary and will be replaced by final transcripts
    */
-  private handlePartialTranscript(message: FlowMessage) {
+  private handlePartialTranscript(message: AddPartialTranscriptMessage) {
     if (!message.results?.length) return;
     this.partials = this.getWords(message);
     this.notifyUpdate();
@@ -144,7 +92,7 @@ export class TranscriptManager extends EventTarget {
    * Processes final transcripts
    * Also handles cleanup of related partial transcripts
    */
-  private handleTranscript(message: FlowMessage) {
+  private handleTranscript(message: AddTranscriptMessage) {
     if (!message.results?.length) return;
     const incomingWords = this.getWords(message);
     this.finals = [...this.finals, ...incomingWords];
@@ -172,7 +120,7 @@ export class TranscriptManager extends EventTarget {
    * Handles the start of an AI agent response
    * Creates a new agent response entry with start time
    */
-  private handleAgentResponseStart(message: FlowMessage) {
+  private handleAgentResponseStart(message: ResponseStartedMessage) {
     if (!message.content || !message.start_time) return;
 
     this.agentResponses.push({
@@ -189,7 +137,9 @@ export class TranscriptManager extends EventTarget {
    * Handles the completion or interruption of an AI agent response
    * Updates the existing response or creates a new one if not found
    */
-  private handleAgentResponseEnd(message: FlowMessage) {
+  private handleAgentResponseEnd(
+    message: ResponseCompletedMessage | ResponseInterruptedMessage,
+  ) {
     if (!message.content || !message.start_time || !message.end_time) return;
 
     const existingIndex = this.agentResponses.findIndex(
@@ -217,8 +167,16 @@ export class TranscriptManager extends EventTarget {
    * Converts raw message results into Word objects
    * Handles both regular words and punctuation
    */
-  private getWords(message: FlowMessage): Word[] {
+  private getWords(
+    message: Exclude<
+      FlowMessage,
+      | ResponseStartedMessage
+      | ResponseCompletedMessage
+      | ResponseInterruptedMessage
+    >,
+  ): Word[] {
     if (!message.results) return [];
+    message.message;
 
     return message.results.map((r) => {
       const word = {
@@ -329,10 +287,9 @@ export class TranscriptManager extends EventTarget {
    * Dispatches a CustomEvent with the current transcript groups
    */
   private notifyUpdate() {
-    this.dispatchEvent(
-      new CustomEvent('update', {
-        detail: this.getTranscriptGroups(),
-      }),
+    this.dispatchTypedEvent(
+      'update',
+      new TranscriptUpdateEvent(this.getTranscriptGroups()),
     );
   }
 
@@ -349,13 +306,15 @@ export class TranscriptManager extends EventTarget {
   }
 }
 
+export default TranscriptManager;
+
 // Example usage:
 /*
 const transcriptManager = new TranscriptManager();
 
 // Listen for updates
-transcriptManager.addEventListener('update', (event: CustomEvent) => {
-  const transcriptGroups = event.detail;
+transcriptManager.addEventListener('update', (event: TranscriptUpdateEvent) => {
+  const transcriptGroups = event.transcriptGroups;
   // Handle updated transcript groups
 });
 

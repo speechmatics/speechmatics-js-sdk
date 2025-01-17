@@ -65,6 +65,9 @@ importers:
       react-error-boundary:
         specifier: ^4.1.2
         version: 4.1.2(react@19.0.0)
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3

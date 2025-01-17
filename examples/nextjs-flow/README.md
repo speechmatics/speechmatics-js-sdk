@@ -7,9 +7,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 The app is styled using [Tailwind](https://tailwindcss.com/) classnames, along with [DaisyUI](https://daisyui.com/) component library.
 
 ## Packages used
-In order to build a React/NextJS app and have Flow working in a browser, this example utilises some of the Speechmatics SDK packages:
+In order to build a React/NextJS app and have Flow working in a browser, this example utilises some of the Speechmatics SDK packages (you can check out their READMEs for more details):
 
-- 
+- [@speechmatics/auth](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/auth)
+- [@speechmatics/browser-audio-input](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/browser-audio-input)
+- [@speechmatics/browser-audio-input-react](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/browser-audio-input-react)
+- [@speechmatics/flow-client-react](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/flow-client-react)
+
+Please check the package.json file for any other dependencies.
 
 # Installation and setup
 

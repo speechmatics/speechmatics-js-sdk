@@ -11,7 +11,7 @@ import {
   usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import { RECORDING_SAMPLE_RATE } from '../lib/constants';
-import { usePlayPCM16Audio } from '../lib/audio-hooks';
+import { usePlayPCM16Audio } from './usePlayPCM16Audio';
 
 // Hook to set up two way audio between the browser and Flow
 export function useFlowWithBrowserAudio() {
