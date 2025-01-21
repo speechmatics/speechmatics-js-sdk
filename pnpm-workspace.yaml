@@ -2,3 +2,4 @@ packages:
   - "packages/*"
   - "examples/nextjs"
   - "examples/nodejs"
+  - "examples/react-native-flow"
