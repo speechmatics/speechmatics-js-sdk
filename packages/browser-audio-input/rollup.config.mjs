@@ -46,7 +46,7 @@ export default function rollup() {
     output: {
       file: 'dist/pcm-audio-worklet.min.js',
       format: 'umd',
-      name: 'PcmAudioProcessor',
+      name: 'PCMAudioProcessor',
       strict: false,
     },
   };

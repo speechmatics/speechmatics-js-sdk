@@ -50,10 +50,9 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     }
 
     const constraints = {
-      echoCancellation: false,
-      noiseSuppression: false,
-      autoGainControl: false,
-      sampleRate: this.audioContext.sampleRate,
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true,
       ...(options.recordingOptions ?? {}),
     };
 

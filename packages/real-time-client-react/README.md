@@ -22,7 +22,7 @@ Below is an example of usage in the browser.
 
     ```JSX
     import { RealtimeTranscriptionProvider } from "@speechmatics/real-time-client-react";
-    import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+    import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
     function RootLayout({children}) {
       /*
@@ -32,9 +32,9 @@ Below is an example of usage in the browser.
             see https://www.npmjs.com/package/@speechmatics/browser-audio-input-react
       */
       return <RealtimeTranscriptionProvider appId="your-app-id">
-        <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
+        <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
           {children}
-        </PcmAudioRecorderProvider>
+        </PCMAudioRecorderProvider>
       </RealtimeTranscriptionProvider>
     }
     ```
