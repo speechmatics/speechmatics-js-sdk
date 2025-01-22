@@ -4,7 +4,6 @@ import { useAudioDevices } from '@speechmatics/browser-audio-input-react';
 
 export function MicrophoneSelect({ disabled }: { disabled?: boolean }) {
   const devices = useAudioDevices();
-  console.log(devices);
 
   switch (devices.permissionState) {
     case 'prompt':
