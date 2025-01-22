@@ -111,6 +111,9 @@ importers:
       '@speechmatics/browser-audio-input-react':
         specifier: workspace:*
         version: link:../../packages/browser-audio-input-react
+      '@speechmatics/flow-client':
+        specifier: workspace:*
+        version: link:../../packages/flow-client
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react

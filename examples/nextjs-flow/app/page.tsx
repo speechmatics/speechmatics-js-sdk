@@ -12,7 +12,11 @@ export default async function Home() {
     // 1. For the audio recorder (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/browser-audio-input-react/README.md)
     // 2. For the Flow API client (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/flow-client-react/README.md)
     <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
-      <FlowProvider appId="nextjs-example" audioBufferingMs={500}>
+      <FlowProvider
+        appId="nextjs-example"
+        audioBufferingMs={500}
+        websocketBinaryType="arraybuffer" // This is optional, but does lead to better audio performance, particularly on Firefox
+      >
         <div className="container p-4 mx-auto max-xl:container">
           <h1 className="text-2xl font-bold">
             Speechmatics ❤️ NextJS Flow Example

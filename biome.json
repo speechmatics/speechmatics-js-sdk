@@ -10,7 +10,7 @@
       "./packages/*/dist/**",
       "*/**/.next/**",
       "*/**/node_modules/*",
-      "./examples/nextjs/public/*"
+      "./examples/**/public/**/*.js"
     ]
   },
   "javascript": {
@@ -27,7 +27,7 @@
       "./packages/*/dist/**",
       "*/**/.next/**",
       "*/**/node_modules/*",
-      "./examples/nextjs/public/*"
+      "./examples/**/public/**/*.js"
     ]
   }
 }

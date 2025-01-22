@@ -18,7 +18,15 @@ export function useFlowWithBrowserAudio() {
   const { startConversation, endConversation, sendAudio } = useFlow();
   const { startRecording, stopRecording } = usePCMAudioRecorder();
   const [audioContext, setAudioContext] = useState<AudioContext>();
-  const { playAudio, resetPlaybackStartTime } = usePlayPCM16Audio(audioContext);
+
+  // Normally we would be able to use the same audio context for playback and recording,
+  // but there is a bug in Firefox which prevents capturing microphone audio at 16,000 Hz.
+  // So in Firefox, we need to use a separate audio context for playback.
+  const [playbackAudioContext, setPlaybackAudioContext] =
+    useState<AudioContext>();
+
+  const { playAudio, resetPlaybackStartTime } =
+    usePlayPCM16Audio(playbackAudioContext);
 
   // Send audio to Flow when we receive it from the active input device
   usePCMAudioListener(sendAudio);
@@ -41,6 +49,17 @@ export function useFlowWithBrowserAudio() {
     }: { personaId: string; deviceId: string }) => {
       const jwt = await getJWT('flow');
 
+      const isFirefox = navigator.userAgent.includes('Firefox');
+      const audioContext = new AudioContext({
+        sampleRate: isFirefox ? undefined : RECORDING_SAMPLE_RATE,
+      });
+      setAudioContext(audioContext);
+
+      const playbackAudioContext = isFirefox
+        ? new AudioContext({ sampleRate: 16_000 })
+        : audioContext;
+      setPlaybackAudioContext(playbackAudioContext);
+
       await startConversation(jwt, {
         config: {
           template_id: personaId,
@@ -51,14 +70,9 @@ export function useFlowWithBrowserAudio() {
         audioFormat: {
           type: 'raw',
           encoding: 'pcm_f32le',
-          sample_rate: RECORDING_SAMPLE_RATE,
+          sample_rate: audioContext.sampleRate,
         },
       });
-
-      const audioContext = new AudioContext({
-        sampleRate: RECORDING_SAMPLE_RATE,
-      });
-      setAudioContext(audioContext);
 
       await startRecording({
         deviceId,
@@ -68,11 +82,28 @@ export function useFlowWithBrowserAudio() {
     [startConversation, startRecording],
   );
 
+  const closeAudioContext = useCallback(() => {
+    if (audioContext?.state !== 'closed') {
+      audioContext?.close();
+    }
+    setAudioContext(undefined);
+    if (playbackAudioContext?.state !== 'closed') {
+      playbackAudioContext?.close;
+    }
+    setPlaybackAudioContext(undefined);
+  }, [audioContext, playbackAudioContext]);
+
   const stopSession = useCallback(async () => {
     endConversation();
     stopRecording();
     resetPlaybackStartTime();
-  }, [endConversation, stopRecording, resetPlaybackStartTime]);
+    closeAudioContext();
+  }, [
+    endConversation,
+    stopRecording,
+    resetPlaybackStartTime,
+    closeAudioContext,
+  ]);
 
   return { startSession, stopSession };
 }
