@@ -16,14 +16,6 @@ const nextConfig: NextConfig = {
               ),
               to: path.resolve(__dirname, 'public/js/[name][ext]'),
             },
-
-            {
-              from: path.resolve(
-                __dirname,
-                'node_modules/@speechmatics/flow-client/dist/agent-audio-processor.js',
-              ),
-              to: path.resolve(__dirname, 'public/js/[name][ext]'),
-            },
           ],
         }),
       );
