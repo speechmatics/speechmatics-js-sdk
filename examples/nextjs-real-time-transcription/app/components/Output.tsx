@@ -5,8 +5,8 @@ import {
   useRealtimeEventListener,
 } from '@speechmatics/real-time-client-react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ErrorFallback } from '@/lib/components/ErrorFallback';
-import { AudioVisualizer } from '@/lib/components/AudioVisualizer';
+import { ErrorFallback } from './ErrorFallback';
+import { AudioVisualizer } from './AudioVisualizer';
 import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
 
 export function Output() {

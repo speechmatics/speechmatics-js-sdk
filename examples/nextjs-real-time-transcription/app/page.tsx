@@ -3,10 +3,10 @@ import {
   RealtimeTranscriptionProvider,
 } from '@speechmatics/real-time-client-react';
 import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
-import { Controls } from './Controls';
-import { Status } from './Status';
-import { Output } from './Output';
 import type { Metadata } from 'next';
+import { Controls } from './components/Controls';
+import { Output } from './components/Output';
+import { Status } from './components/Status';
 
 export const metadata: Metadata = {
   title: 'Speechmatics Real-time example',
