@@ -40,25 +40,22 @@ export async function createSpeechmaticsJWT({
 
   // Handle errors
   if (resp.status === 403) {
-    throw new SpeechmaticsJWTError('Unauthorized', 'forbidden');
-  }
-
-  if (resp.status === 401) {
     throw new SpeechmaticsJWTError('Unauthorized', 'unauthorized');
   }
 
-  if (resp.status === 422) {
-    let json: { code: string; message: string };
-    try {
-      json = await resp.json();
-    } catch (e) {
-      throw new SpeechmaticsJWTError(
-        'UnknownError',
-        'Failed to parse JSON response',
-        { cause: e },
-      );
-    }
+  let json: { code: string; message: string };
 
+  try {
+    json = await resp.json();
+  } catch (e) {
+    throw new SpeechmaticsJWTError(
+      'UnknownError',
+      'Failed to parse JSON response',
+      { cause: e },
+    );
+  }
+
+  if (resp.status === 422) {
     throw new SpeechmaticsJWTError('ValidationFailed', json.message, {
       cause: json,
     });
