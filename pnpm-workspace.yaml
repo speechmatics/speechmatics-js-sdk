@@ -3,3 +3,4 @@ packages:
   - "examples/nextjs-real-time-transcription"
   - "examples/nextjs-flow"
   - "examples/nodejs"
+  - "examples/react-native-flow"
