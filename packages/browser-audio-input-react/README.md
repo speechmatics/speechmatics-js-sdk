@@ -74,26 +74,84 @@ function MicrophoneSelect({
 
 ### PCM recording
 
-This package exposes a context provider that can be used like so:
+This package exposes a context provider that can be used to share a **single PCM recorder across the app**. This is quite handy, as you can control the recorder from any component in your app!
 
 ```TSX
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL="/path/to/pcm-audio-worklet.min.js">
+    // See note in the next section about the AudioWorklet script
+    <PCMAudioRecorderProvider workletScriptURL="/path/to/pcm-audio-worklet.min.js">
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 
-// Now all child components can use the provided hooks
+```
+Now all child components can use the provided hooks:
+
+### Start/stop recording
+
+The only required argument to `startRecording` is an [`AudioContext`](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext). Note that 
+
+`stopRecording` stops the active `MediaStream` source, but leaves the `AudioContext` open, so it can be re-used.
+
+```TSX
+function RecordingButton() {
+  const { startRecording, stopRecording, isRecording } = usePCMAudioRecorder();
+
+  const onClick = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      const audioContext = new AudioContext();
+      startRecording({ audioContext });
+    }
+  }
+
+  return <button onClick={onClick}>
+    {isRecording ? "Stop recording" : "Start recording" }
+  </button>
+}
+```
+You can specify the device for recording by passing the `deviceId`option to `startRecording`.
+
+
+#### Recording options
+
+You can pass whatever ['MediaTrackSettings'](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings) you want through the `recordingOptions` property:
+
+```typescript
+    pcmRecorder.startRecording({
+      audioContext,
+      deviceId,
+      recordingOptions: {
+        noiseSuppression: false,
+      },
+    });
+```
+
+By default we enable the following to optimize for speech:
+
+```javascript
+{
+  noiseSuppression: true,
+  echoCancellation: true,
+  autoGainControl: true,
+}
+```
+
+Note that the last two [may not be supported in Safari](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints/autoGainControl#browser_compatibility)
+
+### Read recorded data
+
+Recorded data can be read from any child component of the context provider with the `usePCMAudioListener` hook:
+
+```TSX
 
 function Component() {
-  const { startRecording, stopRecording, mediaStream, isRecording } =
-    usePcmAudioRecorder();
-
-  usePcmAudioListener((audio) => {
+  usePCMAudioListener((audio: Float32Array) => {
     // Handle Float32Array of audio however you like
   });
 }
@@ -154,13 +212,13 @@ Then use `/js/pcm-audio-worklet.min.js` (or whatever other path you define) as t
 
 ```TSX
 // WEBPACK EXAMPLE
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
+    <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 ```
@@ -172,14 +230,27 @@ Vite supports referencing bundled code by URL for use in Workers. This can be us
 
 ```TSX
 // VITE EXAMPLE
-import { PcmAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
+import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import workletScriptURL from '@speechmatics/browser-audio-input/pcm-audio-worklet.min.js?url';
 
 function App() {
   return (
-    <PcmAudioRecorderProvider workletScriptURL={workletScriptURL}>
+    <PCMAudioRecorderProvider workletScriptURL={workletScriptURL}>
       <Component>
-    </PcmAudioRecorderProvider>
+    </PCMAudioRecorderProvider>
   );
 }
 ```
+
+### Creating audio visualizers
+
+The hook `usePCMAudioRecorder` provides an `analyser` object, which is an instance of [`AnalyserNode`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode).
+
+```typescript
+const { analyser } = usePCMAudioRecorder();
+
+```
+
+MDN has a [great guide on audio visualizers for the WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API). The basic idea though is that you can use `requestAnimationFrame` to repeatedly read the [`analyser.getFloatFrequencyData`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatFrequencyData) method to animate whatever DOM elements you like.
+
+See the [`AudioVisualizer`](../../examples/nextjs/src/lib/components/AudioVisualizer.tsx) in the NextJS demo app for a complete example.

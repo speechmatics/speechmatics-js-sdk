@@ -1,4 +1,4 @@
-class PcmAudioProcessor extends AudioWorkletProcessor {
+class PCMAudioProcessor extends AudioWorkletProcessor {
   process(inputs: Float32Array[][]) {
     const input = inputs[0];
 
@@ -11,4 +11,4 @@ class PcmAudioProcessor extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('pcm-audio-processor', PcmAudioProcessor);
+registerProcessor('pcm-audio-processor', PCMAudioProcessor);
