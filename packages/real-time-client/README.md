@@ -1,10 +1,7 @@
 
 # Speechmatics real-time client 🎤
 
-> [!WARNING]
-> This package is still in beta. It should be as functional as the legacy package, but some behaviour may have changed.
-
-Official JS client for the Speechmatics batch jobs API.
+Official JS client for the Speechmatics real-time transcription API.
 
 API documentation can be found here: https://docs.speechmatics.com/rt-api-ref
 
@@ -18,8 +15,6 @@ npm i @speechmatics/real-time-client
 > For React Native, make sure to install the [`event-target-polyfill`](https://www.npmjs.com/package/event-target-polyfill) package, or any other polyfill for the [`EventTarget` class](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
 
 ## Usage
-
-
 
 More examples will be available soon. For now, you can checkout the [NodeJS example](/examples/nodejs/real-time-file-example.ts).
 

@@ -38,17 +38,16 @@ export type RealtimeServerMessage =
   | Warning
   | ModelError;
 
-export type ConnectionState =
-  | 'idle'
-  | 'connecting'
-  | 'starting'
-  | 'running'
-  | 'stopping';
+export class SocketStateChangeEvent extends Event {
+  constructor(public readonly socketState: RealtimeClient['socketState']) {
+    super('socketStateChange');
+  }
+}
 
 export interface RealtimeClientEventMap {
   sendMessage: MessageEvent<RealtimeClientMessage>;
   receiveMessage: MessageEvent<RealtimeServerMessage>;
-  socketStateChange: Event;
+  socketStateChange: SocketStateChangeEvent;
 }
 
 export interface RealtimeClientOptions {
@@ -116,7 +115,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       this.socket = new WebSocket(url.toString());
       this.dispatchTypedEvent(
         'socketStateChange',
-        new Event('socketStateChange'),
+        new SocketStateChangeEvent(this.socketState),
       );
 
       this.socket.addEventListener(
@@ -130,7 +129,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       this.socket.addEventListener('error', (error) => {
         this.dispatchTypedEvent(
           'socketStateChange',
-          new Event('socketStateChange'),
+          new SocketStateChangeEvent(this.socketState),
         );
         // In case the above hasn't resolved, we can reject here rather than waiting
         // If the above has resolved, this will be ignored
@@ -140,7 +139,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       this.socket.addEventListener('close', () => {
         this.dispatchTypedEvent(
           'socketStateChange',
-          new Event('socketStateChange'),
+          new SocketStateChangeEvent(this.socketState),
         );
       });
 
