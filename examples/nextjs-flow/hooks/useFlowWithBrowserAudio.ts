@@ -11,7 +11,7 @@ import {
   usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
 import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
-import { usePlayPCM16Audio } from './usePlayPCM16Audio';
+import { usePCMAudioPlayer } from '@speechmatics/web-pcm-player-react';
 
 // Hook to set up two way audio between the browser and Flow
 export function useFlowWithBrowserAudio() {
@@ -25,8 +25,7 @@ export function useFlowWithBrowserAudio() {
   const [playbackAudioContext, setPlaybackAudioContext] =
     useState<AudioContext>();
 
-  const { playAudio, resetPlaybackStartTime } =
-    usePlayPCM16Audio(playbackAudioContext);
+  const { playAudio } = usePCMAudioPlayer(playbackAudioContext);
 
   // Send audio to Flow when we receive it from the active input device
   usePCMAudioListener(sendAudio);
@@ -96,14 +95,8 @@ export function useFlowWithBrowserAudio() {
   const stopSession = useCallback(async () => {
     endConversation();
     stopRecording();
-    resetPlaybackStartTime();
     closeAudioContext();
-  }, [
-    endConversation,
-    stopRecording,
-    resetPlaybackStartTime,
-    closeAudioContext,
-  ]);
+  }, [endConversation, stopRecording, closeAudioContext]);
 
   return { startSession, stopSession };
 }
