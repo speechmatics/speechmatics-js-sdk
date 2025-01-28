@@ -65,6 +65,7 @@ fileStream.on('data', (sample) => {
 //end the session
 fileStream.on('end', () => {
   // Send a stop message to the server when we're done sending audio.
-  // We set `noTimeout` so that we can wait for all the data to be processed before closing the connection.
+  // We set `noTimeout` because we are streaming faster than real-time,
+  // so we should wait for all the data to be processed before closing the connection.
   client.stopRecognition({ noTimeout: true });
 });
