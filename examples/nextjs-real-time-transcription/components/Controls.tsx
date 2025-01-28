@@ -8,9 +8,9 @@ import {
   type RealtimeTranscriptionConfig,
   useRealtimeTranscription,
 } from '@speechmatics/real-time-client-react';
-import { getJWT } from '../actions';
-import { configFromFormData } from '../lib/config-from-form-data';
-import { RECORDING_SAMPLE_RATE } from '../lib/constants';
+import { getJWT } from '@/app/actions';
+import { configFromFormData } from '@/lib/config-from-form-data';
+import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
 import { MicrophoneSelect } from './MicrophoneSelect';
 import { LanguageSelect } from './LanguageSelect';
 
