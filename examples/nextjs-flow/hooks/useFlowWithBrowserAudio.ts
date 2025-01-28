@@ -5,12 +5,12 @@ import {
   useFlow,
   useFlowEventListener,
 } from '@speechmatics/flow-client-react';
-import { getJWT } from '../actions';
+import { getJWT } from '@/app/actions';
 import {
   usePCMAudioListener,
   usePCMAudioRecorder,
 } from '@speechmatics/browser-audio-input-react';
-import { RECORDING_SAMPLE_RATE } from '../lib/constants';
+import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
 import { usePlayPCM16Audio } from './usePlayPCM16Audio';
 
 // Hook to set up two way audio between the browser and Flow

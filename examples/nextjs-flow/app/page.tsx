@@ -1,8 +1,8 @@
 import { fetchPersonas, FlowProvider } from '@speechmatics/flow-client-react';
 import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
-import { Controls } from './components/Controls';
-import { Status } from './components/Status';
-import { TranscriptView } from './components/TranscriptView';
+import { Controls } from '@/components/Controls';
+import { Status } from '@/components/Status';
+import { TranscriptView } from '@/components/TranscriptView';
 
 export default async function Home() {
   const personas = await fetchPersonas();

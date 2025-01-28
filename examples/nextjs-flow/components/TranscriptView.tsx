@@ -1,12 +1,12 @@
 'use client';
 import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 import { useFlowEventListener } from '@speechmatics/flow-client-react';
-import { ErrorFallback } from '../ErrorFallback';
+import { ErrorFallback } from './ErrorFallback';
 import { useEffect, useRef } from 'react';
 import Card from './Card';
-import TranscriptManager from '../lib/transcript-manager';
-import { useTranscriptManager } from '../hooks/useTranscriptManager';
-import type { TranscriptGroup } from '../lib/transcript-types';
+import TranscriptManager from '@/lib/transcript-manager';
+import { useTranscriptManager } from '@/hooks/useTranscriptManager';
+import type { TranscriptGroup } from '@/lib/transcript-types';
 
 export function TranscriptView() {
   return (
