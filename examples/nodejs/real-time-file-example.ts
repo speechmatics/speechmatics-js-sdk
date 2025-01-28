@@ -46,7 +46,7 @@ const jwt = await createSpeechmaticsJWT({
   ttl: 60, // 1 minute
 });
 
-const fileStream = fs.createReadStream('./Super_long.wav', {
+const fileStream = fs.createReadStream('./example.wav', {
   highWaterMark: 4096, // avoid sending too much data at once
 });
 
