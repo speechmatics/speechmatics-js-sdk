@@ -191,7 +191,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   ): Promise<RecognitionStarted> {
     await this.connect(jwt);
 
-    const waitForConversationStarted = new Promise<RecognitionStarted>(
+    const waitForRecognitionStarted = new Promise<RecognitionStarted>(
       (resolve, reject) => {
         this.addEventListener('receiveMessage', ({ data }) => {
           if (data.message === 'RecognitionStarted') {
@@ -214,7 +214,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     );
 
     return Promise.race([
-      waitForConversationStarted,
+      waitForRecognitionStarted,
       rejectAfter<RecognitionStarted>(
         RT_CLIENT_RESPONSE_TIMEOUT_MS,
         'RecognitionStarted',
@@ -223,7 +223,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   }
 
   /** Sends an `"EndOfStream"` message, resolving if acknowledged by an `"EndOfTranscript"` from server, rejecting if not received */
-  async stopRecognition() {
+  async stopRecognition({ noTimeout }: { noTimeout?: true } = {}) {
     const waitForEndOfTranscript = new Promise<void>((resolve) => {
       this.addEventListener('receiveMessage', ({ data }) => {
         if (data.message === 'EndOfTranscript') {
@@ -237,6 +237,10 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
         last_seq_no: this.lastAudioAddedSeqNo,
       });
     });
+
+    if (noTimeout) {
+      return;
+    }
 
     return Promise.race([
       waitForEndOfTranscript,
@@ -279,7 +283,7 @@ function rejectAfter<T = unknown>(timeoutMs: number, key: string): Promise<T> {
       () =>
         reject(
           new SpeechmaticsRealtimeError(
-            `Timed out after ${timeoutMs}s waiting for ${key}`,
+            `Timed out after ${timeoutMs}ms waiting for ${key}`,
           ),
         ),
       timeoutMs,

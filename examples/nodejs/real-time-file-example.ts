@@ -46,8 +46,8 @@ const jwt = await createSpeechmaticsJWT({
   ttl: 60, // 1 minute
 });
 
-const fileStream = fs.createReadStream('./example.wav', {
-  highWaterMark: 4096, //avoid sending faster than realtime
+const fileStream = fs.createReadStream('./Super_long.wav', {
+  highWaterMark: 4096, // avoid sending too much data at once
 });
 
 await client.start(jwt, {
@@ -64,5 +64,7 @@ fileStream.on('data', (sample) => {
 
 //end the session
 fileStream.on('end', () => {
-  client.stopRecognition();
+  // Send a stop message to the server when we're done sending audio.
+  // We set `noTimeout` so that we can wait for all the data to be processed before closing the connection.
+  client.stopRecognition({ noTimeout: true });
 });
