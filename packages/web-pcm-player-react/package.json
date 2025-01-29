@@ -10,6 +10,7 @@
   },
   "module": "dist/index.js",
   "type": "module",
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player-react",
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../web-pcm-player build && pnpm rollup -c"
   },

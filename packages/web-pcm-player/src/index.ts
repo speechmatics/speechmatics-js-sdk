@@ -1,8 +1,15 @@
 import { TypedEventTarget } from 'typescript-event-target';
 
+const VOLUME_CHANGE = 'volumeChange';
+
+export class VolumeChangeEvent extends Event {
+  constructor(public volume: number) {
+    super(VOLUME_CHANGE);
+  }
+}
+
 export class PCMPlayer extends TypedEventTarget<{
-  start: Event;
-  stop: Event;
+  [VOLUME_CHANGE]: VolumeChangeEvent;
 }> {
   private playbackTime = 0;
   private gainNode: GainNode;
@@ -37,14 +44,19 @@ export class PCMPlayer extends TypedEventTarget<{
       this.playbackTime = currentTime;
     }
 
-    source.connect(this.audioContext.destination);
+    source.connect(this.gainNode);
     source.start(this.playbackTime);
 
     this.playbackTime += audioBuffer.duration;
   }
 
-  setVolumePercentage(percentage: number) {
+  get volumePercentage() {
+    return this.gainNode.gain.value * 100;
+  }
+
+  set volumePercentage(percentage: number) {
     this.gainNode.gain.value = percentage / 100;
+    this.dispatchTypedEvent(VOLUME_CHANGE, new VolumeChangeEvent(percentage));
   }
 }
 

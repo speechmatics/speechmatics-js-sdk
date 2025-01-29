@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { PCMPlayer } from '@speechmatics/web-pcm-player';
 
 export function usePCMAudioPlayer(audioContext?: AudioContext) {
@@ -21,7 +21,25 @@ export function usePCMAudioPlayer(audioContext?: AudioContext) {
     [player],
   );
 
-  return { playAudio };
+  const volumePercentage = useSyncExternalStore(
+    (onChange: () => void) => {
+      player?.addEventListener('volumeChange', onChange);
+      return () => player?.removeEventListener('volumeChange', onChange);
+    },
+    () => player?.volumePercentage,
+    () => player?.volumePercentage,
+  );
+
+  const setVolumePercentage = useCallback(
+    (percentage: number) => {
+      if (player) {
+        player.volumePercentage = percentage;
+      }
+    },
+    [player],
+  );
+
+  return { playAudio, volumePercentage, setVolumePercentage };
 }
 
 export * from '@speechmatics/web-pcm-player';
