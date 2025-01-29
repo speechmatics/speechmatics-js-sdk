@@ -53,6 +53,9 @@ importers:
       '@speechmatics/flow-client-react':
         specifier: workspace:*
         version: link:../../packages/flow-client-react
+      '@speechmatics/web-pcm-player-react':
+        specifier: workspace:*
+        version: link:../../packages/web-pcm-player-react
       next:
         specifier: 15.1.4
         version: 15.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -386,6 +389,28 @@ importers:
       rollup-plugin-preserve-directives:
         specifier: ^0.4.0
         version: 0.4.0(rollup@4.21.2)
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
+
+  packages/web-pcm-player:
+    dependencies:
+      typescript-event-target:
+        specifier: ^1.1.1
+        version: 1.1.1
+
+  packages/web-pcm-player-react:
+    dependencies:
+      '@speechmatics/web-pcm-player':
+        specifier: workspace:*
+        version: link:../web-pcm-player
+      react:
+        specifier: ^18 || ^19
+        version: 19.0.0
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.12
+        version: 18.3.12
       typescript-event-target:
         specifier: ^1.1.1
         version: 1.1.1
