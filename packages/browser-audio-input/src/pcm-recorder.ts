@@ -3,6 +3,8 @@ import { TypedEventTarget } from 'typescript-event-target';
 const RECORDING_STARTED = 'recordingStarted';
 const RECORDING_STOPPED = 'recordingStopped';
 const AUDIO = 'audio';
+const MUTE = 'mute';
+const UNMUTE = 'unmute';
 
 export class InputAudioEvent extends Event {
   constructor(public readonly data: Float32Array) {
@@ -10,10 +12,24 @@ export class InputAudioEvent extends Event {
   }
 }
 
+export class MuteEvent extends Event {
+  constructor() {
+    super(MUTE);
+  }
+}
+
+export class UnmuteEvent extends Event {
+  constructor() {
+    super(UNMUTE);
+  }
+}
+
 interface PCMRecorderEventMap {
   [RECORDING_STARTED]: Event;
   [RECORDING_STOPPED]: Event;
   [AUDIO]: InputAudioEvent;
+  [MUTE]: MuteEvent;
+  [UNMUTE]: UnmuteEvent;
 }
 
 export type StartRecordingOptions = {
@@ -83,6 +99,37 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     this.inputSourceNode.connect(this._analyser);
 
     this.dispatchTypedEvent(RECORDING_STARTED, new Event(RECORDING_STARTED));
+  }
+
+  mute() {
+    if (!this.mediaStream) return;
+
+    for (const track of this.mediaStream.getTracks()) {
+      console.log(track);
+      track.enabled = false;
+    }
+
+    this.dispatchTypedEvent(MUTE, new MuteEvent());
+    console.log('muted');
+  }
+
+  unmute() {
+    if (!this.mediaStream) return;
+
+    for (const track of this.mediaStream.getTracks()) {
+      console.log(track);
+      track.enabled = true;
+    }
+
+    this.dispatchTypedEvent(UNMUTE, new UnmuteEvent());
+    console.log('unmuted');
+  }
+
+  get muted() {
+    return (
+      this.mediaStream?.getAudioTracks().some((track) => !track.enabled) ??
+      false
+    );
   }
 
   stopRecording() {
