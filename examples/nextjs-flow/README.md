@@ -13,6 +13,8 @@ In order to build a React/NextJS app and have Flow working in a browser, this ex
 - [@speechmatics/browser-audio-input](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/browser-audio-input)
 - [@speechmatics/browser-audio-input-react](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/browser-audio-input-react)
 - [@speechmatics/flow-client-react](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/flow-client-react)
+- [@speechmatics/web-pcm-player-react](https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player-react)
+]
 
 Please check the package.json file for any other dependencies.
 
