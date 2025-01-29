@@ -56,7 +56,7 @@ export function Controls({
         </div>
         <div className="card-actions mt-4">
           <ActionButton />
-          <MuteButton />
+          <MuteMicrophoneButton />
         </div>
       </form>
     </Card>
@@ -86,13 +86,13 @@ function ActionButton() {
   );
 }
 
-function MuteButton() {
+function MuteMicrophoneButton() {
   const { isRecording, mute, unmute, isMuted } = usePCMAudioRecorder();
   if (!isRecording) return null;
 
   return (
     <Button type="button" onClick={isMuted ? unmute : mute}>
-      {isMuted ? 'Unmute' : 'Mute'}
+      {isMuted ? 'Unmute microphone' : 'Mute microphone'}
     </Button>
   );
 }
