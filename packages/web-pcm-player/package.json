@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/web-pcm-player",
-  "version": "1.0.0-rc6",
+  "version": "1.0.0",
   "description": "Library for playing PCM audio in the browser",
   "exports": {
     ".": {
