@@ -110,19 +110,16 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     }
 
     this.dispatchTypedEvent(MUTE, new MuteEvent());
-    console.log('muted');
   }
 
   unmute() {
     if (!this.mediaStream) return;
 
     for (const track of this.mediaStream.getTracks()) {
-      console.log(track);
       track.enabled = true;
     }
 
     this.dispatchTypedEvent(UNMUTE, new UnmuteEvent());
-    console.log('unmuted');
   }
 
   get muted() {
