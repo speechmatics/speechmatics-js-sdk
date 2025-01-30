@@ -122,7 +122,7 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     this.dispatchTypedEvent(UNMUTE, new UnmuteEvent());
   }
 
-  get muted() {
+  get isMuted() {
     return (
       this.mediaStream?.getAudioTracks().some((track) => !track.enabled) ??
       false

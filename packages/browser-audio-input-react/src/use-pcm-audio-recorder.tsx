@@ -20,7 +20,7 @@ export interface IPCMAudioRecorderContext {
   removeEventListener: PCMRecorder['removeEventListener'];
   analyser: PCMRecorder['analyser'];
   isRecording: PCMRecorder['isRecording'];
-  isMuted: PCMRecorder['muted'];
+  isMuted: PCMRecorder['isMuted'];
 }
 
 const context = createContext<IPCMAudioRecorderContext | null>(null);
@@ -117,8 +117,8 @@ export function PCMAudioRecorderProvider({
         recorder.removeEventListener('unmute', onChange);
       };
     },
-    () => recorder.muted,
-    () => recorder.muted,
+    () => recorder.isMuted,
+    () => recorder.isMuted,
   );
 
   const value = useMemo(
