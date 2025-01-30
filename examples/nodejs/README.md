@@ -4,6 +4,10 @@ Examples using Speechmatics with Node JS
 
 ## To run this examples
 
+## Check Node version
+
+Make sure you are using Node 22 or higher. You can use [NVM to manage Node versions](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script).
+
 Check out this repo, navigate to `/examples` and run
 
 ```

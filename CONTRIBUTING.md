@@ -28,7 +28,7 @@ This monorepo uses [`pnpm`](https://pnpm.io/) as a package manager. You can inst
 ### PNPM installation steps
 
 - If you have PNPM installed already, we recommend removing it from your system with this command: rm -rf $PNPM_HOME
-- If using NVM, run `nvm use` in the speechmatics-js-sdk repo, to ensure you're using Node 20.17
+- If using NVM, run `nvm use` in the speechmatics-js-sdk repo, to ensure you're using Node 22 or higher
 - In the `speechmatics-js-sdk/` folder, run `corepack use pnpm@latest`
 - Run `corepack enable pnpm`
 - Verify `pnpm --version` outputs the same version found in the `packageManager` field of [`package.json`](/package.json)

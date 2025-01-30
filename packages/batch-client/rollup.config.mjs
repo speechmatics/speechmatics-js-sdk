@@ -1,7 +1,7 @@
 import esbuild from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
-import packageJSON from './package.json' assert { type: 'json' };
+import packageJSON from './package.json' with { type: 'json' };
 const name = packageJSON.main.replace(/\.js$/, '');
 
 // Based on gist
