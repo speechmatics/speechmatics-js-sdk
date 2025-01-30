@@ -1,7 +1,7 @@
 import esbuild from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
-import packageJSON from './package.json' assert { type: 'json' };
+import packageJSON from './package.json' with { type: 'json' };
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 const CJS_TARGET = packageJSON.main;
 

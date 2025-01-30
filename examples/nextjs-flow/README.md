@@ -20,6 +20,10 @@ Please check the package.json file for any other dependencies.
 
 # Installation and setup
 
+## Check Node version
+
+Make sure you are using Node 22 or higher. You can use [NVM to manage Node versions](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script).
+
 ## Generate an API key
 
 To access the APIs and generate JWTs, you'll first need to generate an API key in the Speechmatics  user portal: https://portal.speechmatics.com/api-keys/
