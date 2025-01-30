@@ -9,6 +9,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm rollup -c",
+    "prepare": "pnpm build",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "test": "node --import tsx ./test/index.test.ts"

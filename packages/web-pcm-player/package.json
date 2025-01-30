@@ -12,7 +12,8 @@
   "type": "module",
   "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player",
   "scripts": {
-    "build": "rm -rf dist/ && pnpm rollup -c"
+    "build": "rm -rf dist/ && pnpm rollup -c",
+    "prepare": "pnpm build"
   },
   "keywords": ["web", "PCM", "audio", "player"],
   "license": "MIT",
