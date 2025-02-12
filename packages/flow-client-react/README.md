@@ -45,7 +45,7 @@ npm i @speechmatics/flow-client-react
   
     See our documentation about generating JWTs (temporary keys): https://docs.speechmatics.com/introduction/authentication#temporary-keys
 
-    An example credentials fetching flow can be found in the [NextJS example](/examples/nextjs/src/lib/fetch-credentials.ts).
+    An example credentials fetching flow can be found in the [NextJS example](/examples/nextjs-flow/app/actions.ts#L11). This uses a [server action](https://nextjs.org/docs/13/app/api-reference/functions/server-actions) which calls the [`@speechmatics/auth`](https://www.npmjs.com/package/@speechmatics/auth) package to get a temporary key to access the API from the browser.
   
     ```typescript
       await startConversation(jwt, {
