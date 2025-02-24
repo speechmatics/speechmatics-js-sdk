@@ -217,6 +217,7 @@ components:
             - recognition_quality
             - model_redirect
             - deprecated
+            - concurrent_session_usage
         reason:
           type: string
         code:
@@ -225,6 +226,10 @@ components:
           type: integer
         quality:
           type: string
+        usage:
+          type: number
+        quota:
+          type: number
       required:
         - message
         - type
