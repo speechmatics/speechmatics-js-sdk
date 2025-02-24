@@ -54,6 +54,18 @@ export interface Info {
    * @memberof Info
    */
   quality?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Info
+   */
+  usage?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Info
+   */
+  quota?: number;
 }
 
 export const InfoMessageEnum = {
@@ -66,6 +78,7 @@ export const InfoTypeEnum = {
   RecognitionQuality: 'recognition_quality',
   ModelRedirect: 'model_redirect',
   Deprecated: 'deprecated',
+  ConcurrentSessionUsage: 'concurrent_session_usage',
 } as const;
 
 export type InfoTypeEnum = (typeof InfoTypeEnum)[keyof typeof InfoTypeEnum];
