@@ -1,6 +1,7 @@
 import {
   type InputAudioEvent,
   PCMRecorder,
+  type StartRecordingOptions,
 } from '@speechmatics/browser-audio-input';
 import {
   createContext,
@@ -11,8 +12,12 @@ import {
   useSyncExternalStore,
 } from 'react';
 
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 export interface IPCMAudioRecorderContext {
-  startRecording: PCMRecorder['startRecording'];
+  startRecording: (
+    opts: PartialBy<StartRecordingOptions, 'audioContext'>,
+  ) => Promise<void>;
   stopRecording: PCMRecorder['stopRecording'];
   mute: PCMRecorder['mute'];
   unmute: PCMRecorder['unmute'];
@@ -37,9 +42,11 @@ export function usePCMAudioRecorder() {
 export function PCMAudioRecorderProvider({
   workletScriptURL,
   children,
+  audioContext,
 }: {
   workletScriptURL: string;
   children: React.ReactNode;
+  audioContext?: AudioContext;
 }) {
   const recorder = useMemo(
     () => new PCMRecorder(workletScriptURL),
@@ -50,9 +57,21 @@ export function PCMAudioRecorderProvider({
     return () => recorder.stopRecording();
   }, [recorder]);
 
-  const startRecording = useCallback<PCMRecorder['startRecording']>(
-    (options) => recorder.startRecording(options),
-    [recorder],
+  const startRecording = useCallback(
+    (options: PartialBy<StartRecordingOptions, 'audioContext'>) => {
+      const recorderAudioContext = options.audioContext ?? audioContext;
+      if (!recorderAudioContext) {
+        throw new Error(
+          'AudioContext must be provided either in the argument to startRecording or as a prop to PCMAudioRecorderProvider',
+        );
+      }
+
+      return recorder.startRecording({
+        ...options,
+        audioContext: recorderAudioContext,
+      });
+    },
+    [recorder, audioContext],
   );
 
   const stopRecording = useCallback<PCMRecorder['stopRecording']>(

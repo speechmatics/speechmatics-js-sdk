@@ -14,11 +14,11 @@ export default function rollup() {
       input: 'src/index.ts',
       output: [
         {
-          file: packageJSON.module,
+          dir: 'dist/',
           format: 'es',
           sourcemap: true,
           strict: false,
-          banner: '"use client";',
+          preserveModules: true,
         },
       ],
     },

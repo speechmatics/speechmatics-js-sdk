@@ -7,6 +7,9 @@ import Card from './Card';
 import TranscriptManager from '@/lib/transcript-manager';
 import { useTranscriptManager } from '@/hooks/useTranscriptManager';
 import type { TranscriptGroup } from '@/lib/transcript-types';
+import { AudioVisualizer } from './AudioVisualizer';
+import { usePCMAudioPlayer } from '@speechmatics/web-pcm-player-react';
+import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
 
 export function TranscriptView() {
   return (
@@ -51,6 +54,8 @@ const TranscriptContainer = ({
     }
   });
 
+  const { analyser } = usePCMAudioRecorder();
+
   return (
     <div
       ref={scrollRef}
@@ -60,6 +65,7 @@ const TranscriptContainer = ({
         height: '300px',
       }}
     >
+      {!!analyser && <AudioVisualizer analyser={analyser} />}
       {transcripts.map((group) => (
         <div
           key={`${group.type}-${

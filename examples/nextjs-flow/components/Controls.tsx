@@ -1,11 +1,12 @@
 'use client';
 import { useFlow } from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
-import { useFlowWithBrowserAudio } from '../hooks/useFlowWithBrowserAudio';
 import { MicrophoneSelect, Select } from './MicrophoneSelect';
 import Card from './Card';
-import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
-import { useStartFlowSession } from '@/hooks/useStartFlowSession';
+import {
+  usePCMAudioListener,
+  usePCMAudioRecorder,
+} from '@speechmatics/browser-audio-input-react';
 import { getJWT } from '@/app/actions';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,14 +22,18 @@ const Button = ({ children, className, ...props }: ButtonProps) => (
 export function Controls({
   personas,
 }: { personas: Record<string, { name: string }> }) {
-  const { startConversation, endConversation, socketState, sessionId } =
-    useFlow();
+  const {
+    startConversation,
+    endConversation,
+    sendAudio,
+    socketState,
+    sessionId,
+  } = useFlow();
+
+  const { startRecording, stopRecording } = usePCMAudioRecorder();
 
   const startSession = useCallback(
-    async ({
-      personaId,
-      recordingSampleRate,
-    }: { personaId: string; recordingSampleRate: number }) => {
+    async ({ personaId }: { personaId: string }) => {
       const jwt = await getJWT('flow');
 
       await startConversation(jwt, {
@@ -41,11 +46,11 @@ export function Controls({
         audioFormat: {
           type: 'raw',
           encoding: 'pcm_f32le',
-          sample_rate: recordingSampleRate,
+          sample_rate: sampleRate,
         },
       });
     },
-    [startConversation],
+    [startConversation, sampleRate],
   );
 
   const handleSubmit = useCallback<FormEventHandler>(
@@ -53,7 +58,9 @@ export function Controls({
       e.preventDefault();
 
       if (socketState === 'open' && sessionId) {
-        return endConversation();
+        stopRecording();
+        endConversation();
+        return;
       }
 
       const formData = new FormData(e.target as HTMLFormElement);
@@ -64,10 +71,21 @@ export function Controls({
       const deviceId = formData.get('deviceId')?.toString();
       if (!deviceId) throw new Error('No device selected!');
 
-      startSession({ personaId, recordingSampleRate: 16000 });
+      await startSession({ personaId });
+      await startRecording({ deviceId });
     },
-    [startSession, endConversation, socketState, sessionId],
+    [
+      startSession,
+      startRecording,
+      stopRecording,
+      endConversation,
+      socketState,
+      sessionId,
+      sampleRate,
+    ],
   );
+
+  usePCMAudioListener(sendAudio);
 
   return (
     <Card>

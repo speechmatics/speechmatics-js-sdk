@@ -1,3 +1,4 @@
+'use client';
 import { PCMPlayer } from '@speechmatics/web-pcm-player';
 import { useMemo, useCallback, useSyncExternalStore } from 'react';
 
