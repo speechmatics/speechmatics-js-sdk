@@ -2,7 +2,7 @@
 import { PCMPlayer } from '@speechmatics/web-pcm-player';
 import { useMemo, useCallback, useSyncExternalStore } from 'react';
 
-export function usePCMAudioPlayer(audioContext?: AudioContext) {
+export function usePCMAudioPlayer(audioContext: AudioContext | undefined) {
   const player = useMemo(() => {
     if (!audioContext) {
       return null;

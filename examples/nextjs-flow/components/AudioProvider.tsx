@@ -11,10 +11,8 @@ import {
 } from 'react';
 
 export function AudioProvider({ children }: PropsWithChildren) {
-  // Separate audio contexts for recording and playback.
-  // In practice they will be the same AudioContext, except in Firefox where sample rates may differ
-  // See bug tracked here: https://bugzilla.mozilla.org/show_bug.cgi?id=1725336https://bugzilla.mozilla.org/show_bug.cgi?id=1725336
-  // TODO: If/when the bug is fixed, we can use the same audio context for both recording and playback
+  // Get audio contexts for input and playback
+  // (see note above `useAudioContexts` for more info)
   const { inputAudioContext, playbackAudioContext } = useAudioContexts();
 
   return (
@@ -32,6 +30,10 @@ export function AudioProvider({ children }: PropsWithChildren) {
   );
 }
 
+// This hook returns audio contexts for recording and playback.
+// In practice they will be the same AudioContext, except in Firefox where sample rates may differ
+// See bug tracked here: https://bugzilla.mozilla.org/show_bug.cgi?id=1725336https://bugzilla.mozilla.org/show_bug.cgi?id=1725336
+// TODO: If/when the bug is fixed, we can use the same audio context for both recording and playback
 function useAudioContexts() {
   const hydrated = useHydrated();
   const inputAudioContext = useMemo(
@@ -53,6 +55,7 @@ function useAudioContexts() {
   return { inputAudioContext, playbackAudioContext };
 }
 
+// Lets us know if we're rendering client side or not
 const useHydrated = () =>
   useSyncExternalStore(
     () => () => {},
@@ -60,6 +63,7 @@ const useHydrated = () =>
     () => false,
   );
 
+// Close audio context when component unmounts
 function useCleanupAudioContext(context?: AudioContext) {
   useEffect(() => {
     return () => {

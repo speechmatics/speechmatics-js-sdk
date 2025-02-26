@@ -20,7 +20,7 @@ type UsePCMAudioRecorderReturn = {
 
 export function usePCMAudioRecorder(
   workletScriptURL: string,
-  audioContext?: AudioContext,
+  audioContext: AudioContext | undefined,
 ): UsePCMAudioRecorderReturn {
   const recorder = useMemo(
     () => new PCMRecorder(workletScriptURL),
