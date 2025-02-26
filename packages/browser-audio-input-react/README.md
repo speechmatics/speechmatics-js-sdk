@@ -98,8 +98,10 @@ The only required argument to `startRecording` is an [`AudioContext`](https://de
 `stopRecording` stops the active `MediaStream` source, but leaves the `AudioContext` open, so it can be re-used.
 
 ```TSX
+import { usePCMAudioRecorderContext } from "@speechmatics/browser-audio-input-react";
+
 function RecordingButton() {
-  const { startRecording, stopRecording, isRecording } = usePCMAudioRecorder();
+  const { startRecording, stopRecording, isRecording } = usePCMAudioRecorderContext();
 
   const onClick = () => {
     if (isRecording) {
@@ -244,11 +246,10 @@ function App() {
 
 ### Creating audio visualizers
 
-The hook `usePCMAudioRecorder` provides an `analyser` object, which is an instance of [`AnalyserNode`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode).
+The hook `usePCMAudioRecorderContext` provides an `analyser` object, which is an instance of [`AnalyserNode`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode).
 
 ```typescript
-const { analyser } = usePCMAudioRecorder();
-
+const { analyser } = usePCMAudioRecorderContext();
 ```
 
 MDN has a [great guide on audio visualizers for the WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API). The basic idea though is that you can use `requestAnimationFrame` to repeatedly read the [`analyser.getFloatFrequencyData`](https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getFloatFrequencyData) method to animate whatever DOM elements you like.

@@ -29,7 +29,7 @@ const base64Data = [
   // packages/web-pcm-player/example/example.html
 ]
 
-export default function Index() {
+export default function Component() {
   const audioContext = useMemo(
     () => new AudioContext({ sampleRate: 16_000 }),
     [],
@@ -71,3 +71,63 @@ export default function Index() {
 }
 
 ```
+
+
+## React context
+
+The above example uses the hook `usePCMAudioPlayer`, which works for many use cases, but may be inconvenient if the audio player data needs to be shared across a large application. To solve this problem, we provide additional utilities for using [React Context](https://react.dev/learn/passing-data-deeply-with-context).
+
+1. Wrap your app/section of your app in the provided `PCMPlayerProvider`, initializing it with an audioContext.
+
+```TSX
+import { PCMPlayerProvider } from '@speechmatics/web-pcm-player-react';
+
+export function ({ children }) {
+  const audioContext = useMemo(
+    () =>
+      // Note audioContext may be undefined if we are rendering on the server. The provider supports this
+      typeof window !== "undefined" ? new AudioContext() : undefined,
+    [],
+  );
+
+  <PCMPlayerProvider audioContext={audioContext}>
+    {children}
+  </PCMPlayerProvider>
+}
+```
+
+Then in any child of `Root`:
+
+```TSX
+import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
+
+const base64Data = [
+  // See this file for full test data:
+  // packages/web-pcm-player/example/example.html
+]
+
+export default function Component() {
+  const { playAudio, volumePercentage, setVolumePercentage } =
+    usePCMAudioPlayerContext();
+
+  async function playTestAudio() {
+    await audioContext.resume();
+
+    for (const audioChunk of base64Data) {
+      const buffer = Uint8Array.from(atob(audioChunk), (c) => c.charCodeAt(0));
+      const data = new Int16Array(buffer.buffer);
+      playAudio(data);
+    }
+  }
+
+  function handleVolumeChange(e) {
+    setVolumePercentage(Number(e.target.value));
+  }
+
+  // ...
+ 
+}
+
+```
+
+**Note**: We intentionally leave the management of the `audioContext` up to you the developer. Applications differ in their audio needs, and it is recommended to re-use/share audio contexts as much as possible (see [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)).

@@ -13,11 +13,14 @@ export class PCMPlayer extends TypedEventTarget<{
 }> {
   private playbackTime = 0;
   private gainNode: GainNode;
+  private _analyser: AnalyserNode;
 
   constructor(private audioContext: AudioContext) {
     super();
     this.gainNode = this.audioContext.createGain();
     this.gainNode.connect(this.audioContext.destination);
+    this._analyser = this.audioContext.createAnalyser();
+    this.gainNode.connect(this._analyser);
   }
 
   playAudio(data: Int16Array | Float32Array) {
@@ -57,6 +60,10 @@ export class PCMPlayer extends TypedEventTarget<{
   set volumePercentage(percentage: number) {
     this.gainNode.gain.value = percentage / 100;
     this.dispatchTypedEvent(VOLUME_CHANGE, new VolumeChangeEvent(percentage));
+  }
+
+  get analyser() {
+    return this._analyser;
   }
 }
 

@@ -1,4 +1,15 @@
 class PCMAudioProcessor extends AudioWorkletProcessor {
+  active = true;
+
+  constructor() {
+    super();
+    this.port.onmessage = (e) => {
+      if (e.data === 'stop') {
+        this.active = false;
+      }
+    };
+  }
+
   process(inputs: Float32Array[][]) {
     const input = inputs[0];
 
@@ -7,7 +18,7 @@ class PCMAudioProcessor extends AudioWorkletProcessor {
       this.port.postMessage(inputBuffer);
     }
 
-    return true;
+    return this.active;
   }
 }
 
