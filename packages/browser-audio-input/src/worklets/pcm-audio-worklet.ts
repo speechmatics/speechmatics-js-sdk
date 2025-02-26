@@ -5,7 +5,6 @@ class PCMAudioProcessor extends AudioWorkletProcessor {
     super();
     this.port.onmessage = (e) => {
       if (e.data === 'stop') {
-        console.log('PCM recorder stopping');
         this.active = false;
       }
     };

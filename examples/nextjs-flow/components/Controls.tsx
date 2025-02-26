@@ -1,5 +1,5 @@
 'use client';
-import { useFlow } from '@speechmatics/flow-client-react';
+import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
 import { MicrophoneSelect, Select } from './MicrophoneSelect';
 import Card from './Card';
@@ -8,6 +8,7 @@ import {
   usePCMAudioRecorderContext,
 } from '@speechmatics/browser-audio-input-react';
 import { getJWT } from '@/app/actions';
+import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -96,7 +97,10 @@ export function Controls({
     ],
   );
 
+  const { playAudio } = usePCMAudioPlayerContext();
+
   usePCMAudioListener(sendAudio);
+  useFlowEventListener('agentAudio', ({ data }) => playAudio(data));
 
   return (
     <Card>

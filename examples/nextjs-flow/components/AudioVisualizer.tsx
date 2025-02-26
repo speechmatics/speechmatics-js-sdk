@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-const BAR_COUNT = 8;
-const BAR_HEIGHT = 32;
+const BAR_COUNT = 5;
+const BAR_SPACING = 8;
+const BAR_HEIGHT = 24;
 
 export function AudioVisualizer({
   analyser,
@@ -57,9 +58,9 @@ export function AudioVisualizer({
     <svg
       ref={svgRef}
       xmlns="http://www.w3.org/2000/svg"
-      width="32px"
-      height="32px"
-      viewBox="0 0 64 64"
+      width={`${BAR_HEIGHT}px`}
+      height={`${BAR_HEIGHT}px`}
+      viewBox={`0 0 ${BAR_HEIGHT * 2} ${BAR_HEIGHT * 2}`}
       fill="none"
     >
       <title>Audio</title>
@@ -67,8 +68,8 @@ export function AudioVisualizer({
         <line
           // biome-ignore lint/suspicious/noArrayIndexKey: static
           key={n}
-          x1={8 * n + 4}
-          x2={8 * n + 4}
+          x1={BAR_SPACING * n + BAR_HEIGHT / BAR_SPACING}
+          x2={BAR_SPACING * n + BAR_HEIGHT / BAR_SPACING}
           y1={BAR_HEIGHT}
           y2={BAR_HEIGHT}
           stroke={color}
