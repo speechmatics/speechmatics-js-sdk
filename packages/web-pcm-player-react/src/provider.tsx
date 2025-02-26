@@ -1,5 +1,5 @@
 'use client';
-import { usePCMAudioPlayer } from './usePCMAudioPlayer';
+import { usePCMAudioPlayer } from './use-pcm-audio-player';
 import { pcmPlayerContext } from './context';
 
 export function PCMPlayerProvider({
@@ -8,7 +8,7 @@ export function PCMPlayerProvider({
 }: { audioContext?: AudioContext; children: React.ReactNode }) {
   const value = usePCMAudioPlayer(audioContext);
   return (
-    <pcmPlayerContext.Provider value={value}>
+    <pcmPlayerContext.Provider value={{ ...value, audioContext }}>
       {children}
     </pcmPlayerContext.Provider>
   );

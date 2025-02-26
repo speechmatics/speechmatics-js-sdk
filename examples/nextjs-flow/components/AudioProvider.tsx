@@ -20,7 +20,7 @@ export function AudioProvider({ children }: PropsWithChildren) {
   return (
     // Two context providers
     // 1. For the audio recorder (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/browser-audio-input-react/README.md)
-    // 2. For the adio player (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/web-pcm-player-react/README.md)
+    // 2. For the audio player (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/web-pcm-player-react/README.md)
     <PCMAudioRecorderProvider
       audioContext={inputAudioContext}
       workletScriptURL="/js/pcm-audio-worklet.min.js"

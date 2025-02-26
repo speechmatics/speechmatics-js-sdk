@@ -41,7 +41,6 @@ export function usePCMAudioPlayer(audioContext?: AudioContext) {
   );
 
   const analyser = player?.analyser;
-  console.log('analyser=', analyser);
 
   return { playAudio, volumePercentage, setVolumePercentage, analyser };
 }

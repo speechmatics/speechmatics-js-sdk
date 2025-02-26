@@ -46,10 +46,11 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
   private mediaStream: MediaStream | undefined;
   private audioContext: AudioContext | undefined = undefined;
   private inputSourceNode: MediaStreamAudioSourceNode | undefined = undefined;
-  private _analyser: AnalyserNode | undefined = undefined;
+  private analyserNode: AnalyserNode | undefined = undefined;
+  private workletProcessorNode: AudioWorkletNode | undefined = undefined;
 
   get analyser() {
-    return this._analyser;
+    return this.analyserNode;
   }
 
   get isRecording() {
@@ -58,6 +59,14 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
 
   async startRecording(options: StartRecordingOptions) {
     this.audioContext = options.audioContext;
+
+    try {
+      if (this.audioContext.state !== 'running') {
+        await this.audioContext.resume();
+      }
+    } catch (e) {
+      throw new AudioContextResumeError(this.audioContext, { cause: e });
+    }
 
     try {
       await this.audioContext.audioWorklet.addModule(this.workletScriptURL);
@@ -82,21 +91,21 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     this.inputSourceNode = this.audioContext.createMediaStreamSource(
       this.mediaStream,
     );
-    const processor = new AudioWorkletNode(
+    this.workletProcessorNode = new AudioWorkletNode(
       this.audioContext,
       'pcm-audio-processor',
     );
 
-    processor.port.onmessage = (event) => {
+    this.workletProcessorNode.port.onmessage = (event) => {
       const inputBuffer = event.data;
       this.dispatchTypedEvent(AUDIO, new InputAudioEvent(inputBuffer));
     };
 
-    this.inputSourceNode.connect(processor);
-    processor.connect(this.audioContext.destination);
+    this.inputSourceNode.connect(this.workletProcessorNode);
+    this.workletProcessorNode.connect(this.audioContext.destination);
 
-    this._analyser = this.audioContext.createAnalyser();
-    this.inputSourceNode.connect(this._analyser);
+    this.analyserNode = this.audioContext.createAnalyser();
+    this.inputSourceNode.connect(this.analyserNode);
 
     this.dispatchTypedEvent(RECORDING_STARTED, new Event(RECORDING_STARTED));
   }
@@ -105,7 +114,6 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     if (!this.mediaStream) return;
 
     for (const track of this.mediaStream.getTracks()) {
-      console.log(track);
       track.enabled = false;
     }
 
@@ -135,11 +143,14 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
         track.stop();
       }
       this.inputSourceNode?.disconnect();
+      this.workletProcessorNode?.port.postMessage('stop');
+      this.workletProcessorNode?.disconnect();
 
       this.mediaStream = undefined;
       this.inputSourceNode = undefined;
-      this._analyser = undefined;
+      this.analyserNode = undefined;
       this.audioContext = undefined;
+      this.workletProcessorNode = undefined;
 
       this.dispatchTypedEvent(RECORDING_STOPPED, new Event(RECORDING_STOPPED));
     }
@@ -150,5 +161,15 @@ export class AudioModuleRegistrationError extends Error {
   constructor(moduleUrl: string, error: unknown) {
     super(`Failed to register module from ${moduleUrl}`, { cause: error });
     this.name = 'AudioModuleRegistrationError';
+  }
+}
+
+export class AudioContextResumeError extends Error {
+  constructor(audioContext: AudioContext, opts: ErrorOptions) {
+    super(
+      `Could not resume audio context. Found in ${audioContext.state} state`,
+      opts,
+    );
+    this.name = 'AudioContextResumeError';
   }
 }

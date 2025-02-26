@@ -9,7 +9,10 @@ import { useTranscriptManager } from '@/hooks/useTranscriptManager';
 import type { TranscriptGroup } from '@/lib/transcript-types';
 import { AudioVisualizer } from './AudioVisualizer';
 import { usePCMAudioPlayer } from '@speechmatics/web-pcm-player-react';
-import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
+import {
+  usePCMAudioRecorder,
+  usePCMAudioRecorderContext,
+} from '@speechmatics/browser-audio-input-react';
 
 export function TranscriptView() {
   return (
@@ -54,7 +57,7 @@ const TranscriptContainer = ({
     }
   });
 
-  const { analyser } = usePCMAudioRecorder();
+  const { analyser } = usePCMAudioRecorderContext();
 
   return (
     <div

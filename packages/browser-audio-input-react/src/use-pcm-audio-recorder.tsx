@@ -1,53 +1,27 @@
 import {
-  type InputAudioEvent,
   PCMRecorder,
   type StartRecordingOptions,
 } from '@speechmatics/browser-audio-input';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useSyncExternalStore,
-} from 'react';
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from 'react';
 
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-export interface IPCMAudioRecorderContext {
+type UsePCMAudioRecorderReturn = {
   startRecording: (
-    opts: PartialBy<StartRecordingOptions, 'audioContext'>,
+    options: Omit<StartRecordingOptions, 'audioContext'>,
   ) => Promise<void>;
   stopRecording: PCMRecorder['stopRecording'];
   mute: PCMRecorder['mute'];
   unmute: PCMRecorder['unmute'];
+  isMuted: boolean;
   addEventListener: PCMRecorder['addEventListener'];
   removeEventListener: PCMRecorder['removeEventListener'];
   analyser: PCMRecorder['analyser'];
-  isRecording: PCMRecorder['isRecording'];
-  isMuted: PCMRecorder['isMuted'];
-}
+  isRecording: boolean;
+};
 
-const context = createContext<IPCMAudioRecorderContext | null>(null);
-
-export function usePCMAudioRecorder() {
-  const ctx = useContext(context);
-  if (!ctx) {
-    throw new Error('PCM audio recorder context must be provided');
-  }
-
-  return ctx;
-}
-
-export function PCMAudioRecorderProvider({
-  workletScriptURL,
-  children,
-  audioContext,
-}: {
-  workletScriptURL: string;
-  children: React.ReactNode;
-  audioContext?: AudioContext;
-}) {
+export function usePCMAudioRecorder(
+  workletScriptURL: string,
+  audioContext?: AudioContext,
+): UsePCMAudioRecorderReturn {
   const recorder = useMemo(
     () => new PCMRecorder(workletScriptURL),
     [workletScriptURL],
@@ -58,17 +32,14 @@ export function PCMAudioRecorderProvider({
   }, [recorder]);
 
   const startRecording = useCallback(
-    (options: PartialBy<StartRecordingOptions, 'audioContext'>) => {
-      const recorderAudioContext = options.audioContext ?? audioContext;
-      if (!recorderAudioContext) {
-        throw new Error(
-          'AudioContext must be provided either in the argument to startRecording or as a prop to PCMAudioRecorderProvider',
-        );
+    (options: Omit<StartRecordingOptions, 'audioContext'>) => {
+      if (!audioContext) {
+        throw new Error('AudioContext not supplied!');
       }
 
       return recorder.startRecording({
         ...options,
-        audioContext: recorderAudioContext,
+        audioContext,
       });
     },
     [recorder, audioContext],
@@ -164,27 +135,5 @@ export function PCMAudioRecorderProvider({
       isRecording,
     ],
   );
-
-  return <context.Provider value={value}>{children}</context.Provider>;
-}
-
-export function usePCMAudioListener(cb: (audio: Float32Array) => void) {
-  const ctx = useContext(context);
-  if (!ctx) {
-    throw new Error('PCM audio recorder context must be provided');
-  }
-
-  const { addEventListener, removeEventListener } = ctx;
-
-  useEffect(() => {
-    const onAudio = (ev: InputAudioEvent) => {
-      cb(ev.data);
-    };
-
-    addEventListener('audio', onAudio);
-
-    return () => {
-      removeEventListener('audio', onAudio);
-    };
-  }, [addEventListener, removeEventListener, cb]);
+  return value;
 }

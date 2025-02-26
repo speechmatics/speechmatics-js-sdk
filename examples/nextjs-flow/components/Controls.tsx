@@ -5,7 +5,7 @@ import { MicrophoneSelect, Select } from './MicrophoneSelect';
 import Card from './Card';
 import {
   usePCMAudioListener,
-  usePCMAudioRecorder,
+  usePCMAudioRecorderContext,
 } from '@speechmatics/browser-audio-input-react';
 import { getJWT } from '@/app/actions';
 
@@ -30,10 +30,14 @@ export function Controls({
     sessionId,
   } = useFlow();
 
-  const { startRecording, stopRecording } = usePCMAudioRecorder();
+  const { startRecording, stopRecording, audioContext } =
+    usePCMAudioRecorderContext();
 
   const startSession = useCallback(
-    async ({ personaId }: { personaId: string }) => {
+    async ({
+      personaId,
+      recordingSampleRate,
+    }: { personaId: string; recordingSampleRate: number }) => {
       const jwt = await getJWT('flow');
 
       await startConversation(jwt, {
@@ -46,16 +50,20 @@ export function Controls({
         audioFormat: {
           type: 'raw',
           encoding: 'pcm_f32le',
-          sample_rate: sampleRate,
+          sample_rate: recordingSampleRate,
         },
       });
     },
-    [startConversation, sampleRate],
+    [startConversation],
   );
 
   const handleSubmit = useCallback<FormEventHandler>(
     async (e) => {
       e.preventDefault();
+
+      if (!audioContext) {
+        throw new Error('Audio context not initialized!');
+      }
 
       if (socketState === 'open' && sessionId) {
         stopRecording();
@@ -71,7 +79,10 @@ export function Controls({
       const deviceId = formData.get('deviceId')?.toString();
       if (!deviceId) throw new Error('No device selected!');
 
-      await startSession({ personaId });
+      await startSession({
+        personaId,
+        recordingSampleRate: audioContext.sampleRate,
+      });
       await startRecording({ deviceId });
     },
     [
@@ -81,7 +92,7 @@ export function Controls({
       endConversation,
       socketState,
       sessionId,
-      sampleRate,
+      audioContext,
     ],
   );
 
@@ -131,7 +142,7 @@ function ActionButton() {
 }
 
 function MuteMicrophoneButton() {
-  const { isRecording, mute, unmute, isMuted } = usePCMAudioRecorder();
+  const { isRecording, mute, unmute, isMuted } = usePCMAudioRecorderContext();
   if (!isRecording) return null;
 
   return (
