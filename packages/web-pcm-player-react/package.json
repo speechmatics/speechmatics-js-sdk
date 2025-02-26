@@ -24,7 +24,7 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
+    "@types/react": "^19.0.10",
     "typescript-event-target": "^1.1.1"
   }
 }

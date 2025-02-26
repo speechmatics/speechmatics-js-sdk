@@ -71,3 +71,8 @@ export default function Index() {
 }
 
 ```
+
+
+## React context
+
+This
