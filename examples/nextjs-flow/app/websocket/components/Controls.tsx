@@ -1,8 +1,8 @@
 'use client';
 import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
-import { MicrophoneSelect, Select } from './MicrophoneSelect';
-import Card from './Card';
+import { MicrophoneSelect, Select } from '@/components/MicrophoneSelect';
+import Card from '@/components/Card';
 import {
   usePCMAudioListener,
   usePCMAudioRecorderContext,
@@ -131,7 +131,7 @@ function ActionButton() {
     (socketState === 'open' && !sessionId)
   ) {
     return (
-      <Button type="button" className="btn-primary" disabled aria-busy>
+      <Button type="button" className="btn" disabled aria-busy>
         <span className="loading loading-spinner" />
       </Button>
     );
@@ -139,7 +139,7 @@ function ActionButton() {
 
   const running = socketState === 'open' && sessionId;
   return (
-    <Button type="submit" className={running ? 'btn-accent' : 'btn-primary'}>
+    <Button type="submit" className={running ? 'btn-accent' : 'btn'}>
       {running ? 'Stop' : 'Start'}
     </Button>
   );
