@@ -19,7 +19,9 @@ import { TranscriptContainer } from '@/components/TranscriptView';
 
 export function Room({
   personas,
-}: { personas: Awaited<ReturnType<typeof fetchPersonas>> }) {
+}: {
+  personas: Awaited<ReturnType<typeof fetchPersonas>>;
+}) {
   const [state, formAction, pending] = useActionState<
     StartLivekitResponse | null,
     FormData
@@ -81,7 +83,7 @@ export function Room({
     >
       <Transcript sessionId={sessionID} />
       <RoomAudioRenderer />
-      <ControlBar />
+      <ControlBar controls={{ camera: false, screenShare: false }} />
     </LiveKitRoom>
   );
 }

@@ -22,15 +22,8 @@
   --lk-danger-fg: oklch(var(--erc));
   --lk-danger: oklch(var(--er));
 
-  /* ?? What should these be? */
-  /* --lk-danger-text: #6d0311;
-  --lk-danger-bg: #fecdd4; */
-
   --lk-success-fg: oklch(var(--suc));
   --lk-success: oklch(var(--su));
-
-  /* --lk-success-text: #036d26;
-  --lk-success-bg: #cdfedd; */
 
   --lk-control-fg: oklch(var(--bc));
   --lk-control-bg: oklch(var(--b2));
@@ -41,7 +34,7 @@
   --lk-connection-good: #f9b11f;
   --lk-connection-poor: #f91f31;
 
-  --lk-control-bar-height: 5rem;
+  --lk-control-bar-height: var(--spacing);
 }
 
 @media (prefers-color-scheme: dark) {
