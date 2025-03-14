@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@livekit/components-react": "^2.8.1",
+    "@livekit/components-styles": "^1.1.4",
     "@speechmatics/auth": "workspace:*",
     "@speechmatics/browser-audio-input": "workspace:*",
     "@speechmatics/browser-audio-input-react": "workspace:*",
     "@speechmatics/flow-client-react": "workspace:*",
     "@speechmatics/web-pcm-player-react": "workspace:*",
+    "livekit-client": "^2.9.5",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
