@@ -9,7 +9,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
+    "clean:deps": "rm -rf node_modules && pnpm -r --parallel exec rm -rf node_modules",
     "clean:builds": "pnpm -r exec rm -rf dist",
     "clean": "pnpm clean:deps && pnpm clean:builds",
     "format": "biome format --write .",
@@ -17,9 +17,11 @@
 
     "format:check": "biome format .",
     "lint:check": "biome lint .",
+    "type:check": "pnpm --filter '{packages/*}' exec tsc",
+    "check-all": "pnpm run /.*:check/",
 
-    "build:packages": "pnpm --filter '{packages/*}' build",
-    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public"
+    "build:packages": "pnpm --parallel --filter '{packages/*}' build",
+    "publish:packages": "pnpm --parallel --filter '{packages/*}' publish --access=public"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,6 @@
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-esbuild": "^6.1.1",
     "tsx": "^4.19.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.8.2"
   }
 }
