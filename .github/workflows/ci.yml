@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Check (format, lint, and types)
-        run: "pnpm run check-all
+        run: pnpm run check-all
       - name: Test
         run: pnpm -r test
         env:
