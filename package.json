@@ -20,7 +20,7 @@
 
     "build:packages": "pnpm --parallel --filter '{packages/*}' build",
     "publish:packages": "pnpm --parallel --filter '{packages/*}' publish --access=public",
-    "type:check": "pnpm --parallel --filter '{packages/*}' exec tsc"
+    "type:check": "pnpm --filter '{packages/*}' exec tsc"
   },
   "keywords": [],
   "author": "",
