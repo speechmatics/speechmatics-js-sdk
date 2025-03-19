@@ -17,10 +17,11 @@
 
     "format:check": "biome format .",
     "lint:check": "biome lint .",
+    "type:check": "pnpm --filter '{packages/*}' exec tsc",
+    "check-all": "pnpm run /.*:check/",
 
     "build:packages": "pnpm --parallel --filter '{packages/*}' build",
-    "publish:packages": "pnpm --parallel --filter '{packages/*}' publish --access=public",
-    "type:check": "pnpm --filter '{packages/*}' exec tsc"
+    "publish:packages": "pnpm --parallel --filter '{packages/*}' publish --access=public"
   },
   "keywords": [],
   "author": "",
