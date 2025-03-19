@@ -28,7 +28,7 @@ importers:
         version: 4.21.2
       rollup-plugin-dts:
         specifier: ^6.1.1
-        version: 6.1.1(rollup@4.21.2)(typescript@5.5.4)
+        version: 6.1.1(rollup@4.21.2)(typescript@5.8.2)
       rollup-plugin-esbuild:
         specifier: ^6.1.1
         version: 6.1.1(esbuild@0.23.1)(rollup@4.21.2)
@@ -36,8 +36,8 @@ importers:
         specifier: ^4.19.0
         version: 4.19.0
       typescript:
-        specifier: ^5.5.4
-        version: 5.5.4
+        specifier: ^5.8.2
+        version: 5.8.2
 
   examples/nextjs-flow:
     dependencies:
@@ -98,7 +98,7 @@ importers:
         version: 3.4.17
       typescript:
         specifier: ^5
-        version: 5.5.4
+        version: 5.8.2
 
   examples/nextjs-real-time-transcription:
     dependencies:
@@ -147,7 +147,7 @@ importers:
         version: 12.0.2(webpack@5.96.1(esbuild@0.23.1))
       typescript:
         specifier: ^5
-        version: 5.5.4
+        version: 5.8.2
 
   examples/nodejs:
     dependencies:
@@ -207,7 +207,7 @@ importers:
         version: 7.0.4(expo@52.0.25(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@expo/metro-runtime@4.0.0(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1)))(react-native-webview@13.12.5(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
       expo-router:
         specifier: ~4.0.16
-        version: 4.0.16(4z625eegvyfzne4n5tvgcbtnru)
+        version: 4.0.16(pp2wqax6lrayrgaketmdzthbgy)
       expo-splash-screen:
         specifier: ~0.29.20
         version: 0.29.20(expo@52.0.25(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@expo/metro-runtime@4.0.0(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1)))(react-native-webview@13.12.5(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))
@@ -274,7 +274,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       typescript:
         specifier: ^5.3.3
-        version: 5.5.4
+        version: 5.8.2
 
   packages/auth:
     devDependencies:
@@ -5825,8 +5825,8 @@ packages:
   typescript-event-target@1.1.1:
     resolution: {integrity: sha512-dFSOFBKV6uwaloBCCUhxlD3Pr/P1a/tJdcmPrTXCHlEFD3faj0mztjcGn6VBAhQ0/Bdy8K3VWrrqwbt/ffsYsg==}
 
-  typescript@5.5.4:
-    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+  typescript@5.8.2:
+    resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -7633,9 +7633,9 @@ snapshots:
 
   '@expo/sdk-runtime-versions@1.0.0': {}
 
-  '@expo/server@0.5.0(typescript@5.5.4)':
+  '@expo/server@0.5.0(typescript@5.8.2)':
     dependencies:
-      '@remix-run/node': 2.15.2(typescript@5.5.4)
+      '@remix-run/node': 2.15.2(typescript@5.8.2)
       abort-controller: 3.0.0
       debug: 4.3.7
       source-map-support: 0.5.21
@@ -8309,9 +8309,9 @@ snapshots:
     dependencies:
       nanoid: 3.3.8
 
-  '@remix-run/node@2.15.2(typescript@5.5.4)':
+  '@remix-run/node@2.15.2(typescript@5.8.2)':
     dependencies:
-      '@remix-run/server-runtime': 2.15.2(typescript@5.5.4)
+      '@remix-run/server-runtime': 2.15.2(typescript@5.8.2)
       '@remix-run/web-fetch': 4.4.2
       '@web3-storage/multipart-parser': 1.0.0
       cookie-signature: 1.2.2
@@ -8319,11 +8319,11 @@ snapshots:
       stream-slice: 0.1.2
       undici: 6.21.1
     optionalDependencies:
-      typescript: 5.5.4
+      typescript: 5.8.2
 
   '@remix-run/router@1.21.0': {}
 
-  '@remix-run/server-runtime@2.15.2(typescript@5.5.4)':
+  '@remix-run/server-runtime@2.15.2(typescript@5.8.2)':
     dependencies:
       '@remix-run/router': 1.21.0
       '@types/cookie': 0.6.0
@@ -8333,7 +8333,7 @@ snapshots:
       source-map: 0.7.4
       turbo-stream: 2.4.0
     optionalDependencies:
-      typescript: 5.5.4
+      typescript: 5.8.2
 
   '@remix-run/web-blob@3.1.0':
     dependencies:
@@ -9755,10 +9755,10 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  expo-router@4.0.16(4z625eegvyfzne4n5tvgcbtnru):
+  expo-router@4.0.16(pp2wqax6lrayrgaketmdzthbgy):
     dependencies:
       '@expo/metro-runtime': 4.0.0(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))
-      '@expo/server': 0.5.0(typescript@5.5.4)
+      '@expo/server': 0.5.0(typescript@5.8.2)
       '@radix-ui/react-slot': 1.0.1(react@18.3.1)
       '@react-navigation/bottom-tabs': 7.2.0(@react-navigation/native@7.0.14(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native-safe-area-context@4.12.0(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native-screens@4.4.0(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
       '@react-navigation/native': 7.0.14(react-native@0.76.6(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
@@ -12098,11 +12098,11 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rollup-plugin-dts@6.1.1(rollup@4.21.2)(typescript@5.5.4):
+  rollup-plugin-dts@6.1.1(rollup@4.21.2)(typescript@5.8.2):
     dependencies:
       magic-string: 0.30.12
       rollup: 4.21.2
-      typescript: 5.5.4
+      typescript: 5.8.2
     optionalDependencies:
       '@babel/code-frame': 7.26.0
 
@@ -12685,7 +12685,7 @@ snapshots:
 
   typescript-event-target@1.1.1: {}
 
-  typescript@5.5.4: {}
+  typescript@5.8.2: {}
 
   ua-parser-js@1.0.40: {}
 
