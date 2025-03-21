@@ -6,7 +6,6 @@ import type { PropsWithChildren } from 'react';
 
 export function AudioProvider({ children }: PropsWithChildren) {
   const audioContext = useAudioContext();
-  console.log(audioContext);
 
   return (
     <PCMAudioRecorderProvider
