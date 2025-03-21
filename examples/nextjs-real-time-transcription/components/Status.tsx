@@ -1,10 +1,10 @@
 'use client';
-import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
+import { usePCMAudioRecorderContext } from '@speechmatics/browser-audio-input-react';
 import { useRealtimeTranscription } from '@speechmatics/real-time-client-react';
 
 export function Status() {
   const { socketState, sessionId } = useRealtimeTranscription();
-  const { isRecording } = usePCMAudioRecorder();
+  const { isRecording } = usePCMAudioRecorderContext();
 
   return (
     <article>

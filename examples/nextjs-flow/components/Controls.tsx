@@ -1,10 +1,14 @@
 'use client';
-import { useFlow } from '@speechmatics/flow-client-react';
+import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
-import { useFlowWithBrowserAudio } from '../hooks/useFlowWithBrowserAudio';
 import { MicrophoneSelect, Select } from './MicrophoneSelect';
 import Card from './Card';
-import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
+import {
+  usePCMAudioListener,
+  usePCMAudioRecorderContext,
+} from '@speechmatics/browser-audio-input-react';
+import { getJWT } from '@/app/actions';
+import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -19,15 +23,53 @@ const Button = ({ children, className, ...props }: ButtonProps) => (
 export function Controls({
   personas,
 }: { personas: Record<string, { name: string }> }) {
-  const { socketState, sessionId } = useFlow();
-  const { startSession, stopSession } = useFlowWithBrowserAudio();
+  const {
+    startConversation,
+    endConversation,
+    sendAudio,
+    socketState,
+    sessionId,
+  } = useFlow();
+
+  const { startRecording, stopRecording, audioContext } =
+    usePCMAudioRecorderContext();
+
+  const startSession = useCallback(
+    async ({
+      personaId,
+      recordingSampleRate,
+    }: { personaId: string; recordingSampleRate: number }) => {
+      const jwt = await getJWT('flow');
+
+      await startConversation(jwt, {
+        config: {
+          template_id: personaId,
+          template_variables: {
+            // We can set up any template variables here
+          },
+        },
+        audioFormat: {
+          type: 'raw',
+          encoding: 'pcm_f32le',
+          sample_rate: recordingSampleRate,
+        },
+      });
+    },
+    [startConversation],
+  );
 
   const handleSubmit = useCallback<FormEventHandler>(
     async (e) => {
       e.preventDefault();
 
+      if (!audioContext) {
+        throw new Error('Audio context not initialized!');
+      }
+
       if (socketState === 'open' && sessionId) {
-        return stopSession();
+        stopRecording();
+        endConversation();
+        return;
       }
 
       const formData = new FormData(e.target as HTMLFormElement);
@@ -38,10 +80,27 @@ export function Controls({
       const deviceId = formData.get('deviceId')?.toString();
       if (!deviceId) throw new Error('No device selected!');
 
-      startSession({ personaId, deviceId });
+      await startSession({
+        personaId,
+        recordingSampleRate: audioContext.sampleRate,
+      });
+      await startRecording({ deviceId });
     },
-    [startSession, stopSession, socketState, sessionId],
+    [
+      startSession,
+      startRecording,
+      stopRecording,
+      endConversation,
+      socketState,
+      sessionId,
+      audioContext,
+    ],
   );
+
+  const { playAudio } = usePCMAudioPlayerContext();
+
+  usePCMAudioListener(sendAudio);
+  useFlowEventListener('agentAudio', ({ data }) => playAudio(data));
 
   return (
     <Card>
@@ -87,7 +146,7 @@ function ActionButton() {
 }
 
 function MuteMicrophoneButton() {
-  const { isRecording, mute, unmute, isMuted } = usePCMAudioRecorder();
+  const { isRecording, mute, unmute, isMuted } = usePCMAudioRecorderContext();
   if (!isRecording) return null;
 
   return (

@@ -1,22 +1,19 @@
 import { fetchPersonas, FlowProvider } from '@speechmatics/flow-client-react';
-import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import { Controls } from '@/components/Controls';
 import { Status } from '@/components/Status';
 import { TranscriptView } from '@/components/TranscriptView';
+import { AudioProvider } from '@/components/AudioProvider';
 
 export default async function Home() {
   const personas = await fetchPersonas();
 
   return (
-    // Two context providers:
-    // 1. For the audio recorder (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/browser-audio-input-react/README.md)
-    // 2. For the Flow API client (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/flow-client-react/README.md)
-    <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
-      <FlowProvider
-        appId="nextjs-example"
-        audioBufferingMs={500}
-        websocketBinaryType="arraybuffer" // This is optional, but does lead to better audio performance, particularly on Firefox
-      >
+    <FlowProvider
+      appId="nextjs-example"
+      audioBufferingMs={500}
+      websocketBinaryType="arraybuffer" // This is optional, but does lead to better audio performance, particularly on Firefox
+    >
+      <AudioProvider>
         <div className="container p-4 mx-auto max-xl:container">
           <h1 className="text-2xl font-bold">
             Speechmatics ❤️ NextJS Flow Example
@@ -27,7 +24,7 @@ export default async function Home() {
           </div>
           <TranscriptView />
         </div>
-      </FlowProvider>
-    </PCMAudioRecorderProvider>
+      </AudioProvider>
+    </FlowProvider>
   );
 }
