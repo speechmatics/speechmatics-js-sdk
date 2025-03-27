@@ -47,7 +47,7 @@ export type AudioDevices =
       permissionState: 'granted';
       deviceList: ReadonlyArray<MediaDeviceInfo>;
     }
-  | { permissionState: 'denied' };
+  | { permissionState: 'denied'; promptPermissions: () => void };
 
 export function useAudioDevices(): AudioDevices {
   const permissionState = useAudioPermissionState();
@@ -56,6 +56,7 @@ export function useAudioDevices(): AudioDevices {
 
   switch (permissionState) {
     case 'prompt':
+    case 'denied':
       return {
         permissionState,
         promptPermissions,
@@ -66,7 +67,6 @@ export function useAudioDevices(): AudioDevices {
         deviceList,
       };
     case 'prompting':
-    case 'denied':
       return {
         permissionState,
       };
