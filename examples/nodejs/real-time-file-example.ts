@@ -54,6 +54,7 @@ await client.start(jwt, {
   transcription_config: {
     language: 'en',
     enable_partials: true,
+    operating_point: 'enhanced',
   },
 });
 
