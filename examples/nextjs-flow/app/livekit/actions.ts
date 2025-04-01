@@ -1,4 +1,7 @@
 'use server';
+
+import { createSpeechmaticsJWT } from '@speechmatics/auth';
+
 export type StartLivekitResponse =
   | {
       success: true;
@@ -15,23 +18,48 @@ export async function start(formData: FormData): Promise<StartLivekitResponse> {
       throw new Error('Missing template');
     }
 
-    const persona = formData.get('persona')?.toString();
-
-    const response = await fetch('http://localhost:8080/v1/flow', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(startMesasage(template, persona)),
-    });
-
-    const json = await response.json();
-
-    if (response.status !== 200) {
-      throw new Error(json.detail);
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error('Please set the API_KEY environment variable');
     }
 
-    console.log(json);
+    const jwt = await createSpeechmaticsJWT({
+      type: 'flow',
+      apiKey,
+    });
+
+    const persona = formData.get('persona')?.toString();
+
+    const response = await fetch(
+      'https://flow.api.speechmatics.com/v1/flow/livekit',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(startMesasage(template, persona)),
+      },
+    );
+
+    if (response.status === 401) {
+      throw new Error('Invalid JWT');
+    }
+
+    let json: Record<string, unknown>;
+
+    try {
+      json = await response.json();
+    } catch (e) {
+      throw new Error(
+        `Failed to parse response with status ${response.status}`,
+      );
+    }
+
+    if (response.status !== 200) {
+      throw new Error(`Got ${response.status} response: ${json.detail}`);
+    }
+
     return {
       success: true as const,
       livekitURL: json.url as string,
@@ -48,14 +76,12 @@ export async function start(formData: FormData): Promise<StartLivekitResponse> {
 }
 
 const startMesasage = (template: string, persona?: string) => ({
-  start_conversation: {
-    message: 'StartConversation',
-    conversation_config: {
-      template_id: template,
-      template_variables: {
-        timezone: 'Europe/London',
-        persona,
-      },
+  message: 'StartConversation',
+  conversation_config: {
+    template_id: template,
+    template_variables: {
+      timezone: 'Europe/London',
+      persona,
     },
   },
 });
