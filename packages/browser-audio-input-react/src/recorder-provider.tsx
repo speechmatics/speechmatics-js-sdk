@@ -8,7 +8,7 @@ export function PCMAudioRecorderProvider({
 }: {
   workletScriptURL: string;
   children: React.ReactNode;
-  audioContext?: AudioContext;
+  audioContext: AudioContext | undefined;
 }) {
   const value = usePCMAudioRecorder(workletScriptURL, audioContext);
 

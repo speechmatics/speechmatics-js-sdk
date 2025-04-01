@@ -17,7 +17,7 @@
     "@speechmatics/flow-client-react": "workspace:*",
     "@speechmatics/web-pcm-player-react": "workspace:*",
     "livekit-client": "^2.9.5",
-    "next": "15.1.4",
+    "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-error-boundary": "^4.1.2",
