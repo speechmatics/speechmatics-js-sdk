@@ -44,9 +44,21 @@ export class SocketStateChangeEvent extends Event {
   }
 }
 
+export class ReceiveMessageEvent extends Event {
+  constructor(public readonly data: RealtimeServerMessage) {
+    super('receiveMessage');
+  }
+}
+
+export class SendMessageEvent extends Event {
+  constructor(public readonly data: RealtimeClientMessage) {
+    super('sendMessage');
+  }
+}
+
 export interface RealtimeClientEventMap {
-  sendMessage: MessageEvent<RealtimeClientMessage>;
-  receiveMessage: MessageEvent<RealtimeServerMessage>;
+  sendMessage: SendMessageEvent;
+  receiveMessage: ReceiveMessageEvent;
   socketStateChange: SocketStateChangeEvent;
 }
 
@@ -161,7 +173,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
         this.dispatchTypedEvent(
           'receiveMessage',
-          new MessageEvent('receiveMessage', { data }),
+          new ReceiveMessageEvent(data),
         );
       });
     });
@@ -172,10 +184,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       throw new SpeechmaticsRealtimeError('Client socket not initialized');
     }
     this.socket.send(JSON.stringify(message));
-    this.dispatchTypedEvent(
-      'sendMessage',
-      new MessageEvent('sendMessage', { data: message }),
-    );
+    this.dispatchTypedEvent('sendMessage', new SendMessageEvent(message));
   }
 
   sendAudio(data: Blob | ArrayBufferLike | string) {
