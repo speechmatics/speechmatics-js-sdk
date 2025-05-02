@@ -7,7 +7,7 @@ import {
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from './ErrorFallback';
 import { AudioVisualizer } from './AudioVisualizer';
-import { usePCMAudioRecorder } from '@speechmatics/browser-audio-input-react';
+import { usePCMAudioRecorderContext } from '@speechmatics/browser-audio-input-react';
 
 export function Output() {
   return (
@@ -21,7 +21,7 @@ export function Component() {
   const [transcription, dispatch] = useReducer(transcriptReducer, []);
 
   useRealtimeEventListener('receiveMessage', (e) => dispatch(e.data));
-  const { analyser } = usePCMAudioRecorder();
+  const { analyser } = usePCMAudioRecorderContext();
 
   return (
     <article>
