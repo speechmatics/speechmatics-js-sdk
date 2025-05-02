@@ -15,10 +15,12 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const features = await getFeatures();
-  const displayNames = new Intl.DisplayNames(['en'], { type: 'language' });
-  const languages = features.realtime.transcription[0].languages.map(
-    (code) => [code, displayNames.of(code) ?? code] as const,
-  );
+  const languages = features.realtime.transcription[0].languages.map((code) => {
+    return [
+      code,
+      features.metadata.language_pack_info[code]?.language_description,
+    ] as const;
+  });
 
   return (
     <AudioProvider>
