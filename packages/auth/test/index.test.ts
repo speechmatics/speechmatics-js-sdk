@@ -12,6 +12,7 @@ test('Request valid JWT', async (t) => {
       'Skipping auth test since API key is missing from environment',
     );
     t.skip();
+    return;
   }
   for (const type of ['batch', 'rt', 'flow'] as const) {
     const ttl = 60;
@@ -36,6 +37,7 @@ test('Request too short TTL', async (t) => {
       'Skipping auth test since API key is missing from environment',
     );
     t.skip();
+    return;
   }
   for (const type of ['batch', 'rt', 'flow'] as const) {
     const ttl = 30;
