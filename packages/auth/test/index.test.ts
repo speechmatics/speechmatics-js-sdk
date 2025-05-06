@@ -7,6 +7,12 @@ import { jwtDecode } from 'jwt-decode';
 const apiKey = process.env.API_KEY!;
 
 test('Request valid JWT', async (t) => {
+  if (!apiKey) {
+    console.warn(
+      'Skipping auth test since API key is missing from environment',
+    );
+    t.skip();
+  }
   for (const type of ['batch', 'rt', 'flow'] as const) {
     const ttl = 60;
     const jwt = await createSpeechmaticsJWT({
@@ -24,7 +30,13 @@ test('Request valid JWT', async (t) => {
   }
 });
 
-test('Request too short TTL', async () => {
+test('Request too short TTL', async (t) => {
+  if (!apiKey) {
+    console.warn(
+      'Skipping auth test since API key is missing from environment',
+    );
+    t.skip();
+  }
   for (const type of ['batch', 'rt', 'flow'] as const) {
     const ttl = 30;
 
