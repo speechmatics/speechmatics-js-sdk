@@ -1,7 +1,9 @@
 interface Personas {
   [personaId: string]: {
     name: string;
+    character: string;
     description: string;
+    start_text: string[];
     avatar?: string;
   };
 }

@@ -322,7 +322,7 @@ function rejectAfter(
         reject(
           new SpeechmaticsFlowError(
             'Timeout',
-            `Timed out after ${timeoutMs}s waiting for ${key}`,
+            `Timed out after ${timeoutMs}ms waiting for ${key}`,
           ),
         ),
       timeoutMs,

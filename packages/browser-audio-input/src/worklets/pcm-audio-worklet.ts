@@ -1,4 +1,15 @@
-class PcmAudioProcessor extends AudioWorkletProcessor {
+class PCMAudioProcessor extends AudioWorkletProcessor {
+  active = true;
+
+  constructor() {
+    super();
+    this.port.onmessage = (e) => {
+      if (e.data === 'stop') {
+        this.active = false;
+      }
+    };
+  }
+
   process(inputs: Float32Array[][]) {
     const input = inputs[0];
 
@@ -7,8 +18,8 @@ class PcmAudioProcessor extends AudioWorkletProcessor {
       this.port.postMessage(inputBuffer);
     }
 
-    return true;
+    return this.active;
   }
 }
 
-registerProcessor('pcm-audio-processor', PcmAudioProcessor);
+registerProcessor('pcm-audio-processor', PCMAudioProcessor);

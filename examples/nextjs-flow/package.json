@@ -1,0 +1,37 @@
+{
+  "name": "nextjs-flow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@livekit/components-react": "^2.8.1",
+    "@livekit/components-styles": "^1.1.4",
+    "@speechmatics/auth": "workspace:*",
+    "@speechmatics/browser-audio-input": "workspace:*",
+    "@speechmatics/browser-audio-input-react": "workspace:*",
+    "@speechmatics/flow-client-react": "workspace:*",
+    "@speechmatics/web-pcm-player-react": "workspace:*",
+    "livekit-client": "^2.9.5",
+    "next": "15.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-error-boundary": "^4.1.2",
+    "typescript-event-target": "^1.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "copy-webpack-plugin": "^12.0.2",
+    "daisyui": "^4.12.23",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

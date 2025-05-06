@@ -1,0 +1,23 @@
+{
+  "name": "@speechmatics/web-pcm-player",
+  "version": "1.0.0",
+  "description": "Library for playing PCM audio in the browser",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist/", "README.md"],
+  "module": "dist/index.js",
+  "type": "module",
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player",
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm rollup -c",
+    "prepare": "pnpm build"
+  },
+  "keywords": ["web", "PCM", "audio", "player"],
+  "license": "MIT",
+  "dependencies": {
+    "typescript-event-target": "^1.1.1"
+  }
+}

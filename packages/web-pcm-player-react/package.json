@@ -1,0 +1,30 @@
+{
+  "name": "@speechmatics/web-pcm-player-react",
+  "version": "2.0.0",
+  "description": "React bindings for @speechmatics/web-pcm-player",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "module": "dist/index.js",
+  "type": "module",
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player-react",
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm -C ../web-pcm-player build && pnpm rollup -c",
+    "prepare": "pnpm build"
+  },
+  "keywords": ["PCM", "audio", "player", "React", "browser"],
+  "license": "MIT",
+  "dependencies": {
+    "@speechmatics/web-pcm-player": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.10",
+    "typescript-event-target": "^1.1.1"
+  }
+}

@@ -1,7 +1,7 @@
 import esbuildPlugin from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
-import packageJSON from './package.json' assert { type: 'json' };
+import packageJSON from './package.json' with { type: 'json' };
 
 // Based on gist
 //https://gist.github.com/aleclarson/9900ed2a9a3119d865286b218e14d226
@@ -46,7 +46,7 @@ export default function rollup() {
     output: {
       file: 'dist/pcm-audio-worklet.min.js',
       format: 'umd',
-      name: 'PcmAudioProcessor',
+      name: 'PCMAudioProcessor',
       strict: false,
     },
   };

@@ -1,7 +1,8 @@
 {
   "name": "@speechmatics/browser-audio-input-react",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "React hooks for managing audio inputs and permissions across browsers",
+  "type": "module",
   "exports": ["./dist/index.js"],
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
@@ -30,7 +31,7 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
+    "@types/react": "^19.0.10",
     "typescript-event-target": "^1.1.1"
   }
 }

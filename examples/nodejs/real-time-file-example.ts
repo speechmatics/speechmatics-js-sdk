@@ -47,13 +47,14 @@ const jwt = await createSpeechmaticsJWT({
 });
 
 const fileStream = fs.createReadStream('./example.wav', {
-  highWaterMark: 4096, //avoid sending faster than realtime
+  highWaterMark: 4096, // avoid sending too much data at once
 });
 
 await client.start(jwt, {
   transcription_config: {
     language: 'en',
     enable_partials: true,
+    operating_point: 'enhanced',
   },
 });
 
@@ -64,5 +65,8 @@ fileStream.on('data', (sample) => {
 
 //end the session
 fileStream.on('end', () => {
-  client.stopRecognition();
+  // Send a stop message to the server when we're done sending audio.
+  // We set `noTimeout` because we are streaming faster than real-time,
+  // so we should wait for all the data to be processed before closing the connection.
+  client.stopRecognition({ noTimeout: true });
 });

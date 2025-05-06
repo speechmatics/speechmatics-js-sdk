@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /*
+    Livekit styles
+    Using DaisyUI colors from here: https://v4.daisyui.com/docs/colors/
+  */
+
+  --lk-fg: oklch(var(--pc));
+  --lk-fg-secondary: oklch(var(--sc));
+
+  --lk-bg: var(--background);
+
+  --lk-accent-fg: oklch(var(--ac));
+  --lk-accent-bg: oklch(var(--a));
+
+  --lk-danger-fg: oklch(var(--erc));
+  --lk-danger: oklch(var(--er));
+
+  --lk-success-fg: oklch(var(--suc));
+  --lk-success: oklch(var(--su));
+
+  --lk-control-fg: oklch(var(--bc));
+  --lk-control-bg: oklch(var(--b2));
+  --lk-control-active-bg: oklch(var(--b2));
+  --lk-border-radius: var(--rounded-btn);
+
+  --lk-connection-excellent: #06db4d;
+  --lk-connection-good: #f9b11f;
+  --lk-connection-poor: #f91f31;
+
+  --lk-control-bar-height: var(--spacing);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+    @apply font-bold;
+  }
+  h2 {
+    @apply text-xl;
+    @apply font-bold;
+  }
+}
