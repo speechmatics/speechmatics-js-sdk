@@ -65,8 +65,9 @@ export class AudioInputDevicesStore extends TypedEventTarget<AudioInputDevicesEv
     if (this.permissionState !== 'prompt') return;
 
     this.permissionState = 'prompting';
+    let mediaStream: MediaStream | null = null;
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: false,
       });
@@ -75,6 +76,12 @@ export class AudioInputDevicesStore extends TypedEventTarget<AudioInputDevicesEv
       }
     } catch (e) {
       this.permissionState = 'denied';
+    } finally {
+      if (mediaStream) {
+        for (const track of mediaStream.getTracks()) {
+          track.stop();
+        }
+      }
     }
   }
 
