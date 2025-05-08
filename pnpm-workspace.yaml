@@ -1,5 +1,6 @@
 packages:
   - "packages/*"
+  - "examples/remix"
   - "examples/nextjs-real-time-transcription"
   - "examples/nextjs-flow"
   - "examples/nodejs"
