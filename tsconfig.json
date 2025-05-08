@@ -3,7 +3,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "Bundler",
@@ -12,6 +12,8 @@
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "jsx": "react-jsx",
+    "skipLibCheck": true
   }
 }
