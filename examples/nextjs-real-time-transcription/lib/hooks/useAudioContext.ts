@@ -28,7 +28,7 @@ const useHydrated = () =>
 function useCleanupAudioContext(context?: AudioContext) {
   useEffect(() => {
     return () => {
-      if (context && context.state !== 'closed') {
+      if (context && context.state === 'running') {
         context.close();
       }
     };

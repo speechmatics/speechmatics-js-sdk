@@ -46,7 +46,9 @@ function useAudioContexts() {
 
   const playbackAudioContext = useMemo(() => {
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    return isFirefox ? new window.AudioContext() : inputAudioContext;
+    return isFirefox
+      ? new window.AudioContext({ sampleRate: 16_000 })
+      : inputAudioContext;
   }, [inputAudioContext]);
 
   useCleanupAudioContext(inputAudioContext);
@@ -67,7 +69,7 @@ const useHydrated = () =>
 function useCleanupAudioContext(context?: AudioContext) {
   useEffect(() => {
     return () => {
-      if (context && context.state !== 'closed') {
+      if (context && context.state === 'running') {
         context.close();
       }
     };
