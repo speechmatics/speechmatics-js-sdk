@@ -1,5 +1,9 @@
 'use client';
-import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
+import {
+  type AgentAudioEvent,
+  useFlow,
+  useFlowEventListener,
+} from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
 import { MicrophoneSelect, Select } from '@/components/MicrophoneSelect';
 import Card from '@/components/Card';
@@ -100,7 +104,17 @@ export function Controls({
   const { playAudio } = usePCMAudioPlayerContext();
 
   usePCMAudioListener(sendAudio);
-  useFlowEventListener('agentAudio', ({ data }) => playAudio(data));
+  useFlowEventListener(
+    'agentAudio',
+    useCallback(
+      ({ data }: AgentAudioEvent) => {
+        if (socketState === 'open' && sessionId) {
+          playAudio(data);
+        }
+      },
+      [socketState, sessionId, playAudio],
+    ),
+  );
 
   return (
     <Card>

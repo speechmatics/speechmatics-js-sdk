@@ -23,6 +23,9 @@ export function Controls({
   const { isRecording, startRecording, stopRecording } =
     usePCMAudioRecorderContext();
 
+  const { audioContext } = usePCMAudioRecorderContext();
+  const sampleRate = audioContext?.sampleRate;
+
   usePCMAudioListener(sendAudio);
 
   const startSession = useCallback(
@@ -43,14 +46,18 @@ export function Controls({
       const formData = new FormData(e.currentTarget);
       const config = configFromFormData(formData);
       const deviceId = formData.get('deviceId')?.toString();
+      if (!sampleRate) {
+        throw new Error('Audio context not found');
+      }
+
       config.audio_format = {
         type: 'raw',
         encoding: 'pcm_f32le',
-        sample_rate: RECORDING_SAMPLE_RATE,
+        sample_rate: sampleRate,
       };
       startSession({ deviceId, ...config });
     },
-    [startSession],
+    [startSession, sampleRate],
   );
 
   // Cleanup
