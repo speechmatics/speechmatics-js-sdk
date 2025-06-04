@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@picocss/pico": "^2.0.6",
+    "@picocss/pico": "^2.1.1",
     "@speechmatics/auth": "workspace:*",
     "@speechmatics/browser-audio-input": "workspace:*",
     "@speechmatics/browser-audio-input-react": "workspace:*",
