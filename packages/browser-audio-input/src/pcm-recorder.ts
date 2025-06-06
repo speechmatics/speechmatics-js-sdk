@@ -141,9 +141,10 @@ export class PCMRecorder extends TypedEventTarget<PCMRecorderEventMap> {
     if (this.mediaStream) {
       for (const track of this.mediaStream.getTracks()) {
         track.stop();
+        this.mediaStream?.removeTrack(track);
       }
-      this.inputSourceNode?.disconnect();
       this.workletProcessorNode?.port.postMessage('stop');
+      this.inputSourceNode?.disconnect();
       this.workletProcessorNode?.disconnect();
 
       this.mediaStream = undefined;
