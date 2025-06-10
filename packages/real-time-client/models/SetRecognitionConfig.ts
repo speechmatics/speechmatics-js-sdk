@@ -1,6 +1,6 @@
-import type TranscriptionConfig from './TranscriptionConfig';
+import type { TranscriptionConfig } from './TranscriptionConfig';
 interface SetRecognitionConfig {
   message: 'SetRecognitionConfig';
   transcription_config: TranscriptionConfig;
 }
-export default SetRecognitionConfig;
+export type { SetRecognitionConfig };

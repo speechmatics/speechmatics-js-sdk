@@ -1,2 +1,2 @@
 type DirectionEnum = 'ltr' | 'rtl';
-export default DirectionEnum;
+export type { DirectionEnum };

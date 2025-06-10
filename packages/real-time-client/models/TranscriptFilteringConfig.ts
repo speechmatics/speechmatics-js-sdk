@@ -1,5 +1,5 @@
 interface TranscriptFilteringConfig {
-  remove_disfluencies?: 'raw';
-  replacements?: 'raw';
+  remove_disfluencies?: boolean;
+  replacements?: boolean;
 }
-export default TranscriptFilteringConfig;
+export type { TranscriptFilteringConfig };

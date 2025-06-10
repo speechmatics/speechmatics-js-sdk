@@ -1,4 +1,4 @@
-import type RecognitionDisplay from './RecognitionDisplay';
+import type { RecognitionDisplay } from './RecognitionDisplay';
 interface RecognitionAlternative {
   content: string;
   confidence: number;
@@ -6,4 +6,4 @@ interface RecognitionAlternative {
   display?: RecognitionDisplay;
   speaker?: string;
 }
-export default RecognitionAlternative;
+export type { RecognitionAlternative };

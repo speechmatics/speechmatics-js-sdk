@@ -3,4 +3,4 @@ interface ChannelAudioAdded {
   seq_no: number;
   channel: string;
 }
-export default ChannelAudioAdded;
+export type { ChannelAudioAdded };

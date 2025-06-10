@@ -1,2 +1,2 @@
 type AttachesToEnum = 'next' | 'previous' | 'none' | 'both';
-export default AttachesToEnum;
+export type { AttachesToEnum };

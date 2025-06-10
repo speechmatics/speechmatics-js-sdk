@@ -3,4 +3,4 @@ interface EndOfChannel {
   channel: string;
   last_seq_no: number;
 }
-export default EndOfChannel;
+export type { EndOfChannel };

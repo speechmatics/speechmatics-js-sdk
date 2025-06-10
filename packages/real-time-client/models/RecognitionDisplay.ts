@@ -1,5 +1,5 @@
-import type DirectionEnum from './DirectionEnum';
+import type { DirectionEnum } from './DirectionEnum';
 interface RecognitionDisplay {
   direction: DirectionEnum;
 }
-export default RecognitionDisplay;
+export type { RecognitionDisplay };

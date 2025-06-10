@@ -1,4 +1,4 @@
 interface AudioFormatFile {
-  type: 'raw';
+  type: 'file';
 }
-export default AudioFormatFile;
+export type { AudioFormatFile };

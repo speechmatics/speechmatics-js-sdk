@@ -3,4 +3,4 @@ interface SpeakerDiarizationConfig {
   prefer_current_speaker?: boolean;
   speaker_sensitivity?: number;
 }
-export default SpeakerDiarizationConfig;
+export type { SpeakerDiarizationConfig };

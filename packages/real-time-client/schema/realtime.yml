@@ -499,6 +499,7 @@ components:
         - $ref: "#/components/schemas/AudioFormatRaw"
         - $ref: "#/components/schemas/AudioFormatFile"
     AudioFormatRaw:
+      type: object
       properties:
         type:
           const: raw
@@ -511,6 +512,7 @@ components:
         - encoding
         - sample_rate
     AudioFormatFile:
+      type: object
       properties:
         type:
           const: file

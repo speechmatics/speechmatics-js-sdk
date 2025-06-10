@@ -3,4 +3,4 @@ interface AudioEventStartData {
   start_time: number;
   confidence: number;
 }
-export default AudioEventStartData;
+export type { AudioEventStartData };

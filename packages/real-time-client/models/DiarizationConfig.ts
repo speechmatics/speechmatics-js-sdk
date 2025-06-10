@@ -1,2 +1,2 @@
 type DiarizationConfig = 'none' | 'speaker';
-export default DiarizationConfig;
+export type { DiarizationConfig };

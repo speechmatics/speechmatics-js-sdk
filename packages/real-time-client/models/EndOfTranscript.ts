@@ -1,4 +1,4 @@
 interface EndOfTranscript {
   message: 'EndOfTranscript';
 }
-export default EndOfTranscript;
+export type { EndOfTranscript };

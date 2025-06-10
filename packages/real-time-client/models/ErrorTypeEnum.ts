@@ -13,4 +13,4 @@ type ErrorTypeEnum =
   | 'timelimit_exceeded'
   | 'quota_exceeded'
   | 'unknown_error';
-export default ErrorTypeEnum;
+export type { ErrorTypeEnum };

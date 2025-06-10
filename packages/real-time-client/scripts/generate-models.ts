@@ -58,12 +58,17 @@ export async function generate(): Promise<void> {
     'utf-8',
   );
   const parsed = parse(realtimeSpec);
-  const models = await generator.generateCompleteModels(parsed, {});
+  const models = await generator.generateCompleteModels(parsed, {
+    exportType: 'named',
+  });
 
   // Ensure the models directory exists
   await mkdir(`${packageDir}/models`);
 
   for (const model of models) {
+    if (model.modelName === 'AudioFormat') {
+      console.log(model);
+    }
     await writeFile(`${packageDir}/models/${model.modelName}.ts`, model.result);
   }
 

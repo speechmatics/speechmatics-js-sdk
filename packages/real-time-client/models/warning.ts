@@ -1,4 +1,4 @@
-import type WarningTypeEnum from './WarningTypeEnum';
+import type { WarningTypeEnum } from './WarningTypeEnum';
 interface Warning {
   message: 'Warning';
   type: WarningTypeEnum;
@@ -7,4 +7,4 @@ interface Warning {
   seq_no?: number;
   duration_limit?: number;
 }
-export default Warning;
+export type { Warning };

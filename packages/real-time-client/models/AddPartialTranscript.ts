@@ -1,9 +1,9 @@
-import type RecognitionMetadata from './RecognitionMetadata';
-import type RecognitionResult from './RecognitionResult';
+import type { RecognitionMetadata } from './RecognitionMetadata';
+import type { RecognitionResult } from './RecognitionResult';
 interface AddPartialTranscript {
   message: 'AddPartialTranscript';
   format?: string;
   metadata: RecognitionMetadata;
   results: RecognitionResult[];
 }
-export default AddPartialTranscript;
+export type { AddPartialTranscript };

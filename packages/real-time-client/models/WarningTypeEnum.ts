@@ -1,2 +1,2 @@
 type WarningTypeEnum = 'duration_limit_exceeded';
-export default WarningTypeEnum;
+export type { WarningTypeEnum };

@@ -1,4 +1,4 @@
-import type InfoTypeEnum from './InfoTypeEnum';
+import type { InfoTypeEnum } from './InfoTypeEnum';
 interface Info {
   message: 'Info';
   type: InfoTypeEnum;
@@ -10,4 +10,4 @@ interface Info {
   quota?: number;
   last_updated?: string;
 }
-export default Info;
+export type { Info };

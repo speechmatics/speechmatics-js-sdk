@@ -1,2 +1,2 @@
 type OperatingPoint = 'standard' | 'enhanced';
-export default OperatingPoint;
+export type { OperatingPoint };

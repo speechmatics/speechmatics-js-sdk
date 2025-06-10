@@ -1,6 +1,6 @@
-import type RecognitionResultTypeEnum from './RecognitionResultTypeEnum';
-import type AttachesToEnum from './AttachesToEnum';
-import type RecognitionAlternative from './RecognitionAlternative';
+import type { RecognitionResultTypeEnum } from './RecognitionResultTypeEnum';
+import type { AttachesToEnum } from './AttachesToEnum';
+import type { RecognitionAlternative } from './RecognitionAlternative';
 interface RecognitionResult {
   type: RecognitionResultTypeEnum;
   start_time: number;
@@ -12,4 +12,4 @@ interface RecognitionResult {
   score?: number;
   volume?: number;
 }
-export default RecognitionResult;
+export type { RecognitionResult };

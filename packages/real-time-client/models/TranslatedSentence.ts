@@ -4,4 +4,4 @@ interface TranslatedSentence {
   end_time: number;
   speaker?: string;
 }
-export default TranslatedSentence;
+export type { TranslatedSentence };

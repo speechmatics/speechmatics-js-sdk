@@ -1,12 +1,12 @@
-import type AdditionalVocabObject from './AdditionalVocabObject';
-import type DiarizationConfig from './DiarizationConfig';
-import type MaxDelayModeConfig from './MaxDelayModeConfig';
-import type SpeakerDiarizationConfig from './SpeakerDiarizationConfig';
-import type AudioFilteringConfig from './AudioFilteringConfig';
-import type TranscriptFilteringConfig from './TranscriptFilteringConfig';
-import type OperatingPoint from './OperatingPoint';
-import type PunctuationOverrides from './PunctuationOverrides';
-import type ConversationConfig from './ConversationConfig';
+import type { AdditionalVocabObject } from './AdditionalVocabObject';
+import type { DiarizationConfig } from './DiarizationConfig';
+import type { MaxDelayModeConfig } from './MaxDelayModeConfig';
+import type { SpeakerDiarizationConfig } from './SpeakerDiarizationConfig';
+import type { AudioFilteringConfig } from './AudioFilteringConfig';
+import type { TranscriptFilteringConfig } from './TranscriptFilteringConfig';
+import type { OperatingPoint } from './OperatingPoint';
+import type { PunctuationOverrides } from './PunctuationOverrides';
+import type { ConversationConfig } from './ConversationConfig';
 interface TranscriptionConfig {
   language: string;
   domain?: string;
@@ -24,4 +24,4 @@ interface TranscriptionConfig {
   punctuation_overrides?: PunctuationOverrides;
   conversation_config?: ConversationConfig;
 }
-export default TranscriptionConfig;
+export type { TranscriptionConfig };

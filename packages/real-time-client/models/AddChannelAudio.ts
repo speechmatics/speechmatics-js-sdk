@@ -3,4 +3,4 @@ interface AddChannelAudio {
   channel: string;
   data: string;
 }
-export default AddChannelAudio;
+export type { AddChannelAudio };

@@ -1,4 +1,4 @@
-import type ErrorTypeEnum from './ErrorTypeEnum';
+import type { ErrorTypeEnum } from './ErrorTypeEnum';
 interface ErrorType {
   message: 'Error';
   type: ErrorTypeEnum;
@@ -6,4 +6,4 @@ interface ErrorType {
   code?: number;
   seq_no?: number;
 }
-export default ErrorType;
+export type { ErrorType };

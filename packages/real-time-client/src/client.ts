@@ -1,42 +1,16 @@
 import { TypedEventTarget } from 'typescript-event-target';
-import type { StartRecognition } from '../models/start-recognition';
-import type { SetRecognitionConfig } from '../models/set-recognition-config';
-import type { EndOfStream } from '../models/end-of-stream';
-import type { RecognitionStarted } from '../models/recognition-started';
-import type { AudioAdded } from '../models/audio-added';
-import type { AddPartialTranscript } from '../models/add-partial-transcript';
-import type { AddTranscript } from '../models/add-transcript';
-import type { AddPartialTranslation } from '../models/add-partial-translation';
-import type { AddTranslation } from '../models/add-translation';
-import type { EndOfTranscript } from '../models/end-of-transcript';
-import type { AudioEventStarted } from '../models/audio-event-started';
-import type { AudioEventEnded } from '../models/audio-event-ended';
-import type { Info } from '../models/info';
-import type { Warning } from '../models/warning';
-import type { ModelError } from '../models/model-error';
+import type {
+  StartRecognition,
+  RecognitionStarted,
+  publish,
+  subscribe,
+} from '../models';
 
 // Messages to be sent to server
-export type RealtimeClientMessage =
-  | StartRecognition
-  | { message: 'AddAudio' }
-  | SetRecognitionConfig
-  | EndOfStream;
+export type RealtimeClientMessage = publish;
 
 // Messages received from the server
-export type RealtimeServerMessage =
-  | SetRecognitionConfig
-  | RecognitionStarted
-  | AudioAdded
-  | AddPartialTranscript
-  | AddTranscript
-  | AddPartialTranslation
-  | AddTranslation
-  | EndOfTranscript
-  | AudioEventStarted
-  | AudioEventEnded
-  | Info
-  | Warning
-  | ModelError;
+export type RealtimeServerMessage = subscribe;
 
 export class SocketStateChangeEvent extends Event {
   constructor(public readonly socketState: RealtimeClient['socketState']) {
@@ -212,7 +186,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
           }
         });
 
-        const startRecognitionMessage = {
+        const startRecognitionMessage: StartRecognition = {
           audio_format: defaultAudioFormat,
           ...config,
           message: 'StartRecognition' as const,

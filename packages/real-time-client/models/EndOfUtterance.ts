@@ -1,6 +1,6 @@
-import type EndOfUtteranceMetadata from './EndOfUtteranceMetadata';
+import type { EndOfUtteranceMetadata } from './EndOfUtteranceMetadata';
 interface EndOfUtterance {
   message: 'EndOfUtterance';
   metadata: EndOfUtteranceMetadata;
 }
-export default EndOfUtterance;
+export type { EndOfUtterance };

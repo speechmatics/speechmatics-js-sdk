@@ -1,7 +1,7 @@
-import type RawAudioEncodingEnum from './RawAudioEncodingEnum';
+import type { RawAudioEncodingEnum } from './RawAudioEncodingEnum';
 interface AudioFormatRaw {
   type: 'raw';
   encoding: RawAudioEncodingEnum;
-  sample_rate: 'raw';
+  sample_rate: number;
 }
-export default AudioFormatRaw;
+export type { AudioFormatRaw };

@@ -3,4 +3,4 @@ type InfoTypeEnum =
   | 'model_redirect'
   | 'deprecated'
   | 'concurrent_session_usage';
-export default InfoTypeEnum;
+export type { InfoTypeEnum };
