@@ -1,3 +1,5 @@
+# Note to developers: This schema is used to generate the Typescript models,
+# but it may change slightly in the future. We will publish a definitive spec elsewhere soon.
 asyncapi: 3.0.0
 id: "urn:com:speechmatics:realtime-asr-api"
 defaultContentType: application/json
