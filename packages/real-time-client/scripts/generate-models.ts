@@ -66,9 +66,6 @@ export async function generate(): Promise<void> {
   await mkdir(`${packageDir}/models`);
 
   for (const model of models) {
-    if (model.modelName === 'AudioFormat') {
-      console.log(model);
-    }
     await writeFile(`${packageDir}/models/${model.modelName}.ts`, model.result);
   }
 
