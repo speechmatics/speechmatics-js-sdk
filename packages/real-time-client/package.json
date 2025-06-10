@@ -10,7 +10,7 @@
   "scripts": {
     "build": "pnpm rollup -c",
     "prepare": "pnpm build",
-    "generate-types": "./scripts/transform-async-to-openapi.ts && ./scripts/generate-models.sh"
+    "generate-models": "./scripts/generate-models.ts"
   },
   "keywords": [
     "speech",
@@ -28,6 +28,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@asyncapi/modelina": "^5.2.5",
     "@rollup/plugin-inject": "^5.0.5",
     "yaml": "^2.5.0"
   }
