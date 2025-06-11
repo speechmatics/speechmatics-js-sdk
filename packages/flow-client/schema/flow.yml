@@ -526,7 +526,11 @@ components:
           description: The name of the tool to invoke.
         arguments:
           type: object
-          additionalProperties: true
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: integer
+              - type: boolean
 
     ToolResult:
       type: object
@@ -699,7 +703,13 @@ components:
         enum:
           type: array
           description: An optional list of valid values for the parameter.
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+              - type: boolean
         example:
+          type: string
           description: An example value for the parameter.
 
     AudioFormat:
