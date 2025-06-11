@@ -5,8 +5,8 @@ import {
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
-  type StartConversationMessage,
 } from './events';
+import type { StartConversation } from '../models';
 import { JitterBuffer } from './jitter-buffer';
 
 export interface FlowClientOptions {
@@ -139,7 +139,6 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.sendWebsocketMessage({
       message: 'AudioReceived',
       seq_no: ++this.serverSeqNo,
-      buffering: this.audioBufferingMs / 1000,
     });
 
     if (data instanceof Blob && this.websocketBinaryType === 'blob') {
@@ -210,8 +209,8 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       config,
       audioFormat,
     }: {
-      config: StartConversationMessage['conversation_config'];
-      audioFormat?: StartConversationMessage['audio_format'];
+      config: StartConversation['conversation_config'];
+      audioFormat?: StartConversation['audio_format'];
     },
   ) {
     await this.connect(jwt);
@@ -224,7 +223,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       },
     };
 
-    const startMessage: StartConversationMessage = {
+    const startMessage: StartConversation = {
       message: 'StartConversation',
       conversation_config,
       audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
