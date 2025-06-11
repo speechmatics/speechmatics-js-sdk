@@ -1,0 +1,954 @@
+asyncapi: 3.0.0
+id: "urn:com:speechmatics:flow-service"
+defaultContentType: application/json
+info:
+  title: Speechmatics Flow API
+  version: "1.0.0"
+  contact:
+    name: Speechmatics Support
+    url: https://www.speechmatics.com/product/support/
+    email: support@speechmatics.com
+  externalDocs:
+    description: "Flow API Reference"
+    url: https://docs.speechmatics.com/api-ref/flow-voice-ai
+
+servers:
+  default:
+    host: flow.api.speechmatics.com/
+    protocol: wss
+    protocolVersion: v13 (RFC 6455)
+    description: Flow server
+    variables:
+      ports:
+        default: "9000"
+
+channels:
+  publish:
+    address: /v1/flow
+    messages:
+      StartConversation:
+        $ref: "#/components/messages/StartConversation"
+      AddAudio:
+        $ref: "#/components/messages/AddAudio"
+      AudioReceived:
+        $ref: "#/components/messages/AudioReceived"
+      AudioEnded:
+        $ref: "#/components/messages/AudioEnded"
+      AddInput:
+        $ref: "#/components/messages/AddInput"
+      ToolResult:
+        $ref: "#/components/messages/ToolResult"
+  subscribe:
+    address: /v1/flow
+    messages:
+      ConversationStarted:
+        $ref: "#/components/messages/ConversationStarted"
+      AddAudio:
+        $ref: "#/components/messages/AddAudio"
+      AudioAdded:
+        $ref: "#/components/messages/AudioAdded"
+      AddPartialTranscript:
+        $ref: "#/components/messages/AddPartialTranscript"
+      AddTranscript:
+        $ref: "#/components/messages/AddTranscript"
+      ResponseStarted:
+        $ref: "#/components/messages/ResponseStarted"
+      ResponseCompleted:
+        $ref: "#/components/messages/ResponseCompleted"
+      ResponseInterrupted:
+        $ref: "#/components/messages/ResponseInterrupted"
+      ToolInvoke:
+        $ref: "#/components/messages/ToolInvoke"
+      Error:
+        $ref: "#/components/messages/Error"
+      Warning:
+        $ref: "#/components/messages/Warning"
+      Info:
+        $ref: "#/components/messages/Info"
+      ConversationEnding:
+        $ref: "#/components/messages/ConversationEnding"
+      ConversationEnded:
+        $ref: "#/components/messages/ConversationEnded"
+
+operations:
+  publish:
+    action: send
+    channel:
+      $ref: "#/channels/publish"
+    messages:
+      - $ref: "#/channels/publish/messages/StartConversation"
+      - $ref: "#/channels/publish/messages/AddAudio"
+      - $ref: "#/channels/publish/messages/AudioReceived"
+      - $ref: "#/channels/publish/messages/AudioEnded"
+      - $ref: "#/channels/publish/messages/AddInput"
+      - $ref: "#/channels/publish/messages/ToolResult"
+
+  subscribe:
+    action: receive
+    channel:
+      $ref: "#/channels/subscribe"
+    messages:
+      - $ref: "#/channels/subscribe/messages/ConversationStarted"
+      - $ref: "#/channels/subscribe/messages/AddAudio"
+      - $ref: "#/channels/subscribe/messages/AudioAdded"
+      - $ref: "#/channels/subscribe/messages/AddPartialTranscript"
+      - $ref: "#/channels/subscribe/messages/AddTranscript"
+      - $ref: "#/channels/subscribe/messages/ResponseStarted"
+      - $ref: "#/channels/subscribe/messages/ResponseCompleted"
+      - $ref: "#/channels/subscribe/messages/ResponseInterrupted"
+      - $ref: "#/channels/subscribe/messages/ToolInvoke"
+      - $ref: "#/channels/subscribe/messages/Error"
+      - $ref: "#/channels/subscribe/messages/Warning"
+      - $ref: "#/channels/subscribe/messages/Info"
+      - $ref: "#/channels/subscribe/messages/ConversationEnding"
+      - $ref: "#/channels/subscribe/messages/ConversationEnded"
+
+components:
+  messages:
+    StartConversation:
+      summary: Initiates a new conversation session.
+      payload:
+        $ref: "#/components/schemas/StartConversation"
+    AddAudio:
+      summary: A binary chunk of audio. The server confirms receipt by sending an AudioAdded message.
+      contentType: application/octet-stream
+      payload:
+        $ref: "#/components/schemas/AddAudio"
+    AudioReceived:
+      summary: Client response to AddAudio, indicating that server audio has been added to the client successfully.
+      payload:
+        $ref: "#/components/schemas/AudioReceived"
+    AudioEnded:
+      summary: Declares that the client has no more audio to send.
+      payload:
+        $ref: "#/components/schemas/AudioEnded"
+    AddInput:
+      summary: Message used by the application client to send input to the LLM in order to influence the conversation.
+      payload:
+        $ref: "#/components/schemas/AddInput"
+    ConversationStarted:
+      summary: Server response to StartConversation, acknowledging that a conversation session has started.
+      payload:
+        $ref: "#/components/schemas/ConversationStarted"
+    AudioAdded:
+      summary: Server response to AddAudio, indicating that audio has been added successfully.
+      payload:
+        $ref: "#/components/schemas/AudioAdded"
+    AddPartialTranscript:
+      summary: Contains a work-in-progress transcript of a part of the audio that the client has sent.
+      payload:
+        $ref: "#/components/schemas/AddPartialTranscript"
+    AddTranscript:
+      summary: Contains the final transcript of a part of the audio that the client has sent.
+      payload:
+        $ref: "#/components/schemas/AddTranscript"
+    ResponseStarted:
+      summary: Indicates the start of a response from the agent.
+      payload:
+        $ref: "#/components/schemas/ResponseStarted"
+    ResponseCompleted:
+      summary: Indicates the completion of a response from the agent.
+      payload:
+        $ref: "#/components/schemas/ResponseCompleted"
+    ResponseInterrupted:
+      summary: Indicates that a response from the agent was interrupted.
+      payload:
+        $ref: "#/components/schemas/ResponseInterrupted"
+    ToolInvoke:
+      summary: Invokes a tool with the specified parameters.
+      payload:
+        $ref: "#/components/schemas/ToolInvoke"
+    ToolResult:
+      summary: Contains the result of a tool invocation.
+      payload:
+        $ref: "#/components/schemas/ToolResult"
+    Info:
+      summary: Additional information sent from the server to the client.
+      payload:
+        $ref: "#/components/schemas/Info"
+    Warning:
+      summary: Warning messages sent from the server to the client.
+      payload:
+        $ref: "#/components/schemas/Warning"
+    Error:
+      summary: Error messages sent from the server to the client.
+      payload:
+        $ref: "#/components/schemas/Error"
+    ConversationEnding:
+      summary: Indicates starting of the session transfer procedure
+      payload:
+        $ref: "#/components/schemas/ConversationEnding"
+    ConversationEnded:
+      summary: Server ends the conversation, after the server has finished sending all other messages.
+      payload:
+        $ref: "#/components/schemas/ConversationEnded"
+
+  schemas:
+    TypeEnum:
+      type: string
+      enum:
+        - word
+        - punctuation
+
+    AttachesToEnum:
+      type: string
+      enum:
+        - next
+        - previous
+        - none
+        - both
+
+    StatusEnum:
+      type: string
+      enum:
+        - ok
+        - rejected
+        - failed
+
+    InfoTypeEnum:
+      type: string
+      enum:
+        - recognition_quality
+        - model_redirect
+        - deprecated
+
+    WarningTypeEnum:
+      type: string
+      enum:
+        - duration_limit_exceeded
+
+    ErrorTypeEnum:
+      type: string
+      enum:
+        - invalid_message
+        - invalid_model
+        - invalid_config
+        - invalid_audio_type
+        - not_authorised
+        - insufficient_funds
+        - not_allowed
+        - job_error
+        - data_error
+        - buffer_error
+        - protocol_error
+        - timelimit_exceeded
+        - quota_exceeded
+        - unknown_error
+
+    ToolTypeEnum:
+      type: string
+      enum:
+        - function
+
+    ToolFunctionParameterTypeEnum:
+      type: string
+      enum:
+        - integer
+        - number
+        - string
+        - boolean
+
+    AudioFormatRawEncodingEnum:
+      type: string
+      enum:
+        - pcm_f32le
+        - pcm_s16le
+        - mulaw
+
+    AudioFormatRawTypeEnum:
+      type: string
+      enum:
+        - raw
+
+    AudioFormatFileTypeEnum:
+      type: string
+      enum:
+        - file
+
+    ToolFunctionParametersTypeEnum:
+      type: string
+      enum:
+        - object
+
+    OperatingPoint:
+      type: string
+      enum:
+        - standard
+        - enhanced
+
+    DiarizationConfigEnum:
+      type: string
+      enum:
+        - none
+        - speaker
+
+    MaxDelayModeConfigEnum:
+      type: string
+      enum:
+        - flexible
+        - fixed
+
+    RecognitionDisplayDirectionEnum:
+      type: string
+      enum:
+        - ltr
+        - rtl
+
+    StartConversation:
+      type: object
+      properties:
+        message:
+          const: StartConversation
+        audio_format:
+          $ref: "#/components/schemas/AudioFormat"
+        conversation_config:
+          $ref: "#/components/schemas/ConversationConfig"
+        tools:
+          $ref: "#/components/schemas/ToolsArray"
+        debug:
+          $ref: "#/components/schemas/DebugObject"
+      required:
+        - message
+        - audio_format
+        - conversation_config
+
+    ToolsArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/ToolConfig"
+      description: >
+        A list of tools that the LLM can use during the conversation.
+
+    DebugObject:
+      type: object
+      properties:
+        llm:
+          type: boolean
+      additionalProperties: true
+
+    AddAudio:
+      type: string
+      format: binary
+
+    AudioReceived:
+      type: object
+      properties:
+        message:
+          const: AudioReceived
+        seq_no:
+          type: integer
+      required:
+        - message
+        - seq_no
+
+    AudioEnded:
+      type: object
+      properties:
+        message:
+          const: AudioEnded
+        last_seq_no:
+          type: integer
+      required:
+        - message
+        - last_seq_no
+
+    AddInput:
+      type: object
+      properties:
+        message:
+          const: AddInput
+        input:
+          type: string
+        interrupt_response:
+          type: boolean
+          default: false
+          description: >
+            If true, the response will be interrupted by the new input. If false,
+            the response will continue until it is complete, defaults to false.
+        immediate:
+          type: boolean
+          default: false
+          description: >
+            If true, the input will be treated as urgent and will be sent to LLM immediately.
+            If false, new input will be added to current prompt and sent to LLM as a part of the next request.
+      required:
+        - message
+        - input
+
+    ConversationStarted:
+      type: object
+      properties:
+        message:
+          const: ConversationStarted
+        orchestrator_version:
+          type: string
+        id:
+          type: string
+      required:
+        - message
+
+    AudioAdded:
+      type: object
+      properties:
+        message:
+          const: AudioAdded
+        seq_no:
+          type: integer
+      required:
+        - message
+        - seq_no
+
+    AddPartialTranscript:
+      type: object
+      properties:
+        message:
+          const: AddPartialTranscript
+        format:
+          type: string
+          example: "2.1"
+          description: Speechmatics JSON output format version number.
+        metadata:
+          $ref: "#/components/schemas/RecognitionMetadata"
+        results:
+          $ref: "#/components/schemas/RecognitionResultArray"
+      required:
+        - message
+        - metadata
+        - results
+
+    AddTranscript:
+      type: object
+      properties:
+        message:
+          const: AddTranscript
+        format:
+          type: string
+          example: "2.1"
+          description: Speechmatics JSON output format version number.
+        metadata:
+          $ref: "#/components/schemas/RecognitionMetadata"
+        results:
+          $ref: "#/components/schemas/RecognitionResultArray"
+      required:
+        - message
+        - metadata
+        - results
+
+    RecognitionResultArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/RecognitionResult"
+
+    ResponseStarted:
+      type: object
+      properties:
+        message:
+          const: ResponseStarted
+        content:
+          type: string
+          description: The content that is spoken by the agent in the response.
+        start_time:
+          type: number
+          format: float
+          description: The start time of the spoken response, relative to the start of the session.
+      required:
+        - message
+        - content
+        - start_time
+
+    ResponseCompleted:
+      type: object
+      properties:
+        message:
+          const: ResponseCompleted
+        content:
+          type: string
+          description: The content that is spoken by the agent in the response.
+        start_time:
+          type: number
+          format: float
+          description: The start time of the spoken response, relative to the start of the session.
+        end_time:
+          type: number
+          format: float
+          description: The end time of the spoken response, relative to the start of the session.
+      required:
+        - message
+        - content
+        - start_time
+        - end_time
+
+    ResponseInterrupted:
+      type: object
+      properties:
+        message:
+          const: ResponseInterrupted
+        content:
+          type: string
+          description: The content that is spoken by the agent in the response.
+        start_time:
+          type: number
+          format: float
+          description: The start time of the spoken response, relative to the start of the session.
+        end_time:
+          type: number
+          format: float
+          description: The end time of the spoken response, relative to the start of the session.
+      required:
+        - message
+        - content
+        - start_time
+        - end_time
+
+    ToolInvoke:
+      type: object
+      required:
+        - message
+        - id
+        - function
+      properties:
+        message:
+          const: ToolInvoke
+        id:
+          type: string
+          description: The id of the tool invoke.
+        function:
+          $ref: "#/components/schemas/ToolFunction"
+
+    ToolFunction:
+      type: object
+      required:
+        - name
+        - arguments
+      properties:
+        name:
+          type: string
+          description: The name of the tool to invoke.
+        arguments:
+          type: object
+          additionalProperties: true
+
+    ToolResult:
+      type: object
+      required:
+        - message
+        - id
+        - status
+      properties:
+        message:
+          const: ToolResult
+        id:
+          type: string
+          description: The id of the tool invoke.
+        status:
+          $ref: "#/components/schemas/StatusEnum"
+          description: The status of the tool invocation.
+        content:
+          type: string
+          description: The content of the tool result.
+
+    Info:
+      type: object
+      properties:
+        message:
+          const: Info
+        type:
+          $ref: "#/components/schemas/InfoTypeEnum"
+        reason:
+          type: string
+        code:
+          type: integer
+        seq_no:
+          type: integer
+        quality:
+          type: string
+      required:
+        - message
+        - type
+        - reason
+
+    Warning:
+      type: object
+      properties:
+        message:
+          const: Warning
+        type:
+          $ref: "#/components/schemas/WarningTypeEnum"
+        reason:
+          type: string
+        code:
+          type: integer
+        seq_no:
+          type: integer
+        duration_limit:
+          type: number
+      required:
+        - message
+        - type
+        - reason
+
+    Error:
+      type: object
+      properties:
+        message:
+          const: Error
+        type:
+          $ref: "#/components/schemas/ErrorTypeEnum"
+        reason:
+          type: string
+        code:
+          type: integer
+        seq_no:
+          type: integer
+      required:
+        - message
+        - type
+        - reason
+
+    ConversationEnding:
+      type: object
+      properties:
+        message:
+          const: ConversationEnding
+        reason:
+          type: string
+      required:
+        - message
+
+    ConversationEnded:
+      type: object
+      properties:
+        message:
+          const: ConversationEnded
+      required:
+        - message
+
+    ConversationConfig:
+      type: object
+      required:
+        - template_id
+      properties:
+        template_id:
+          type: string
+          description: The id of the agent or persona to use during the conversation.
+        template_variables:
+          type: object
+          additionalProperties:
+            type: string
+
+    ToolConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - function
+      properties:
+        type:
+          $ref: "#/components/schemas/ToolTypeEnum"
+          description: The type of the tool (currently, must be 'function').
+        function:
+          $ref: "#/components/schemas/ToolFunctionConfig"
+
+    ToolFunctionConfig:
+      type: object
+      additionalProperties: false
+      description: The function that the tool will call.
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the function.
+        description:
+          type: string
+          description: A description of when the function should be used.
+        parameters:
+          $ref: "#/components/schemas/ToolFunctionParameters"
+
+    ToolFunctionParameters:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/ToolFunctionParametersTypeEnum"
+          description: The type of the parameters (currently, will always be object).
+        required:
+          type: array
+          items:
+            type: string
+        properties:
+          $ref: "#/components/schemas/ToolFunctionParameterProperties"
+
+    ToolFunctionParameterProperties:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/ToolFunctionParameter"
+
+    ToolFunctionParameter:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+      properties:
+        type:
+          $ref: "#/components/schemas/ToolFunctionParameterTypeEnum"
+          description: The type of the parameter (e.g., string, integer, boolean).
+        description:
+          type: string
+          description: A description of the parameter.
+        enum:
+          type: array
+          description: An optional list of valid values for the parameter.
+        example:
+          description: An example value for the parameter.
+
+    AudioFormat:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/AudioFormatRaw"
+        - $ref: "#/components/schemas/AudioFormatFile"
+
+    AudioFormatRaw:
+      type: object
+      title: "AudioFormatRaw"
+      properties:
+        type:
+          $ref: "#/components/schemas/AudioFormatRawTypeEnum"
+        encoding:
+          $ref: "#/components/schemas/AudioFormatRawEncodingEnum"
+        sample_rate:
+          type: integer
+      required:
+        - type
+        - encoding
+        - sample_rate
+
+    AudioFormatFile:
+      type: object
+      title: "AudioFormatFile"
+      properties:
+        type:
+          $ref: "#/components/schemas/AudioFormatFileTypeEnum"
+      required:
+        - type
+
+    TranscriptionConfig:
+      type: object
+      properties:
+        language:
+          type: string
+        domain:
+          type: string
+          description: >
+            Request a specialized model based on 'language' but optimized for a particular field, e.g. "finance" or "medical".
+        output_locale:
+          $ref: "#/components/schemas/OutputLocale"
+        additional_vocab:
+          $ref: "#/components/schemas/VocabList"
+        diarization:
+          $ref: "#/components/schemas/DiarizationConfigEnum"
+        max_delay:
+          type: number
+          minimum: 0
+        max_delay_mode:
+          $ref: "#/components/schemas/MaxDelayModeConfigEnum"
+        speaker_diarization_config:
+          $ref: "#/components/schemas/SpeakerDiarizationConfig"
+        audio_filtering_config:
+          $ref: "#/components/schemas/AudioFilteringConfig"
+        transcript_filtering_config:
+          $ref: "#/components/schemas/TranscriptFilteringConfig"
+        enable_partials:
+          type: boolean
+          default: false
+        enable_entities:
+          type: boolean
+          default: true
+        operating_point:
+          $ref: "#/components/schemas/OperatingPoint"
+        punctuation_overrides:
+          $ref: "#/components/schemas/PunctuationOverrides"
+      required:
+        - language
+
+    PunctuationOverrides:
+      type: object
+      properties:
+        permitted_marks:
+          type: array
+          description: "The punctuation marks which the client is prepared to accept in transcription output, or the special value 'all' (the default). Unsupported marks are ignored. This value is used to guide the transcription process."
+          items:
+            pattern: "^(.|all)$"
+            type: string
+        sensitivity:
+          type: number
+          description: "Ranges between zero and one. Higher values will produce more punctuation. The default is 0.5."
+          format: float
+          maximum: 1
+          minimum: 0
+
+    TranslationConfig:
+      type: object
+      properties:
+        target_languages:
+          type: array
+          items:
+            type: string
+        enable_partials:
+          type: boolean
+          default: false
+      required:
+        - target_languages
+
+    AudioEventsConfig:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            type: string
+
+    VocabList:
+      type: array
+      items:
+        $ref: "#/components/schemas/VocabWord"
+
+    VocabWord:
+      oneOf:
+        - $ref: "#/components/schemas/VocabWordObject"
+        - $ref: "#/components/schemas/VocabWordString"
+
+    VocabWordObject:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+        sounds_like:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+      required:
+        - content
+
+    VocabWordString:
+      type: string
+      minLength: 1
+
+    DiarizationConfig:
+      $ref: "#/components/schemas/DiarizationConfigEnum"
+
+    SpeakerDiarizationConfig:
+      type: object
+      properties:
+        max_speakers:
+          type: number
+          format: integer
+          minimum: 2
+          maximum: 100
+
+    AudioFilteringConfig:
+      type: object
+      properties:
+        volume_threshold:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+
+    TranscriptFilteringConfig:
+      type: object
+      properties:
+        remove_disfluencies:
+          type: boolean
+
+    OutputLocale:
+      type: string
+      minLength: 1
+
+    RecognitionMetadata:
+      type: object
+      properties:
+        start_time:
+          type: number
+          format: float
+        end_time:
+          type: number
+          format: float
+        transcript:
+          type: string
+      required:
+        - start_time
+        - end_time
+        - transcript
+
+    RecognitionResult:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/TypeEnum"
+        start_time:
+          type: number
+          format: float
+        end_time:
+          type: number
+          format: float
+        channel:
+          type: string
+        attaches_to:
+          $ref: "#/components/schemas/AttachesToEnum"
+        is_eos:
+          type: boolean
+        alternatives:
+          $ref: "#/components/schemas/RecognitionAlternativeArray"
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        volume:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+      required:
+        - type
+        - start_time
+        - end_time
+
+    RecognitionAlternativeArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/RecognitionAlternative"
+
+    RecognitionAlternative:
+      type: object
+      properties:
+        content:
+          type: string
+        confidence:
+          type: number
+          format: float
+        language:
+          type: string
+        display:
+          $ref: "#/components/schemas/RecognitionDisplay"
+        speaker:
+          type: string
+      required:
+        - content
+        - confidence
+
+    RecognitionDisplay:
+      type: object
+      required:
+        - direction
+      properties:
+        direction:
+          $ref: "#/components/schemas/RecognitionDisplayDirectionEnum"
+
+    MaxDelayModeConfig:
+      $ref: "#/components/schemas/MaxDelayModeConfigEnum"
+   
