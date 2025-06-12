@@ -69,6 +69,10 @@ export async function generate(): Promise<void> {
   await mkdir(`${packageDir}/models`);
 
   for (const model of models) {
+    model.result.replace(
+      'enum?: unknown[];',
+      'enum?: (string | number | boolean)[];',
+    );
     await writeFile(`${packageDir}/models/${model.modelName}.ts`, model.result);
   }
 
