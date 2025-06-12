@@ -242,6 +242,7 @@ components:
 
     ToolFunctionParameterTypeEnum:
       type: string
+      description: The type of the parameter (e.g., string, integer, boolean).
       enum:
         - integer
         - number
@@ -527,10 +528,7 @@ components:
         arguments:
           type: object
           additionalProperties:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: boolean
+            type: string
 
     ToolResult:
       type: object
@@ -546,7 +544,6 @@ components:
           description: The id of the tool invoke.
         status:
           $ref: "#/components/schemas/StatusEnum"
-          description: The status of the tool invocation.
         content:
           type: string
           description: The content of the tool result.
@@ -642,20 +639,17 @@ components:
 
     ToolConfig:
       type: object
-      additionalProperties: false
       required:
         - type
         - function
       properties:
         type:
           $ref: "#/components/schemas/ToolTypeEnum"
-          description: The type of the tool (currently, must be 'function').
         function:
           $ref: "#/components/schemas/ToolFunctionConfig"
 
     ToolFunctionConfig:
       type: object
-      additionalProperties: false
       description: The function that the tool will call.
       required:
         - name
@@ -671,11 +665,9 @@ components:
 
     ToolFunctionParameters:
       type: object
-      additionalProperties: false
       properties:
         type:
           $ref: "#/components/schemas/ToolFunctionParametersTypeEnum"
-          description: The type of the parameters (currently, will always be object).
         required:
           type: array
           items:
@@ -690,24 +682,19 @@ components:
 
     ToolFunctionParameter:
       type: object
-      additionalProperties: false
       required:
         - type
       properties:
         type:
           $ref: "#/components/schemas/ToolFunctionParameterTypeEnum"
-          description: The type of the parameter (e.g., string, integer, boolean).
         description:
           type: string
           description: A description of the parameter.
         enum:
           type: array
           description: An optional list of valid values for the parameter.
-          items:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: boolean
+          # Note: swagger-cli doesn't like this being set to oneOf, so we leave schema open for now
+          items: {}
         example:
           type: string
           description: An example value for the parameter.
