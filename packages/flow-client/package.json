@@ -3,10 +3,7 @@
   "version": "0.2.2",
   "description": "Javascript client for the Speechmatics Flow API",
   "main": "dist/index.js",
-  "files": [
-    "dist/",
-    "README.md"
-  ],
+  "files": ["dist/", "README.md"],
   "browser": "dist/index.browser.js",
   "module": "dist/index.browser.js",
   "typings": "dist/index.d.ts",
@@ -18,14 +15,7 @@
     "test": "node --import tsx ./test/index.test.ts",
     "generate-models": "./scripts/generate-models.ts"
   },
-  "keywords": [
-    "voice",
-    "speech",
-    "intelligence",
-    "assistance",
-    "chat",
-    "API"
-  ],
+  "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
   "author": "",
   "license": "MIT",
   "dependencies": {
