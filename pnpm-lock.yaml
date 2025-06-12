@@ -340,6 +340,9 @@ importers:
       '@types/ws':
         specifier: ^8.5.12
         version: 8.5.12
+      yaml:
+        specifier: ^2.5.0
+        version: 2.5.0
 
   packages/flow-client-react:
     dependencies:
