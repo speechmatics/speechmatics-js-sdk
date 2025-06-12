@@ -21,7 +21,7 @@ export type FlowClientOutgoingMessage =
   | AudioReceived
   | AudioEnded;
 
-export type FlowClientIncomingMessage =
+export type FlowClientIncomingMessage = subscribe
   | ConversationStarted
   | AudioAdded
   | ResponseStarted
