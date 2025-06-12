@@ -1,39 +1,8 @@
-import type {
-  ConversationStarted,
-  ConversationEnded,
-  StartConversation,
-  AudioReceived,
-  AudioEnded,
-  AudioAdded,
-  ResponseStarted,
-  ResponseCompleted,
-  ResponseInterrupted,
-  AddTranscript,
-  AddPartialTranscript,
-  ConversationEnding,
-  Info,
-  Warning,
-  ErrorType,
-} from '../models';
+import type { publish, subscribe } from '../models';
 
-export type FlowClientOutgoingMessage = publish
-  | StartConversation
-  | AudioReceived
-  | AudioEnded;
+export type FlowClientOutgoingMessage = Exclude<publish, string>;
 
-export type FlowClientIncomingMessage = subscribe
-  | ConversationStarted
-  | AudioAdded
-  | ResponseStarted
-  | ResponseCompleted
-  | ResponseInterrupted
-  | AddTranscript
-  | AddPartialTranscript
-  | ConversationEnding
-  | ConversationEnded
-  | Info
-  | Warning
-  | ErrorType;
+export type FlowClientIncomingMessage = Exclude<subscribe, string>;
 
 // Custom event gets fired when we receive agent TTS audio
 // The underlying data is PCM16_SLE, represented as an Int16Array
