@@ -38,6 +38,12 @@ const generator = new TypeScriptGenerator({
   mapType: 'indexedObject',
   rawPropertyNames: true,
   moduleSystem: 'ESM',
+  typeMapping: {
+    // Anywhere we would output `any` we want to output `unknown` instead
+    Any: () => {
+      return 'unknown';
+    },
+  },
   processorOptions: {
     interpreter: {
       ignoreAdditionalProperties: true,
