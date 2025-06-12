@@ -1,5 +1,5 @@
 interface DebugObject {
   llm?: boolean;
-  additionalProperties?: { [name: string]: any };
+  additionalProperties?: { [name: string]: unknown };
 }
 export type { DebugObject };
