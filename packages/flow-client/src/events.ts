@@ -16,7 +16,7 @@ import type {
   ErrorType,
 } from '../models';
 
-export type FlowClientOutgoingMessage =
+export type FlowClientOutgoingMessage = publish
   | StartConversation
   | AudioReceived
   | AudioEnded;
