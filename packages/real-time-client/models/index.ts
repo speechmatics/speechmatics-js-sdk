@@ -1,5 +1,5 @@
-export * from './publish';
-export * from './subscribe';
+export * from './RealtimeClientMessage';
+export * from './RealtimeServerMessage';
 export * from './StartRecognition';
 export * from './AudioFormatRaw';
 export * from './RawAudioEncodingEnum';

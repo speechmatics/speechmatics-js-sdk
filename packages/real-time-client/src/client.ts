@@ -2,15 +2,9 @@ import { TypedEventTarget } from 'typescript-event-target';
 import type {
   StartRecognition,
   RecognitionStarted,
-  publish,
-  subscribe,
+  RealtimeClientMessage,
+  RealtimeServerMessage,
 } from '../models';
-
-// JSON messages to be sent to the server (exclude binary audio)
-export type RealtimeClientMessage = Exclude<publish, string>;
-
-// Messages received from the server
-export type RealtimeServerMessage = subscribe;
 
 export class SocketStateChangeEvent extends Event {
   constructor(public readonly socketState: RealtimeClient['socketState']) {
@@ -161,7 +155,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.dispatchTypedEvent('sendMessage', new SendMessageEvent(message));
   }
 
-  sendAudio(data: Blob | ArrayBufferLike | string) {
+  sendAudio(data: Parameters<WebSocket['send']>[0]) {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }

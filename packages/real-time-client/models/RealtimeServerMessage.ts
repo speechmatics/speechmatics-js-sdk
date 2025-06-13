@@ -11,7 +11,7 @@ import type { EndOfUtterance } from './EndOfUtterance';
 import type { Info } from './Info';
 import type { Warning } from './Warning';
 import type { ErrorType } from './ErrorType';
-type subscribe =
+type RealtimeServerMessage =
   | RecognitionStarted
   | AudioAdded
   | AddPartialTranscript
@@ -25,4 +25,4 @@ type subscribe =
   | Info
   | Warning
   | ErrorType;
-export type { subscribe };
+export type { RealtimeServerMessage };
