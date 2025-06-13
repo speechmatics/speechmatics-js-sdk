@@ -30,6 +30,8 @@ export interface RealtimeClientEventMap {
   socketStateChange: SocketStateChangeEvent;
 }
 
+export type AddAudio = Parameters<WebSocket['send']>[0];
+
 export interface RealtimeClientOptions {
   /**
    * URL of the Speechmatics Realtime API, see options here: https://docs.speechmatics.com/introduction/authentication#supported-endpoints
@@ -155,7 +157,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.dispatchTypedEvent('sendMessage', new SendMessageEvent(message));
   }
 
-  sendAudio(data: Parameters<WebSocket['send']>[0]) {
+  sendAudio(data: AddAudio) {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
