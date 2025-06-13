@@ -209,7 +209,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     });
   }
 
-  public sendProgrammeInput(addInput: Exclude<AddInput, 'message'>) {
+  public sendInput(addInput: Exclude<AddInput, 'message'>) {
     this.sendWebsocketMessage({
       ...addInput,
       message: 'AddInput',
