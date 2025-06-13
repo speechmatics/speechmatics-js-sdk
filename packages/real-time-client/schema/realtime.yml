@@ -30,12 +30,8 @@ channels:
         $ref: "#/components/messages/StartRecognition"
       AddAudio:
         $ref: "#/components/messages/AddAudio"
-      AddChannelAudio:
-        $ref: "#/components/messages/AddChannelAudio"
       EndOfStream:
         $ref: "#/components/messages/EndOfStream"
-      EndOfChannel:
-        $ref: "#/components/messages/EndOfChannel"
       SetRecognitionConfig:
         $ref: "#/components/messages/SetRecognitionConfig"
   subscribe:
@@ -45,8 +41,6 @@ channels:
         $ref: "#/components/messages/RecognitionStarted"
       AudioAdded:
         $ref: "#/components/messages/AudioAdded"
-      ChannelAudioAdded:
-        $ref: "#/components/messages/ChannelAudioAdded"
       AddPartialTranscript:
         $ref: "#/components/messages/AddPartialTranscript"
       AddTranscript:
@@ -77,9 +71,7 @@ operations:
     messages:
       - $ref: "#/channels/publish/messages/StartRecognition"
       - $ref: "#/channels/publish/messages/AddAudio"
-      - $ref: "#/channels/publish/messages/AddChannelAudio"
       - $ref: "#/channels/publish/messages/EndOfStream"
-      - $ref: "#/channels/publish/messages/EndOfChannel"
       - $ref: "#/channels/publish/messages/SetRecognitionConfig"
   subscribe:
     action: receive
@@ -88,7 +80,6 @@ operations:
     messages:
       - $ref: "#/channels/subscribe/messages/RecognitionStarted"
       - $ref: "#/channels/subscribe/messages/AudioAdded"
-      - $ref: "#/channels/subscribe/messages/ChannelAudioAdded"
       - $ref: "#/channels/subscribe/messages/AddPartialTranscript"
       - $ref: "#/channels/subscribe/messages/AddTranscript"
       - $ref: "#/channels/subscribe/messages/AddPartialTranslation"
@@ -111,18 +102,10 @@ components:
       contentType: application/octet-stream
       payload:
         $ref: "#/components/schemas/AddAudio"
-    AddChannelAudio:
-      summary: Audio belonging to a specific channel.
-      payload:
-        $ref: "#/components/schemas/AddChannelAudio"
     EndOfStream:
       summary: Declares that the client has no more audio to send.
       payload:
         $ref: "#/components/schemas/EndOfStream"
-    EndOfChannel:
-      summary: Declares that the channel has no more audio to send.
-      payload:
-        $ref: "#/components/schemas/EndOfChannel"
     SetRecognitionConfig:
       summary: Allows the client to re-configure the recognition session.
       payload:
@@ -135,10 +118,6 @@ components:
       summary: Server response to AddAudio, indicating that audio has been added successfully.
       payload:
         $ref: "#/components/schemas/AudioAdded"
-    ChannelAudioAdded:
-      summary: Server response to AddChannelAudio, indicating that audio has been added successfully.
-      payload:
-        $ref: "#/components/schemas/ChannelAudioAdded"
     AddPartialTranscript:
       summary: Contains a work-in-progress transcript of a part of the audio that the client has sent.
       payload:
@@ -204,21 +183,6 @@ components:
     AddAudio:
       type: string
       format: binary
-    AddChannelAudio:
-      type: object
-      properties:
-        message:
-          const: AddChannelAudio
-        channel:
-          type: string
-          description: The channel identifier to which the audio belongs.
-        data:
-          type: string
-          description: The audio data in base64 format.
-      required:
-        - message
-        - channel
-        - data
     EndOfStream:
       type: object
       properties:
@@ -228,20 +192,6 @@ components:
           type: integer
       required:
         - message
-        - last_seq_no
-    EndOfChannel:
-      type: object
-      properties:
-        message:
-          const: EndOfChannel
-        channel:
-          type: string
-          description: The channel identifier to which the audio belongs.
-        last_seq_no:
-          type: integer
-      required:
-        - message
-        - channel
         - last_seq_no
     SetRecognitionConfig:
       type: object
@@ -296,19 +246,6 @@ components:
           type: integer
       required:
         - message
-        - seq_no
-    ChannelAudioAdded:
-      type: object
-      properties:
-        message:
-          const: ChannelAudioAdded
-        seq_no:
-          type: integer
-        channel:
-          type: string
-      required:
-        - message
-        - channel
         - seq_no
     AddPartialTranscript:
       type: object

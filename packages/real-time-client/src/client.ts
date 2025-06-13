@@ -6,8 +6,8 @@ import type {
   subscribe,
 } from '../models';
 
-// Messages to be sent to server
-export type RealtimeClientMessage = publish;
+// JSON messages to be sent to the server (exclude binary audio)
+export type RealtimeClientMessage = Exclude<publish, string>;
 
 // Messages received from the server
 export type RealtimeServerMessage = subscribe;

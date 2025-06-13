@@ -1,6 +1,5 @@
 import type { RecognitionStarted } from './RecognitionStarted';
 import type { AudioAdded } from './AudioAdded';
-import type { ChannelAudioAdded } from './ChannelAudioAdded';
 import type { AddPartialTranscript } from './AddPartialTranscript';
 import type { AddTranscript } from './AddTranscript';
 import type { AddPartialTranslation } from './AddPartialTranslation';
@@ -15,7 +14,6 @@ import type { ErrorType } from './ErrorType';
 type subscribe =
   | RecognitionStarted
   | AudioAdded
-  | ChannelAudioAdded
   | AddPartialTranscript
   | AddTranscript
   | AddPartialTranslation
