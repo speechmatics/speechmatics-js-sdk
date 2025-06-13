@@ -198,14 +198,14 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     }
   }
 
-  public sendToolResult(toolResult: Exclude<ToolResult, "message">) {
+  public sendToolResult(toolResult: Exclude<ToolResult, 'message'>) {
     this.sendWebsocketMessage({
       ...toolResult,
       message: 'ToolResult',
     });
   }
 
-  public sendProgrammeInput(addInput: Exclude<AddInput, "message">) {
+  public sendProgrammeInput(addInput: Exclude<AddInput, 'message'>) {
     this.sendWebsocketMessage({
       ...addInput,
       message: 'AddInput',
