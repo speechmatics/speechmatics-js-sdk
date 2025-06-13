@@ -5,9 +5,8 @@ import {
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
-  type FlowClientOutgoingMessagePrivate
 } from './events';
-import type { StartConversation } from '../models';
+import type { AddInput, StartConversation, ToolResult } from '../models';
 import { JitterBuffer } from './jitter-buffer';
 
 export interface FlowClientOptions {
@@ -193,14 +192,24 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
   }
 
-  private sendWebsocketMessage(message: FlowClientOutgoingMessagePrivate) {
+  private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
     if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
   }
 
-  public sendMessage(message: FlowClientOutgoingMessage) {
-    this.sendWebsocketMessage(message);
+  public sendToolResult(toolResult: Exclude<ToolResult, "message">) {
+    this.sendWebsocketMessage({
+      ...toolResult,
+      message: 'ToolResult',
+    });
+  }
+
+  public sendProgrammeInput(addInput: Exclude<AddInput, "message">) {
+    this.sendWebsocketMessage({
+      ...addInput,
+      message: 'AddInput',
+    });
   }
 
   public sendAudio(pcmData: ArrayBufferLike) {
