@@ -1,5 +1,5 @@
-export * from './publish';
-export * from './subscribe';
+export * from './FlowClientOutgoingMessage';
+export * from './FlowClientIncomingMessage';
 export * from './StartConversation';
 export * from './AudioFormatRaw';
 export * from './AudioFormatRawTypeEnum';

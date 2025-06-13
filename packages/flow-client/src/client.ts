@@ -3,10 +3,14 @@ import {
   AgentAudioEvent,
   FlowIncomingMessageEvent,
   type FlowClientEventMap,
-  type FlowClientIncomingMessage,
-  type FlowClientOutgoingMessage,
 } from './events';
-import type { AddInput, StartConversation, ToolResult } from '../models';
+import type {
+  AddInput,
+  StartConversation,
+  ToolResult,
+  FlowClientIncomingMessage,
+  FlowClientOutgoingMessage,
+} from '../models';
 import { JitterBuffer } from './jitter-buffer';
 
 export interface FlowClientOptions {
