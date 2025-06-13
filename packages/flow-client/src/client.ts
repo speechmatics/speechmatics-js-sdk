@@ -5,6 +5,7 @@ import {
   type FlowClientEventMap,
   type FlowClientIncomingMessage,
   type FlowClientOutgoingMessage,
+  type FlowClientOutgoingMessagePrivate
 } from './events';
 import type { StartConversation } from '../models';
 import { JitterBuffer } from './jitter-buffer';
@@ -192,10 +193,14 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
   }
 
-  private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
+  private sendWebsocketMessage(message: FlowClientOutgoingMessagePrivate) {
     if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
+  }
+
+  public sendMessage(message: FlowClientOutgoingMessage) {
+    this.sendWebsocketMessage(message);
   }
 
   public sendAudio(pcmData: ArrayBufferLike) {
