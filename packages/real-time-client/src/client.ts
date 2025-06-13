@@ -4,6 +4,7 @@ import type {
   RecognitionStarted,
   RealtimeClientMessage,
   RealtimeServerMessage,
+  TranscriptionConfig,
 } from '../models';
 
 export class SocketStateChangeEvent extends Event {
@@ -149,7 +150,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     });
   }
 
-  sendMessage(message: RealtimeClientMessage) {
+  private sendMessage(message: RealtimeClientMessage) {
     if (!this.socket) {
       throw new SpeechmaticsRealtimeError('Client socket not initialized');
     }
@@ -225,6 +226,13 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       waitForEndOfTranscript,
       rejectAfter(RT_CLIENT_RESPONSE_TIMEOUT_MS, 'EndOfTranscript'),
     ]);
+  }
+
+  setRecognitionConfig(config: TranscriptionConfig) {
+    this.sendMessage({
+      message: 'SetRecognitionConfig' as const,
+      transcription_config: config,
+    });
   }
 }
 
