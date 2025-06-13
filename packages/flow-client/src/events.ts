@@ -1,9 +1,4 @@
-import type { ToolResult, AddInput, publish, subscribe } from '../models';
-
-// Internal client-sent message types used by FlowClient
-export type FlowClientOutgoingMessage = Exclude<publish, string>;
-
-export type FlowClientIncomingMessage = Exclude<subscribe, string>;
+import type { FlowClientIncomingMessage } from '../models';
 
 // Custom event gets fired when we receive agent TTS audio
 // The underlying data is PCM16_SLE, represented as an Int16Array
