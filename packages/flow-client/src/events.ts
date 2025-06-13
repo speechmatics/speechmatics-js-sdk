@@ -1,10 +1,7 @@
 import type { ToolResult, AddInput, publish, subscribe } from '../models';
 
 // Internal client-sent message types used by FlowClient
-export type FlowClientOutgoingMessagePrivate = Exclude<publish, string>;
-
-// client-sent message types controlled by the user
-export type FlowClientOutgoingMessage = AddInput | ToolResult;
+export type FlowClientOutgoingMessage = Exclude<publish, string>;
 
 export type FlowClientIncomingMessage = Exclude<subscribe, string>;
 

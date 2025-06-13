@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/flow-client",
-  "version": "0.3.0-alpha",
+  "version": "1.0.0-rc.1",
   "description": "Javascript client for the Speechmatics Flow API",
   "main": "dist/index.js",
   "files": ["dist/", "README.md"],

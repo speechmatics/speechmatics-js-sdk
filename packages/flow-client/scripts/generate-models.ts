@@ -43,6 +43,14 @@ const generator = new TypeScriptGenerator({
     Any: () => {
       return 'unknown';
     },
+    Array: (context) => {
+      console.log(context.constrainedModel.name);
+      if (context.constrainedModel.name === 'ToolFunctionParameterEnum') {
+        console.log(context.constrainedModel);
+        return '(string | number | boolean)[];';
+      }
+      return TypeScriptGenerator.defaultOptions.typeMapping.Array(context);
+    },
   },
   processorOptions: {
     interpreter: {
@@ -69,11 +77,17 @@ export async function generate(): Promise<void> {
   await mkdir(`${packageDir}/models`);
 
   for (const model of models) {
-    model.result.replace(
-      'enum?: unknown[];',
-      'enum?: (string | number | boolean)[];',
-    );
-    await writeFile(`${packageDir}/models/${model.modelName}.ts`, model.result);
+    if (model.modelName === 'ToolFunctionParameter') {
+      await writeFile(
+        `${packageDir}/models/${model.modelName}.ts`,
+        toolFunctionParamerterModel,
+      );
+    } else {
+      await writeFile(
+        `${packageDir}/models/${model.modelName}.ts`,
+        model.result,
+      );
+    }
   }
 
   await writeFile(
@@ -92,3 +106,14 @@ if (require.main === module) {
       }),
     );
 }
+
+const toolFunctionParamerterModel = `
+import type { ToolFunctionParameterTypeEnum } from './ToolFunctionParameterTypeEnum';
+interface ToolFunctionParameter {
+  type: ToolFunctionParameterTypeEnum;
+  description?: string;
+  enum?: unknown[];
+  example?: string;
+}
+export type { ToolFunctionParameter };
+`;
