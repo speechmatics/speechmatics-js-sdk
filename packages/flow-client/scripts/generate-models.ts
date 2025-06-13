@@ -28,6 +28,12 @@ const generator = new TypeScriptGenerator({
         if (name === 'Error') {
           return 'ErrorType';
         }
+        if (name === 'publish') {
+          return 'FlowClientOutgoingMessage';
+        }
+        if (name === 'subscribe') {
+          return 'FlowClientIncomingMessage';
+        }
         return name;
       },
     }),
@@ -44,12 +50,22 @@ const generator = new TypeScriptGenerator({
       return 'unknown';
     },
     Array: (context) => {
-      console.log(context.constrainedModel.name);
       if (context.constrainedModel.name === 'ToolFunctionParameterEnum') {
-        console.log(context.constrainedModel);
         return '(string | number | boolean)[];';
       }
       return TypeScriptGenerator.defaultOptions.typeMapping.Array(context);
+    },
+    Union(context) {
+      if (
+        context.constrainedModel.name === 'FlowClientOutgoingMessage' ||
+        context.constrainedModel.name === 'FlowClientIncomingMessage'
+      ) {
+        // Exclude AddAudio from the union type, since we handle it separately from the JSON messages
+        context.constrainedModel.union = context.constrainedModel.union.filter(
+          (m) => m.name !== 'AddAudio',
+        );
+      }
+      return TypeScriptGenerator.defaultOptions.typeMapping.Union(context);
     },
   },
   processorOptions: {
