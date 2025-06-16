@@ -234,6 +234,7 @@ components:
         - timelimit_exceeded
         - quota_exceeded
         - unknown_error
+        - llm_error
 
     ToolTypeEnum:
       type: string
