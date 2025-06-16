@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/flow-client-react",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "React hooks for interacting with the Speechmatics Flow API",
   "main": "dist/index.cjs",
   "module": "dist/index.js",

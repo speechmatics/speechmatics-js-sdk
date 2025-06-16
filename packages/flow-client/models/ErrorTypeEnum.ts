@@ -12,5 +12,6 @@ type ErrorTypeEnum =
   | 'protocol_error'
   | 'timelimit_exceeded'
   | 'quota_exceeded'
-  | 'unknown_error';
+  | 'unknown_error'
+  | 'llm_error';
 export type { ErrorTypeEnum };

@@ -216,6 +216,7 @@ components:
       type: string
       enum:
         - duration_limit_exceeded
+        - llm_error
 
     ErrorTypeEnum:
       type: string
