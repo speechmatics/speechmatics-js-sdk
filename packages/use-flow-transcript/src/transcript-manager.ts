@@ -8,7 +8,7 @@ import type {
 } from '@speechmatics/flow-client-react';
 import { TypedEventTarget } from 'typescript-event-target';
 import {
-  type TranscriptUpdateMessage,
+  type FlowMessage,
   type Word,
   type AgentResponse,
   type TranscriptGroup,
@@ -186,10 +186,8 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    */
   private getWords(
     message: Exclude<
-      FlowServerMessage,
-      | ResponseStarted
-      | ResponseCompleted
-      | ResponseInterrupted
+      FlowMessage,
+      ResponseStarted | ResponseCompleted | ResponseInterrupted
     >,
   ): Word[] {
     if (!message.results) return [];
