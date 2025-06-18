@@ -170,9 +170,7 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
   private getWords(
     message: Exclude<
       FlowMessage,
-      | ResponseStarted
-      | ResponseCompleted
-      | ResponseInterrupted
+      ResponseStarted | ResponseCompleted | ResponseInterrupted
     >,
   ): Word[] {
     if (!message.results) return [];
