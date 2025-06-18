@@ -1,5 +1,5 @@
-export * from './FlowClientOutgoingMessage';
-export * from './FlowClientIncomingMessage';
+export * from './FlowClientMessage';
+export * from './FlowServerMessage';
 export * from './StartConversation';
 export * from './AudioFormatRaw';
 export * from './AudioFormatRawTypeEnum';

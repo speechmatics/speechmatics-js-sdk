@@ -29,10 +29,10 @@ const generator = new TypeScriptGenerator({
           return 'ErrorType';
         }
         if (name === 'publish') {
-          return 'FlowClientOutgoingMessage';
+          return 'FlowClientMessage';
         }
         if (name === 'subscribe') {
-          return 'FlowClientIncomingMessage';
+          return 'FlowServerMessage';
         }
         return name;
       },
@@ -46,19 +46,18 @@ const generator = new TypeScriptGenerator({
   moduleSystem: 'ESM',
   typeMapping: {
     // Anywhere we would output `any` we want to output `unknown` instead
-    Any: () => {
-      return 'unknown';
-    },
-    Array: (context) => {
-      if (context.constrainedModel.name === 'ToolFunctionParameterEnum') {
-        return '(string | number | boolean)[];';
+    Any: (context) => {
+      // HACK get mixed types through special annotation to deal with upstream Swagger 2 dependency
+      if (context.constrainedModel.originalInput['x-union-string-int']) {
+        console.log(context.constrainedModel);
+        return '(string | number)';
       }
-      return TypeScriptGenerator.defaultOptions.typeMapping.Array(context);
+      return 'unknown';
     },
     Union(context) {
       if (
-        context.constrainedModel.name === 'FlowClientOutgoingMessage' ||
-        context.constrainedModel.name === 'FlowClientIncomingMessage'
+        context.constrainedModel.name === 'FlowClientMessage' ||
+        context.constrainedModel.name === 'FlowServerMessage'
       ) {
         // Exclude AddAudio from the union type, since we handle it separately from the JSON messages
         context.constrainedModel.union = context.constrainedModel.union.filter(
@@ -93,17 +92,7 @@ export async function generate(): Promise<void> {
   await mkdir(`${packageDir}/models`);
 
   for (const model of models) {
-    if (model.modelName === 'ToolFunctionParameter') {
-      await writeFile(
-        `${packageDir}/models/${model.modelName}.ts`,
-        toolFunctionParamerterModel,
-      );
-    } else {
-      await writeFile(
-        `${packageDir}/models/${model.modelName}.ts`,
-        model.result,
-      );
-    }
+    await writeFile(`${packageDir}/models/${model.modelName}.ts`, model.result);
   }
 
   await writeFile(
@@ -122,14 +111,3 @@ if (require.main === module) {
       }),
     );
 }
-
-const toolFunctionParamerterModel = `
-import type { ToolFunctionParameterTypeEnum } from './ToolFunctionParameterTypeEnum';
-interface ToolFunctionParameter {
-  type: ToolFunctionParameterTypeEnum;
-  description?: string;
-  enum?: unknown[];
-  example?: string;
-}
-export type { ToolFunctionParameter };
-`;
