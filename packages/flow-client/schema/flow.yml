@@ -692,7 +692,6 @@ components:
 
     ToolFunctionParameter:
       type: object
-      additionalProperties: false
       required:
         - type
       properties:
@@ -703,16 +702,17 @@ components:
           type: string
           description: A description of the parameter.
         enum:
-          $ref: "#/components/schemas/ToolFunctionParameterEnum" 
+          type: array
+          items:
+            x-union-string-int: true
+          description: >
+            An optional list of valid values for the parameter. If provided, the parameter must be one of these values.
         example:
-          type: string
+          oneOf:
+            - type: string
+            - type: boolean
+            - type: number
           description: An example value for the parameter.
-    
-    ToolFunctionParameterEnum:
-      type: array
-      items: {}
-      description: >
-        An optional list of valid values for the parameter. If provided, the parameter must be one of these values.
 
     AudioFormat:
       type: object

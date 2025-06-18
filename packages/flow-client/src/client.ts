@@ -1,15 +1,15 @@
 import { TypedEventTarget } from 'typescript-event-target';
 import {
   AgentAudioEvent,
-  FlowIncomingMessageEvent,
+  FlowServerMessageEvent,
   type FlowClientEventMap,
 } from './events';
 import type {
   AddInput,
   StartConversation,
   ToolResult,
-  FlowClientIncomingMessage,
-  FlowClientOutgoingMessage,
+  FlowClientMessage,
+  FlowServerMessage,
 } from '../models';
 import { JitterBuffer } from './jitter-buffer';
 
@@ -171,7 +171,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
   private handleWebsocketMessage(message: string) {
     // We're intentionally not validating the message shape. It is design by contract
-    let data: FlowClientIncomingMessage;
+    let data: FlowServerMessage;
     try {
       data = JSON.parse(message);
     } catch (e) {
@@ -193,10 +193,10 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.jitterBuffer?.flush();
     }
 
-    this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
+    this.dispatchTypedEvent('message', new FlowServerMessageEvent(data));
   }
 
-  private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
+  private sendWebsocketMessage(message: FlowClientMessage) {
     if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }

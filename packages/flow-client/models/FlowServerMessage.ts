@@ -11,7 +11,7 @@ import type { Warning } from './Warning';
 import type { Info } from './Info';
 import type { ConversationEnding } from './ConversationEnding';
 import type { ConversationEnded } from './ConversationEnded';
-type FlowClientIncomingMessage =
+type FlowServerMessage =
   | ConversationStarted
   | AudioAdded
   | AddPartialTranscript
@@ -25,4 +25,4 @@ type FlowClientIncomingMessage =
   | Info
   | ConversationEnding
   | ConversationEnded;
-export type { FlowClientIncomingMessage };
+export type { FlowServerMessage };

@@ -13,7 +13,7 @@
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "test": "node --import tsx ./test/index.test.ts",
-    "generate-models": "./scripts/generate-models.ts"
+    "generate-types": "./scripts/generate-models.ts"
   },
   "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
   "author": "",

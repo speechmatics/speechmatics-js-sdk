@@ -1,4 +1,4 @@
-import type { StartConversationMessage } from '@speechmatics/flow-client';
+import type { StartConversation } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
 import { FlowContext } from './flow-context';
 
@@ -18,8 +18,8 @@ export function useFlow() {
         config,
         audioFormat,
       }: {
-        config: StartConversationMessage['conversation_config'];
-        audioFormat?: StartConversationMessage['audio_format'];
+        config: StartConversation['conversation_config'];
+        audioFormat?: StartConversation['audio_format'];
       },
     ) => client.startConversation(jwt, { config, audioFormat }),
     [client],

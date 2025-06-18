@@ -2,7 +2,7 @@ import type { ToolFunctionParameterTypeEnum } from './ToolFunctionParameterTypeE
 interface ToolFunctionParameter {
   type: ToolFunctionParameterTypeEnum;
   description?: string;
-  enum?: unknown[];
-  example?: string;
+  enum?: (string | number)[];
+  example?: string | boolean | number;
 }
 export type { ToolFunctionParameter };
