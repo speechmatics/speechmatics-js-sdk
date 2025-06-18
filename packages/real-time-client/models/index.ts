@@ -11,6 +11,7 @@ export * from './MaxDelayModeConfig';
 export * from './SpeakerDiarizationConfig';
 export * from './AudioFilteringConfig';
 export * from './TranscriptFilteringConfig';
+export * from './WordReplacementItem';
 export * from './OperatingPoint';
 export * from './PunctuationOverrides';
 export * from './ConversationConfig';
