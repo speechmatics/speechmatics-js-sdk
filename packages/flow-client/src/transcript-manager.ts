@@ -1,3 +1,4 @@
+import { TypedEventTarget } from 'typescript-event-target';
 import type {
   AddPartialTranscriptMessage,
   AddTranscriptMessage,
@@ -5,22 +6,87 @@ import type {
   ResponseCompletedMessage,
   ResponseInterruptedMessage,
   ResponseStartedMessage,
-} from '@speechmatics/flow-client-react';
-import { TypedEventTarget } from 'typescript-event-target';
-import {
-  type FlowMessage,
-  type Word,
-  type AgentResponse,
-  type TranscriptGroup,
-  type TranscriptManagerEvents,
-  TranscriptUpdateEvent,
-} from './transcript-types';
+  AttachesToEnum,
+} from './events';
 
-// transcript-manager.ts
+type TranscriptUpdateMessage =
+  | AddPartialTranscriptMessage
+  | AddTranscriptMessage
+  | ResponseStartedMessage
+  | ResponseCompletedMessage
+  | ResponseInterruptedMessage;
+
+export type Word = {
+  startTime: number;
+  endTime: number;
+  speaker: string;
+  text: string;
+  partial: boolean;
+} & (
+  | { punctuation: false }
+  | {
+      punctuation: true;
+      eos: boolean;
+      attachesTo?: AttachesToEnum;
+    }
+);
+
+export type AgentResponse = {
+  speaker: 'agent';
+  agent: true;
+  startTime: number;
+  endTime?: number;
+  text: string;
+};
+
+export type TranscriptGroup =
+  | {
+      type: 'speaker';
+      speaker: string;
+      data: Word[];
+    }
+  | {
+      type: 'agent';
+      data: AgentResponse[];
+    };
+
+export class TranscriptUpdateEvent extends Event {
+  constructor(
+    public readonly transcriptGroups: TranscriptGroup[],
+    eventInitDict?: EventInit,
+  ) {
+    super('update', eventInitDict);
+  }
+}
+
+export interface TranscriptManagerEvents {
+  update: TranscriptUpdateEvent;
+}
+
 /**
  * Manages the state and processing of a real-time transcript
  * Handles both human speech transcription and AI agent responses
  * Uses EventTarget to notify listeners of updates
+ *
+ * example:
+ *
+ * ```ts
+ * const transcriptManager = new TranscriptManager();
+ *
+ * // Listen for updates
+ * transcriptManager.addEventListener('update', (event: TranscriptUpdateEvent) => {
+ *   const transcriptGroups = event.transcriptGroups;
+ *   // Handle updated transcript groups
+ * });
+ *
+ * // Process incoming messages
+ * transcriptManager.handleMessage({
+ *   message: 'AddTranscript',
+ *   results: [
+ *     // message data
+ *   ]
+ * });
+ * ```
  */
 class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
   // Store final transcribed words
@@ -306,22 +372,3 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
 }
 
 export default TranscriptManager;
-
-// Example usage:
-/*
-const transcriptManager = new TranscriptManager();
-
-// Listen for updates
-transcriptManager.addEventListener('update', (event: TranscriptUpdateEvent) => {
-  const transcriptGroups = event.transcriptGroups;
-  // Handle updated transcript groups
-});
-
-// Process incoming messages
-transcriptManager.handleMessage({
-  message: 'AddTranscript',
-  results: [
-    // message data
-  ]
-});
-*/

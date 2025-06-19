@@ -1,12 +1,9 @@
 import { useFlow, useFlowEventListener } from '@speechmatics/flow-client-react';
 import { useState, useMemo, useEffect } from 'react';
-import TranscriptManager from '@/lib/transcript-manager';
-import type {
-  TranscriptGroup,
-  TranscriptUpdateEvent,
-} from '@/lib/transcript-types';
+import TranscriptManager from './transcript-manager';
+import type { TranscriptGroup, TranscriptUpdateEvent } from './types';
 
-export function useTranscriptManager() {
+export function useFlowTranscript() {
   const [transcriptGroups, setTranscriptGroups] = useState<TranscriptGroup[]>(
     [],
   );

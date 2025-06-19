@@ -3,10 +3,11 @@ import { ErrorBoundary, useErrorBoundary } from 'react-error-boundary';
 import { useFlowEventListener } from '@speechmatics/flow-client-react';
 import { ErrorFallback } from './ErrorFallback';
 import { useEffect, useRef } from 'react';
-import Card from './Card';
-import TranscriptManager from '@/lib/transcript-manager';
-import { useTranscriptManager } from '@/hooks/useTranscriptManager';
-import type { TranscriptGroup } from '@/lib/transcript-types';
+import {
+  useFlowTranscript,
+  wordsToText,
+  type TranscriptGroup,
+} from '@speechmatics/use-flow-transcript';
 import { AudioVisualizer } from './AudioVisualizer';
 import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
 import { usePCMAudioRecorderContext } from '@speechmatics/browser-audio-input-react';
@@ -21,7 +22,7 @@ export function TranscriptView() {
 
 function Component() {
   const { showBoundary } = useErrorBoundary();
-  const transcriptGroups = useTranscriptManager();
+  const transcriptGroups = useFlowTranscript();
 
   // Show error boundary on both socket errors and error messages from server
   useFlowEventListener('message', ({ data }) => {
@@ -35,9 +36,14 @@ function Component() {
   });
 
   return (
-    <Card heading="Output">
-      <TranscriptContainer transcripts={transcriptGroups} />
-    </Card>
+    <div className="card card-border shadow-md h-full overflow-y-auto">
+      <div className="h-full card-body min-h-0">
+        <div className="card-title">
+          <h3>Transcript</h3>
+        </div>
+        <TranscriptContainer transcripts={transcriptGroups} />
+      </div>
+    </div>
   );
 }
 
@@ -65,7 +71,7 @@ export const TranscriptContainer = ({
   return (
     <div
       ref={scrollRef}
-      className="h-full overflow-y-auto"
+      className="h-full overflow-y-auto min-h-0"
       style={{
         scrollBehavior: 'smooth',
       }}
@@ -87,9 +93,7 @@ export const TranscriptContainer = ({
                   <SpeakerAudioVisualizer />
                 )}
               </div>
-              <p className="text-lg">
-                {TranscriptManager.wordsToText(group.data)}
-              </p>
+              <p className="text-lg">{wordsToText(group.data)}</p>
             </div>
           ) : (
             <div className="chat-bubble  flex flex-col p-2">

@@ -15,6 +15,7 @@
     "@speechmatics/browser-audio-input": "workspace:*",
     "@speechmatics/browser-audio-input-react": "workspace:*",
     "@speechmatics/flow-client-react": "workspace:*",
+    "@speechmatics/use-flow-transcript": "workspace:*",
     "@speechmatics/web-pcm-player-react": "workspace:*",
     "livekit-client": "^2.9.5",
     "next": "15.2.3",
