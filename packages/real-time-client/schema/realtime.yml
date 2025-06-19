@@ -607,10 +607,7 @@ components:
         remove_disfluencies:
           type: boolean
         replacements:
-          description: A list of replacement rules to apply to the transcript. Each rule consists of a pattern to match and a replacement string.
-          type: array
-          items:
-            $ref: "#/components/schemas/WordReplacementList"
+          $ref: "#/components/schemas/WordReplacementList"
     OutputLocale:
       type: string
       minLength: 1
