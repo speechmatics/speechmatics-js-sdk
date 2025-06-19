@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/use-flow-transcript",
-  "version": "0.0.1",
+  "version": "0.0.1-rc.0",
   "description": "A hook for rendering transcripts for conversations with the Speechmatics Flow API",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
