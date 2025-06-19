@@ -239,7 +239,10 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
       if (!currentGroup) {
         currentGroup =
           'agent' in wordOrResponse
-            ? { type: 'agent', data: [wordOrResponse] }
+            ? {
+                type: 'agent',
+                data: [wordOrResponse],
+              }
             : {
                 type: 'speaker',
                 data: [wordOrResponse],
@@ -310,8 +313,10 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
   }
 }
 
-export default TranscriptManager;
+export function transcriptGroupKey(group: TranscriptGroup): string {
+  return `${group.type}-${
+    group.type === 'agent' ? group.data[0].startTime : group.data[0].startTime
+  }-${group.type === 'speaker' ? group.speaker : 'agent'}`;
+}
 
-// Example usage:
-/*
- */
+export default TranscriptManager;

@@ -7,6 +7,7 @@ import {
   useFlowTranscript,
   wordsToText,
   type TranscriptGroup,
+  transcriptGroupKey,
 } from '@speechmatics/use-flow-transcript';
 import { AudioVisualizer } from './AudioVisualizer';
 import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
@@ -78,11 +79,7 @@ export const TranscriptContainer = ({
     >
       {transcripts.map((group, i) => (
         <div
-          key={`${group.type}-${
-            group.type === 'agent'
-              ? group.data[0].startTime
-              : group.data[0].startTime
-          }-${group.type === 'speaker' ? group.speaker : 'agent'}`}
+          key={transcriptGroupKey(group)}
           className={`animate-fade-in chat ${group.type === 'agent' ? 'chat-start' : 'chat-end'}`}
         >
           {group.type === 'speaker' ? (

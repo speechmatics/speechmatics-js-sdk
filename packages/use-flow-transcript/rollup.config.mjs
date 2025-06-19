@@ -40,7 +40,7 @@ export default function rollup() {
       plugins: [
         dts({
           compilerOptions: {
-            removeComments: true,
+            removeComments: false,
           },
         }),
       ],
