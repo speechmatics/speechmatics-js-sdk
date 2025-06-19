@@ -1,0 +1,31 @@
+{
+  "name": "@speechmatics/use-flow-transcript",
+  "version": "0.0.1-rc.0",
+  "description": "A hook for rendering transcripts for conversations with the Speechmatics Flow API",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
+    "prepare": "pnpm build",
+    "format": "biome format --write .",
+    "lint": "biome lint --write ."
+  },
+  "keywords": ["speechmatics", "flow", "transcript", "react", "hooks"],
+  "license": "MIT",
+  "dependencies": {
+    "@speechmatics/flow-client-react": "workspace:*",
+    "typescript-event-target": "^1.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-inject": "^5.0.5",
+    "@types/react": "^18.3.12",
+    "rollup-plugin-preserve-directives": "^0.4.0"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
+  }
+}

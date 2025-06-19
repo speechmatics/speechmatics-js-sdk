@@ -1,4 +1,3 @@
-// transcript-types.ts
 import type {
   AddPartialTranscriptMessage,
   AddTranscriptMessage,
@@ -8,7 +7,7 @@ import type {
   ResponseStartedMessage,
 } from '@speechmatics/flow-client-react';
 
-export type FlowMessage =
+export type TranscriptUpdateMessage =
   | AddTranscriptMessage
   | AddPartialTranscriptMessage
   | ResponseStartedMessage

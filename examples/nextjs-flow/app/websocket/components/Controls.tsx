@@ -6,7 +6,6 @@ import {
 } from '@speechmatics/flow-client-react';
 import { useCallback, type FormEventHandler } from 'react';
 import { MicrophoneSelect, Select } from '@/components/MicrophoneSelect';
-import Card from '@/components/Card';
 import {
   usePCMAudioListener,
   usePCMAudioRecorderContext,
@@ -117,22 +116,27 @@ export function Controls({
   );
 
   return (
-    <Card>
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-4">
-          <MicrophoneSelect />
-          <Select label="Select a persona" name="personaId">
-            {Object.entries(personas).map(([id, persona]) => (
-              <option key={id} value={id} label={persona.name} />
-            ))}
-          </Select>
+    <div className="card card-border shadow-md">
+      <div className="card-body">
+        <div className="card-title">
+          <h3>Controls</h3>
         </div>
-        <div className="card-actions mt-4">
-          <ActionButton />
-          <MuteMicrophoneButton />
-        </div>
-      </form>
-    </Card>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-4">
+            <MicrophoneSelect />
+            <Select label="Select a persona" name="personaId">
+              {Object.entries(personas).map(([id, persona]) => (
+                <option key={id} value={id} label={persona.name} />
+              ))}
+            </Select>
+          </div>
+          <div className="card-actions mt-4">
+            <ActionButton />
+            <MuteMicrophoneButton />
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 
