@@ -57,9 +57,7 @@ await client.start(jwt, {
     operating_point: 'enhanced',
     transcript_filtering_config: {
       remove_disfluencies: true,
-      replacements: [
-        { from: 'hello', to: 'hi' },
-      ],
+      replacements: [{ from: 'hello', to: 'hi' }],
     },
   },
 });
