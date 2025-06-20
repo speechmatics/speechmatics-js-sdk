@@ -22,7 +22,7 @@ npm i @speechmatics/flow-client-react
     import { FlowProvider } from "@speechmatics/flow-client-react";
 
     function RootLayout({children}) {
-      <FlowProvider appId="your-app-id">
+      <FlowProvider>
         {children}
       </FlowProvider>
     }

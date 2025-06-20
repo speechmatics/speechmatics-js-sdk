@@ -31,7 +31,7 @@ Below is an example of usage in the browser.
           - One for capturing PCM microphone audio in the browser
             see https://www.npmjs.com/package/@speechmatics/browser-audio-input-react
       */
-      return <RealtimeTranscriptionProvider appId="your-app-id">
+      return <RealtimeTranscriptionProvider>
         <PCMAudioRecorderProvider workletScriptURL="/js/pcm-audio-worklet.min.js">
           {children}
         </PCMAudioRecorderProvider>
