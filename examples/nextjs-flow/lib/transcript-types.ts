@@ -1,19 +1,19 @@
 // transcript-types.ts
 import type {
-  AddPartialTranscriptMessage,
-  AddTranscriptMessage,
-  RecognitionResultAttachesToEnum,
-  ResponseCompletedMessage,
-  ResponseInterruptedMessage,
-  ResponseStartedMessage,
+  AddPartialTranscript,
+  AddTranscript,
+  AttachesToEnum,
+  ResponseCompleted,
+  ResponseInterrupted,
+  ResponseStarted,
 } from '@speechmatics/flow-client-react';
 
 export type FlowMessage =
-  | AddTranscriptMessage
-  | AddPartialTranscriptMessage
-  | ResponseStartedMessage
-  | ResponseCompletedMessage
-  | ResponseInterruptedMessage;
+  | AddTranscript
+  | AddPartialTranscript
+  | ResponseStarted
+  | ResponseCompleted
+  | ResponseInterrupted;
 
 export type Word = {
   startTime: number;
@@ -26,7 +26,7 @@ export type Word = {
   | {
       punctuation: true;
       eos: boolean;
-      attachesTo?: RecognitionResultAttachesToEnum;
+      attachesTo?: AttachesToEnum;
     }
 );
 
