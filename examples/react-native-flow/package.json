@@ -17,7 +17,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
-    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/native": "^7.1.14",
     "@speechmatics/auth": "^0.0.1",
     "@speechmatics/expo-two-way-audio": "^0.1.2",
     "@speechmatics/flow-client-react": "^0.2.0",
