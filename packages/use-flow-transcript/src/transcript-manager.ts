@@ -8,21 +8,38 @@ import type {
 } from '@speechmatics/flow-client-react';
 import { TypedEventTarget } from 'typescript-event-target';
 import {
-  type FlowMessage,
+  type TranscriptUpdateMessage,
   type Word,
   type AgentResponse,
   type TranscriptGroup,
   type TranscriptManagerEvents,
   TranscriptUpdateEvent,
-} from './transcript-types';
+} from './types';
 
-// transcript-manager.ts
 /**
  * Manages the state and processing of a real-time transcript
  * Handles both human speech transcription and AI agent responses
  * Uses EventTarget to notify listeners of updates
+ *
+ * Example usage:
+ * ```ts
+ * const transcriptManager = new TranscriptManager();
+ *
+ * // Listen for updates
+ * transcriptManager.addEventListener('update', (event: TranscriptUpdateEvent) => {
+ *   const transcriptGroups = event.transcriptGroups;
+ *   // Handle updated transcript groups
+ * });
+ *
+ * // Process incoming messages
+ * transcriptManager.handleMessage({
+ *   message: 'AddTranscript',
+ *   results: [
+ *     // message data
+ *   ]
+ * });
  */
-class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
+export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
   // Store final transcribed words
   private finals: Word[] = [];
   // Store partial (in-progress) transcribed words
@@ -60,7 +77,7 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
     }
   }
 
-  private processMessage(message: FlowMessage) {
+  private processMessage(message: TranscriptUpdateMessage) {
     switch (message.message) {
       case 'AddPartialTranscript':
         this.handlePartialTranscript(message);
@@ -169,7 +186,7 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
    */
   private getWords(
     message: Exclude<
-      FlowMessage,
+      TranscriptUpdateMessage,
       | ResponseStartedMessage
       | ResponseCompletedMessage
       | ResponseInterruptedMessage
@@ -222,7 +239,10 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
       if (!currentGroup) {
         currentGroup =
           'agent' in wordOrResponse
-            ? { type: 'agent', data: [wordOrResponse] }
+            ? {
+                type: 'agent',
+                data: [wordOrResponse],
+              }
             : {
                 type: 'speaker',
                 data: [wordOrResponse],
@@ -291,37 +311,12 @@ class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents> {
       new TranscriptUpdateEvent(this.getTranscriptGroups()),
     );
   }
+}
 
-  /**
-   * Utility function to convert an array of words into readable text
-   * Handles spacing between words and punctuation
-   */
-  static wordsToText(words: readonly Word[]): string {
-    return words.reduce(
-      (text, word) =>
-        `${text}${words.indexOf(word) > 0 && !word.punctuation ? ' ' : ''}${word.text}`,
-      '',
-    );
-  }
+export function transcriptGroupKey(group: TranscriptGroup): string {
+  return `${group.type}-${
+    group.type === 'agent' ? group.data[0].startTime : group.data[0].startTime
+  }-${group.type === 'speaker' ? group.speaker : 'agent'}`;
 }
 
 export default TranscriptManager;
-
-// Example usage:
-/*
-const transcriptManager = new TranscriptManager();
-
-// Listen for updates
-transcriptManager.addEventListener('update', (event: TranscriptUpdateEvent) => {
-  const transcriptGroups = event.transcriptGroups;
-  // Handle updated transcript groups
-});
-
-// Process incoming messages
-transcriptManager.handleMessage({
-  message: 'AddTranscript',
-  results: [
-    // message data
-  ]
-});
-*/
