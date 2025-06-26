@@ -1,6 +1,6 @@
 interface ConcurrentSessionUsageInfo {
   reason: string;
-  message: string;
+  message: 'Info';
   usage: number;
   quota: number;
   last_udpated?: string;

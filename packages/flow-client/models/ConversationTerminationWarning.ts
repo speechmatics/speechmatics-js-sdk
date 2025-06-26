@@ -1,6 +1,6 @@
 interface ConversationTerminationWarning {
   reason: string;
-  message: string;
+  message: 'Warning';
   conversation_termination: number;
   type: 'conversation_termination';
 }
