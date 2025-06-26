@@ -165,7 +165,7 @@ components:
     Info:
       summary: Additional information sent from the server to the client.
       payload:
-        $ref: "#/components/schemas/Info"
+        $ref: "#/components/schemas/InfoMessage"
     Warning:
       summary: Warning messages sent from the server to the client.
       payload:
@@ -208,34 +208,39 @@ components:
     InfoTypeEnum:
       type: string
       enum:
-        - recognition_quality
-        - model_redirect
-        - deprecated
+        - status_update
+        - conversation_duration_limit
+        - concurrent_session_usage
 
     WarningTypeEnum:
       type: string
       enum:
-        - duration_limit_exceeded
+        - conversation_termination
+        - high_asr_latency
         - llm_error
+        - high_llm_latency
+        - llm_request_content_filter
+        - tts_error
+        - high_tts_latency
+        - protocol_error
+        - idle_timeout
+        - session_timeout
 
     ErrorTypeEnum:
       type: string
       enum:
-        - invalid_message
-        - invalid_model
-        - invalid_config
-        - invalid_audio_type
-        - not_authorised
-        - insufficient_funds
-        - not_allowed
-        - job_error
-        - data_error
-        - buffer_error
+        - asr_error
         - protocol_error
-        - timelimit_exceeded
+        - config_error
+        - idle_timeout
+        - session_timeout
+        - not_allowed
+        - not_authorised
         - quota_exceeded
+        - timelimit_exceeded
+        - job_error
+        - internal_error
         - unknown_error
-        - llm_error
 
     ToolTypeEnum:
       type: string
@@ -256,16 +261,7 @@ components:
         - pcm_f32le
         - pcm_s16le
         - mulaw
-
-    AudioFormatRawTypeEnum:
-      type: string
-      enum:
-        - raw
-
-    AudioFormatFileTypeEnum:
-      type: string
-      enum:
-        - file
+      default: pcm_s16le
 
     ToolFunctionParametersTypeEnum:
       type: string
@@ -311,7 +307,6 @@ components:
           $ref: "#/components/schemas/DebugObject"
       required:
         - message
-        - audio_format
         - conversation_config
 
     ToolsArray:
@@ -382,10 +377,12 @@ components:
       properties:
         message:
           const: ConversationStarted
-        orchestrator_version:
-          type: string
         id:
           type: string
+        asr_session_id:
+          type: string
+        language_pack_info:
+          $ref: "#/components/schemas/LanguagePackInfo"
       required:
         - message
 
@@ -507,6 +504,7 @@ components:
       required:
         - message
         - id
+        - type
         - function
       properties:
         message:
@@ -514,6 +512,8 @@ components:
         id:
           type: string
           description: The id of the tool invoke.
+        type:
+          const: function
         function:
           $ref: "#/components/schemas/ToolFunction"
 
@@ -529,10 +529,7 @@ components:
         arguments:
           type: object
           additionalProperties:
-            oneOf:
-              - type: string
-              - type: integer
-              - type: boolean
+            type: string
 
     ToolResult:
       type: object
@@ -553,27 +550,102 @@ components:
           type: string
           description: The content of the tool result.
 
-    Info:
-      type: object
+    BaseInfo:
       properties:
         message:
           const: Info
-        type:
-          $ref: "#/components/schemas/InfoTypeEnum"
-        reason:
-          type: string
-        code:
-          type: integer
-        seq_no:
-          type: integer
-        quality:
-          type: string
       required:
         - message
-        - type
-        - reason
+
+    InfoMessage:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/Info'
+        - $ref: '#/components/schemas/StatusUpdateInfo'
+        - $ref: '#/components/schemas/ConversationDurationLimitInfo'
+        - $ref: '#/components/schemas/ConcurrentSessionUsageInfo'
+
+
+    Info:
+      allOf:
+        - $ref: '#/components/schemas/BaseInfo'
+        - type: object
+          properties:
+            type:
+              type: string
+            reason:
+              type: string
+          required:
+            - reason
+            - type
+
+    StatusUpdateInfo:
+      allOf:
+        - $ref: '#/components/schemas/BaseInfo'
+        - type: object
+          properties:
+            type:
+              const: status_update
+            event:
+              $ref: '#/components/schemas/StatusUpdateInfoEvent'
+          required:
+            - event
+            - type
+
+    StatusUpdateInfoEvent:
+      type: object
+      required:
+        - prev_status
+        - status
+      properties:
+        prev_status:
+          type: string
+        status:
+          type: string
+
+    ConversationDurationLimitInfo:
+      allOf:
+        - $ref: '#/components/schemas/BaseInfo'
+        - type: object
+          properties:
+            type:
+              const: conversation_duration_limit
+            conversation_duration_limit:
+              type: integer
+          required:
+            - conversation_duration_limit
+            - type
+
+    ConcurrentSessionUsageInfo:
+      allOf:
+        - $ref: '#/components/schemas/BaseInfo'
+        - type: object
+          properties:
+            type:
+              const: concurrent_session_usage
+            usage:
+              type: integer
+            quota:
+              type: integer
+            last_udpated:
+              type: string
+              format: date-time
+          required:
+            - usage
+            - quota
+            - last_updated
+            - type
 
     Warning:
+      oneOf:
+        - $ref: "#/components/schemas/DefaultWarning"
+        - $ref: "#/components/schemas/ConversationTermination"
+      discrimator:
+        propertyName: type
+        mapping:
+          conversation_termination: "#/components/schemas/ConversationTermination"
+
+    DefaultWarning:
       type: object
       properties:
         message:
@@ -582,16 +654,20 @@ components:
           $ref: "#/components/schemas/WarningTypeEnum"
         reason:
           type: string
-        code:
-          type: integer
-        seq_no:
-          type: integer
-        duration_limit:
-          type: number
       required:
         - message
         - type
         - reason
+
+    ConversationTermination:
+      allOf:
+        - $ref: "#/components/schemas/DefaultWarning"
+        - type: object
+          properties:
+            conversation_termination:
+              type: integer
+          required:
+           - conversation_termination
 
     Error:
       type: object
@@ -602,10 +678,6 @@ components:
           $ref: "#/components/schemas/ErrorTypeEnum"
         reason:
           type: string
-        code:
-          type: integer
-        seq_no:
-          type: integer
       required:
         - message
         - type
@@ -616,8 +688,6 @@ components:
       properties:
         message:
           const: ConversationEnding
-        reason:
-          type: string
       required:
         - message
 
@@ -692,6 +762,7 @@ components:
 
     ToolFunctionParameter:
       type: object
+      additionalProperties: false
       required:
         - type
       properties:
@@ -704,181 +775,58 @@ components:
         enum:
           type: array
           items:
+            # Thus union type allows us to autogen code without breaking swagger 2.0 imports
             x-union-string-int: true
           description: >
             An optional list of valid values for the parameter. If provided, the parameter must be one of these values.
         example:
-          oneOf:
-            - type: string
-            - type: boolean
-            - type: number
+          # Thus union type allows us to autogen code without breaking swagger 2.0 imports
+          x-union-string-int-bool: true
           description: An example value for the parameter.
 
     AudioFormat:
       type: object
-      oneOf:
-        - $ref: "#/components/schemas/AudioFormatRaw"
-        - $ref: "#/components/schemas/AudioFormatFile"
-
-    AudioFormatRaw:
-      type: object
-      title: "AudioFormatRaw"
       properties:
         type:
-          $ref: "#/components/schemas/AudioFormatRawTypeEnum"
+          const: raw
         encoding:
           $ref: "#/components/schemas/AudioFormatRawEncodingEnum"
         sample_rate:
           type: integer
-      required:
-        - type
-        - encoding
-        - sample_rate
-
-    AudioFormatFile:
-      type: object
-      title: "AudioFormatFile"
-      properties:
-        type:
-          $ref: "#/components/schemas/AudioFormatFileTypeEnum"
+          default: 16000
       required:
         - type
 
-    TranscriptionConfig:
+    LanguagePackInfo:
       type: object
+      description: Properties of the language pack.
+      required: [
+        word_delimiter
+      ]
       properties:
-        language:
+        language_description:
           type: string
-        domain:
+          description: Full descriptive name of the language, e.g. 'Japanese'.
+        word_delimiter:
           type: string
-          description: >
-            Request a specialized model based on 'language' but optimized for a particular field, e.g. "finance" or "medical".
-        output_locale:
-          $ref: "#/components/schemas/OutputLocale"
-        additional_vocab:
-          $ref: "#/components/schemas/VocabList"
-        diarization:
-          $ref: "#/components/schemas/DiarizationConfigEnum"
-        max_delay:
-          type: number
-          minimum: 0
-        max_delay_mode:
-          $ref: "#/components/schemas/MaxDelayModeConfigEnum"
-        speaker_diarization_config:
-          $ref: "#/components/schemas/SpeakerDiarizationConfig"
-        audio_filtering_config:
-          $ref: "#/components/schemas/AudioFilteringConfig"
-        transcript_filtering_config:
-          $ref: "#/components/schemas/TranscriptFilteringConfig"
-        enable_partials:
+          description: The character to use to separate words.
+        writing_direction:
+          $ref: "#/components/schemas/WritingDirectionEnum"
+        itn:
           type: boolean
-          default: false
-        enable_entities:
+          description: Whether or not ITN (inverse text normalization) is available for the language pack.
+        adapted:
           type: boolean
-          default: true
-        operating_point:
-          $ref: "#/components/schemas/OperatingPoint"
-        punctuation_overrides:
-          $ref: "#/components/schemas/PunctuationOverrides"
-      required:
-        - language
+          description: Whether or not language model adaptation has been applied to the language pack.
 
-    PunctuationOverrides:
-      type: object
-      properties:
-        permitted_marks:
-          type: array
-          description: "The punctuation marks which the client is prepared to accept in transcription output, or the special value 'all' (the default). Unsupported marks are ignored. This value is used to guide the transcription process."
-          items:
-            pattern: "^(.|all)$"
-            type: string
-        sensitivity:
-          type: number
-          description: "Ranges between zero and one. Higher values will produce more punctuation. The default is 0.5."
-          format: float
-          maximum: 1
-          minimum: 0
 
-    TranslationConfig:
-      type: object
-      properties:
-        target_languages:
-          type: array
-          items:
-            type: string
-        enable_partials:
-          type: boolean
-          default: false
-      required:
-        - target_languages
-
-    AudioEventsConfig:
-      type: object
-      properties:
-        types:
-          type: array
-          items:
-            type: string
-
-    VocabList:
-      type: array
-      items:
-        $ref: "#/components/schemas/VocabWord"
-
-    VocabWord:
-      oneOf:
-        - $ref: "#/components/schemas/VocabWordObject"
-        - $ref: "#/components/schemas/VocabWordString"
-
-    VocabWordObject:
-      type: object
-      properties:
-        content:
-          type: string
-          minLength: 1
-        sounds_like:
-          type: array
-          items:
-            type: string
-            minLength: 1
-          minItems: 1
-      required:
-        - content
-
-    VocabWordString:
+    WritingDirectionEnum:
       type: string
-      minLength: 1
+      enum:
+        - left-to-right
+        - right-to-left
+      description: The direction that words in the language should be written and read in.
 
-    DiarizationConfig:
-      $ref: "#/components/schemas/DiarizationConfigEnum"
-
-    SpeakerDiarizationConfig:
-      type: object
-      properties:
-        max_speakers:
-          type: number
-          format: integer
-          minimum: 2
-          maximum: 100
-
-    AudioFilteringConfig:
-      type: object
-      properties:
-        volume_threshold:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 100
-
-    TranscriptFilteringConfig:
-      type: object
-      properties:
-        remove_disfluencies:
-          type: boolean
-
-    OutputLocale:
-      type: string
-      minLength: 1
 
     RecognitionMetadata:
       type: object
@@ -960,7 +908,3 @@ components:
       properties:
         direction:
           $ref: "#/components/schemas/RecognitionDisplayDirectionEnum"
-
-    MaxDelayModeConfig:
-      $ref: "#/components/schemas/MaxDelayModeConfigEnum"
-   

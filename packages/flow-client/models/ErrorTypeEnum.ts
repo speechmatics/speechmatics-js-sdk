@@ -1,17 +1,14 @@
 type ErrorTypeEnum =
-  | 'invalid_message'
-  | 'invalid_model'
-  | 'invalid_config'
-  | 'invalid_audio_type'
-  | 'not_authorised'
-  | 'insufficient_funds'
-  | 'not_allowed'
-  | 'job_error'
-  | 'data_error'
-  | 'buffer_error'
+  | 'asr_error'
   | 'protocol_error'
-  | 'timelimit_exceeded'
+  | 'config_error'
+  | 'idle_timeout'
+  | 'session_timeout'
+  | 'not_allowed'
+  | 'not_authorised'
   | 'quota_exceeded'
-  | 'unknown_error'
-  | 'llm_error';
+  | 'timelimit_exceeded'
+  | 'job_error'
+  | 'internal_error'
+  | 'unknown_error';
 export type { ErrorTypeEnum };

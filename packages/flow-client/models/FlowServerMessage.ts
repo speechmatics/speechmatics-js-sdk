@@ -7,8 +7,12 @@ import type { ResponseCompleted } from './ResponseCompleted';
 import type { ResponseInterrupted } from './ResponseInterrupted';
 import type { ToolInvoke } from './ToolInvoke';
 import type { ErrorType } from './ErrorType';
-import type { Warning } from './Warning';
+import type { DefaultWarning } from './DefaultWarning';
+import type { ConversationTermination } from './ConversationTermination';
 import type { Info } from './Info';
+import type { StatusUpdateInfo } from './StatusUpdateInfo';
+import type { ConversationDurationLimitInfo } from './ConversationDurationLimitInfo';
+import type { ConcurrentSessionUsageInfo } from './ConcurrentSessionUsageInfo';
 import type { ConversationEnding } from './ConversationEnding';
 import type { ConversationEnded } from './ConversationEnded';
 type FlowServerMessage =
@@ -21,8 +25,12 @@ type FlowServerMessage =
   | ResponseInterrupted
   | ToolInvoke
   | ErrorType
-  | Warning
+  | DefaultWarning
+  | ConversationTermination
   | Info
+  | StatusUpdateInfo
+  | ConversationDurationLimitInfo
+  | ConcurrentSessionUsageInfo
   | ConversationEnding
   | ConversationEnded;
 export type { FlowServerMessage };

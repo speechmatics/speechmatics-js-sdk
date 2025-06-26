@@ -1,10 +1,6 @@
-import type { InfoTypeEnum } from './InfoTypeEnum';
 interface Info {
   message: 'Info';
-  type: InfoTypeEnum;
+  type: string;
   reason: string;
-  code?: number;
-  seq_no?: number;
-  quality?: string;
 }
 export type { Info };

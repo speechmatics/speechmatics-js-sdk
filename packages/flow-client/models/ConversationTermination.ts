@@ -1,10 +1,8 @@
 import type { WarningTypeEnum } from './WarningTypeEnum';
-interface Warning {
+interface ConversationTermination {
   message: 'Warning';
   type: WarningTypeEnum;
   reason: string;
-  code?: number;
-  seq_no?: number;
-  duration_limit?: number;
+  conversation_termination: number;
 }
-export type { Warning };
+export type { ConversationTermination };

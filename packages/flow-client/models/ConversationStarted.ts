@@ -1,6 +1,8 @@
+import type { LanguagePackInfo } from './LanguagePackInfo';
 interface ConversationStarted {
   message: 'ConversationStarted';
-  orchestrator_version?: string;
   id?: string;
+  asr_session_id?: string;
+  language_pack_info?: LanguagePackInfo;
 }
 export type { ConversationStarted };

@@ -3,6 +3,6 @@ interface ToolFunctionParameter {
   type: ToolFunctionParameterTypeEnum;
   description?: string;
   enum?: (string | number)[];
-  example?: string | boolean | number;
+  example?: unknown;
 }
 export type { ToolFunctionParameter };

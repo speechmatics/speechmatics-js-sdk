@@ -24,7 +24,7 @@ function checkNodeVersion() {
 const generator = new TypeScriptGenerator({
   constraints: {
     modelName: typeScriptDefaultModelNameConstraints({
-      NAMING_FORMATTER: (name) => {
+      NAMING_FORMATTER: (name: string) => {
         if (name === 'Error') {
           return 'ErrorType';
         }
@@ -49,7 +49,6 @@ const generator = new TypeScriptGenerator({
     Any: (context) => {
       // HACK get mixed types through special annotation to deal with upstream Swagger 2 dependency
       if (context.constrainedModel.originalInput['x-union-string-int']) {
-        console.log(context.constrainedModel);
         return '(string | number)';
       }
       return 'unknown';

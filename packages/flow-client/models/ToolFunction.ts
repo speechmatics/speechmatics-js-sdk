@@ -1,5 +1,5 @@
 interface ToolFunction {
   name: string;
-  arguments: { [name: string]: string | number | boolean };
+  arguments: { [name: string]: string };
 }
 export type { ToolFunction };
