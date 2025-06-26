@@ -7,8 +7,8 @@ import type { ResponseCompleted } from './ResponseCompleted';
 import type { ResponseInterrupted } from './ResponseInterrupted';
 import type { ToolInvoke } from './ToolInvoke';
 import type { ErrorType } from './ErrorType';
-import type { DefaultWarning } from './DefaultWarning';
-import type { ConversationTermination } from './ConversationTermination';
+import type { Warning } from './Warning';
+import type { ConversationTerminationWarning } from './ConversationTerminationWarning';
 import type { Info } from './Info';
 import type { StatusUpdateInfo } from './StatusUpdateInfo';
 import type { ConversationDurationLimitInfo } from './ConversationDurationLimitInfo';
@@ -25,8 +25,8 @@ type FlowServerMessage =
   | ResponseInterrupted
   | ToolInvoke
   | ErrorType
-  | DefaultWarning
-  | ConversationTermination
+  | Warning
+  | ConversationTerminationWarning
   | Info
   | StatusUpdateInfo
   | ConversationDurationLimitInfo

@@ -1,7 +1,8 @@
 import type { StatusUpdateInfoEvent } from './StatusUpdateInfoEvent';
 interface StatusUpdateInfo {
-  message: 'Info';
-  type: 'status_update';
+  reason: string;
+  message: string;
   event: StatusUpdateInfoEvent;
+  type: 'status_update';
 }
 export type { StatusUpdateInfo };

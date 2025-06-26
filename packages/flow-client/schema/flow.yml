@@ -169,7 +169,7 @@ components:
     Warning:
       summary: Warning messages sent from the server to the client.
       payload:
-        $ref: "#/components/schemas/Warning"
+        $ref: "#/components/schemas/WarningMessage"
     Error:
       summary: Error messages sent from the server to the client.
       payload:
@@ -550,13 +550,6 @@ components:
           type: string
           description: The content of the tool result.
 
-    BaseInfo:
-      properties:
-        message:
-          const: Info
-      required:
-        - message
-
     InfoMessage:
       type: object
       oneOf:
@@ -565,6 +558,15 @@ components:
         - $ref: '#/components/schemas/ConversationDurationLimitInfo'
         - $ref: '#/components/schemas/ConcurrentSessionUsageInfo'
 
+    BaseInfo:
+      properties:
+        reason:
+          type: string
+        message:
+          const: Info
+      required:
+        - reason
+        - message
 
     Info:
       allOf:
@@ -573,10 +575,7 @@ components:
           properties:
             type:
               type: string
-            reason:
-              type: string
           required:
-            - reason
             - type
 
     StatusUpdateInfo:
@@ -584,10 +583,10 @@ components:
         - $ref: '#/components/schemas/BaseInfo'
         - type: object
           properties:
-            type:
-              const: status_update
             event:
               $ref: '#/components/schemas/StatusUpdateInfoEvent'
+            type:
+              const: status_update
           required:
             - event
             - type
@@ -608,10 +607,10 @@ components:
         - $ref: '#/components/schemas/BaseInfo'
         - type: object
           properties:
-            type:
-              const: conversation_duration_limit
             conversation_duration_limit:
               type: integer
+            type:
+              const: conversation_duration_limit
           required:
             - conversation_duration_limit
             - type
@@ -621,8 +620,6 @@ components:
         - $ref: '#/components/schemas/BaseInfo'
         - type: object
           properties:
-            type:
-              const: concurrent_session_usage
             usage:
               type: integer
             quota:
@@ -630,44 +627,51 @@ components:
             last_udpated:
               type: string
               format: date-time
+            type:
+              const: concurrent_session_usage
           required:
             - usage
             - quota
             - last_updated
             - type
 
-    Warning:
+    WarningMessage:
       oneOf:
-        - $ref: "#/components/schemas/DefaultWarning"
-        - $ref: "#/components/schemas/ConversationTermination"
-      discrimator:
-        propertyName: type
-        mapping:
-          conversation_termination: "#/components/schemas/ConversationTermination"
+        - $ref: "#/components/schemas/Warning"
+        - $ref: "#/components/schemas/ConversationTerminationWarning"
 
-    DefaultWarning:
-      type: object
+    BaseWarning:
       properties:
-        message:
-          const: Warning
-        type:
-          $ref: "#/components/schemas/WarningTypeEnum"
         reason:
           type: string
+        message:
+          const: Warning
       required:
-        - message
-        - type
         - reason
+        - message
 
-    ConversationTermination:
+    Warning:
       allOf:
-        - $ref: "#/components/schemas/DefaultWarning"
+        - $ref: "#/components/schemas/BaseWarning"
+        - type: object
+          properties:
+            type:
+              $ref: "#/components/schemas/WarningTypeEnum"
+          required:
+            - type
+
+    ConversationTerminationWarning:
+      allOf:
+        - $ref: "#/components/schemas/BaseWarning"
         - type: object
           properties:
             conversation_termination:
               type: integer
+            type:
+              const: conversation_termination
           required:
-           - conversation_termination
+          - conversation_termination
+          - type
 
     Error:
       type: object

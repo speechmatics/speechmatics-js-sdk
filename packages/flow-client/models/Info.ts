@@ -1,6 +1,6 @@
 interface Info {
-  message: 'Info';
-  type: string;
   reason: string;
+  message: string;
+  type: string;
 }
 export type { Info };
