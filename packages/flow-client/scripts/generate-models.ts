@@ -22,6 +22,7 @@ function checkNodeVersion() {
 }
 
 const generator = new TypeScriptGenerator({
+  presets: [TS_DESCRIPTION_PRESET],
   constraints: {
     modelName: typeScriptDefaultModelNameConstraints({
       NAMING_FORMATTER: (name: string) => {
