@@ -77,7 +77,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
     }
   }
 
-  private processMessage(message: TranscriptUpdateMessage) {
+  private processMessage(message: FlowMessage) {
     switch (message.message) {
       case 'AddPartialTranscript':
         this.handlePartialTranscript(message);
