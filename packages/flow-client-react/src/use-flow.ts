@@ -1,4 +1,4 @@
-import type { StartConversation } from '@speechmatics/flow-client';
+import type { AddInput, StartConversation, ToolResult } from '@speechmatics/flow-client';
 import { useCallback, useContext, useMemo } from 'react';
 import { FlowContext } from './flow-context';
 
@@ -32,6 +32,17 @@ export function useFlow() {
     [client],
   );
 
+  const sendToolResult = useCallback(
+    (toolResult: Exclude<ToolResult, 'message'>) =>
+      client.sendToolResult(toolResult),
+    [client],
+  );
+
+  const sendInput = useCallback(
+    (input: Exclude<AddInput, 'message'>) => client.sendInput(input),
+    [client],
+  );
+
   return useMemo(
     () => ({
       startConversation,
@@ -39,7 +50,9 @@ export function useFlow() {
       sendAudio,
       socketState,
       sessionId,
+      sendToolResult,
+      sendInput,
     }),
-    [startConversation, endConversation, sendAudio, socketState, sessionId],
+    [startConversation, endConversation, sendAudio, socketState, sessionId, sendToolResult, sendInput],
   );
 }
