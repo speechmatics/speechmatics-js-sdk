@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { getAudioDevicesStore } from '@speechmatics/browser-audio-input';
 
 // Here we subscribe to the device state browser event
@@ -41,37 +41,52 @@ function usePromptAudioPermission() {
 }
 
 export type AudioDevices =
-  | { permissionState: 'prompt'; promptPermissions: () => void }
-  | { permissionState: 'prompting' }
+  | {
+      permissionState: 'prompt';
+      promptPermissions: () => void;
+      deviceList?: undefined;
+    }
+  | {
+      permissionState: 'prompting';
+      promptPermissions?: undefined;
+      deviceList?: undefined;
+    }
   | {
       permissionState: 'granted';
       deviceList: ReadonlyArray<MediaDeviceInfo>;
+      promptPermissions?: undefined;
     }
-  | { permissionState: 'denied' };
+  | {
+      permissionState: 'denied';
+      promptPermissions?: undefined;
+      deviceList?: undefined;
+    };
 
 export function useAudioDevices(): AudioDevices {
   const permissionState = useAudioPermissionState();
   const promptPermissions = usePromptAudioPermission();
   const deviceList = useAudioDeviceList();
 
-  switch (permissionState) {
-    case 'prompt':
-      return {
-        permissionState,
-        promptPermissions,
-      };
-    case 'granted':
-      return {
-        permissionState,
-        deviceList,
-      };
-    case 'prompting':
-    case 'denied':
-      return {
-        permissionState,
-      };
-    default:
-      permissionState satisfies never;
-      throw new Error(`Unexpected permission state: ${permissionState}`);
-  }
+  return useMemo(() => {
+    switch (permissionState) {
+      case 'prompt':
+        return {
+          permissionState,
+          promptPermissions,
+        };
+      case 'granted':
+        return {
+          permissionState,
+          deviceList,
+        };
+      case 'prompting':
+      case 'denied':
+        return {
+          permissionState,
+        };
+      default:
+        permissionState satisfies never;
+        throw new Error(`Unexpected permission state: ${permissionState}`);
+    }
+  }, [permissionState, promptPermissions, deviceList]);
 }
