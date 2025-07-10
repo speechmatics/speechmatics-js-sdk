@@ -41,13 +41,26 @@ function usePromptAudioPermission() {
 }
 
 export type AudioDevices =
-  | { permissionState: 'prompt'; promptPermissions: () => void }
-  | { permissionState: 'prompting' }
+  | {
+      permissionState: 'prompt';
+      promptPermissions: () => void;
+      deviceList?: undefined;
+    }
+  | {
+      permissionState: 'prompting';
+      promptPermissions?: undefined;
+      deviceList?: undefined;
+    }
   | {
       permissionState: 'granted';
       deviceList: ReadonlyArray<MediaDeviceInfo>;
+      promptPermissions?: undefined;
     }
-  | { permissionState: 'denied' };
+  | {
+      permissionState: 'denied';
+      promptPermissions?: undefined;
+      deviceList?: undefined;
+    };
 
 export function useAudioDevices(): AudioDevices {
   const permissionState = useAudioPermissionState();
