@@ -1,4 +1,4 @@
-import { useCallback, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import { getAudioDevicesStore } from '@speechmatics/browser-audio-input';
 
 // Here we subscribe to the device state browser event
@@ -67,24 +67,26 @@ export function useAudioDevices(): AudioDevices {
   const promptPermissions = usePromptAudioPermission();
   const deviceList = useAudioDeviceList();
 
-  switch (permissionState) {
-    case 'prompt':
-      return {
-        permissionState,
-        promptPermissions,
-      };
-    case 'granted':
-      return {
-        permissionState,
-        deviceList,
-      };
-    case 'prompting':
-    case 'denied':
-      return {
-        permissionState,
-      };
-    default:
-      permissionState satisfies never;
-      throw new Error(`Unexpected permission state: ${permissionState}`);
-  }
+  return useMemo(() => {
+    switch (permissionState) {
+      case 'prompt':
+        return {
+          permissionState,
+          promptPermissions,
+        };
+      case 'granted':
+        return {
+          permissionState,
+          deviceList,
+        };
+      case 'prompting':
+      case 'denied':
+        return {
+          permissionState,
+        };
+      default:
+        permissionState satisfies never;
+        throw new Error(`Unexpected permission state: ${permissionState}`);
+    }
+  }, [permissionState, promptPermissions, deviceList]);
 }
