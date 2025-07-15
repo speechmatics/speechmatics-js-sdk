@@ -1,12 +1,16 @@
 import { TypedEventTarget } from 'typescript-event-target';
 import {
   AgentAudioEvent,
-  FlowIncomingMessageEvent,
+  FlowServerMessageEvent,
   type FlowClientEventMap,
-  type FlowClientIncomingMessage,
-  type FlowClientOutgoingMessage,
-  type StartConversationMessage,
 } from './events';
+import type {
+  AddInput,
+  StartConversation,
+  ToolResult,
+  FlowClientMessage,
+  FlowServerMessage,
+} from '../models';
 import { JitterBuffer } from './jitter-buffer';
 
 export interface FlowClientOptions {
@@ -139,7 +143,6 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
     this.sendWebsocketMessage({
       message: 'AudioReceived',
       seq_no: ++this.serverSeqNo,
-      buffering: this.audioBufferingMs / 1000,
     });
 
     if (data instanceof Blob && this.websocketBinaryType === 'blob') {
@@ -168,7 +171,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
 
   private handleWebsocketMessage(message: string) {
     // We're intentionally not validating the message shape. It is design by contract
-    let data: FlowClientIncomingMessage;
+    let data: FlowServerMessage;
     try {
       data = JSON.parse(message);
     } catch (e) {
@@ -190,13 +193,27 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       this.jitterBuffer?.flush();
     }
 
-    this.dispatchTypedEvent('message', new FlowIncomingMessageEvent(data));
+    this.dispatchTypedEvent('message', new FlowServerMessageEvent(data));
   }
 
-  private sendWebsocketMessage(message: FlowClientOutgoingMessage) {
+  private sendWebsocketMessage(message: FlowClientMessage) {
     if (this.socketState === 'open') {
       this.ws?.send(JSON.stringify(message));
     }
+  }
+
+  public sendToolResult(toolResult: Exclude<ToolResult, 'message'>) {
+    this.sendWebsocketMessage({
+      ...toolResult,
+      message: 'ToolResult',
+    });
+  }
+
+  public sendInput(addInput: Exclude<AddInput, 'message'>) {
+    this.sendWebsocketMessage({
+      ...addInput,
+      message: 'AddInput',
+    });
   }
 
   public sendAudio(pcmData: ArrayBufferLike) {
@@ -210,8 +227,8 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       config,
       audioFormat,
     }: {
-      config: StartConversationMessage['conversation_config'];
-      audioFormat?: StartConversationMessage['audio_format'];
+      config: StartConversation['conversation_config'];
+      audioFormat?: StartConversation['audio_format'];
     },
   ) {
     await this.connect(jwt);
@@ -224,7 +241,7 @@ export class FlowClient extends TypedEventTarget<FlowClientEventMap> {
       },
     };
 
-    const startMessage: StartConversationMessage = {
+    const startMessage: StartConversation = {
       message: 'StartConversation',
       conversation_config,
       audio_format: audioFormat ?? DEFAULT_AUDIO_FORMAT,
