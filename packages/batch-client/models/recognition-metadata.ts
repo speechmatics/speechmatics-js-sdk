@@ -71,35 +71,35 @@ export interface RecognitionMetadata {
    */
   transcription_config?: TranscriptionConfig;
   /**
-   *
-   * @type {TranslationError}
+   * List of errors that occurred in the translation stage.
+   * @type {Array<TranslationError>}
    * @memberof RecognitionMetadata
    */
-  translation_errors?: TranslationError;
+  translation_errors?: Array<TranslationError>;
   /**
-   *
-   * @type {SummarizationError}
+   * List of errors that occurred in the summarization stage.
+   * @type {Array<SummarizationError>}
    * @memberof RecognitionMetadata
    */
-  summarization_errors?: SummarizationError;
+  summarization_errors?: Array<SummarizationError>;
   /**
-   *
-   * @type {SentimentAnalysisError}
+   * List of errors that occurred in the sentiment analysis stage.
+   * @type {Array<SentimentAnalysisError>}
    * @memberof RecognitionMetadata
    */
-  sentiment_analysis_errors?: SentimentAnalysisError;
+  sentiment_analysis_errors?: Array<SentimentAnalysisError>;
   /**
-   *
-   * @type {TopicDetectionError}
+   * List of errors that occurred in the topic detection stage.
+   * @type {Array<TopicDetectionError>}
    * @memberof RecognitionMetadata
    */
-  topic_detection_errors?: TopicDetectionError;
+  topic_detection_errors?: Array<TopicDetectionError>;
   /**
-   *
-   * @type {AutoChaptersResultError}
+   * List of errors that occurred in the auto chapters stage.
+   * @type {Array<AutoChaptersResultError>}
    * @memberof RecognitionMetadata
    */
-  auto_chapters_errors?: AutoChaptersResultError;
+  auto_chapters_errors?: Array<AutoChaptersResultError>;
   /**
    *
    * @type {AlignmentConfig}

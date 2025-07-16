@@ -66,30 +66,44 @@ export interface RecognitionResult {
   type: RecognitionResultTypeEnum;
   /**
    *
-   * @type {WrittenFormRecognitionResult}
+   * @type {Array<WrittenFormRecognitionResult>}
    * @memberof RecognitionResult
    */
-  written_form?: WrittenFormRecognitionResult;
+  written_form?: Array<WrittenFormRecognitionResult>;
   /**
    *
-   * @type {SpokenFormRecognitionResult}
+   * @type {Array<SpokenFormRecognitionResult>}
    * @memberof RecognitionResult
    */
-  spoken_form?: SpokenFormRecognitionResult;
+  spoken_form?: Array<SpokenFormRecognitionResult>;
   /**
    *
    * @type {Array<RecognitionAlternative>}
    * @memberof RecognitionResult
    */
   alternatives?: Array<RecognitionAlternative>;
+  /**
+   * Attachment direction of the punctuation mark. This only applies to punctuation marks. This information can be used to produce a well-formed text representation by placing the `word_delimiter` from `language_pack_info` on the correct side of the punctuation mark.
+   * @type {string}
+   * @memberof RecognitionResult
+   */
+  attaches_to?: RecognitionResultAttachesToEnum;
 }
 
 export const RecognitionResultTypeEnum = {
   Word: 'word',
   Punctuation: 'punctuation',
-  SpeakerChange: 'speaker_change',
   Entity: 'entity',
 } as const;
 
 export type RecognitionResultTypeEnum =
   (typeof RecognitionResultTypeEnum)[keyof typeof RecognitionResultTypeEnum];
+export const RecognitionResultAttachesToEnum = {
+  Previous: 'previous',
+  Next: 'next',
+  Both: 'both',
+  None: 'none',
+} as const;
+
+export type RecognitionResultAttachesToEnum =
+  (typeof RecognitionResultAttachesToEnum)[keyof typeof RecognitionResultAttachesToEnum];
