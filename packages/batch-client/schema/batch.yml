@@ -1,4 +1,4 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
   title: Speechmatics ASR REST API
   version: 2.0.0
@@ -25,9 +25,9 @@ parameters:
     required: false
     type: string
 paths:
-  '/jobs':
+  "/jobs":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     post:
       summary: Create a new job.
       consumes:
@@ -52,49 +52,49 @@ paths:
           required: false
           type: file
       responses:
-        '201':
+        "201":
           description: OK
           schema:
-            $ref: '#/definitions/CreateJobResponse'
-        '400':
+            $ref: "#/definitions/CreateJobResponse"
+        "400":
           description: Bad request
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 400
               error: Job rejected
               detail: Job config JSON is invalid
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '403':
+        "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 403
               error: Invalid or missing license
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: Requested Early Access Release not available
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
@@ -124,39 +124,39 @@ paths:
             Specifies whether deleted jobs should be included in the response. Defaults to false.
           required: false
       responses:
-        '200':
+        "200":
           description: OK
           schema:
-            $ref: '#/definitions/RetrieveJobsResponse'
-        '401':
+            $ref: "#/definitions/RetrieveJobsResponse"
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '422':
+        "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 422
               error: limit in query must be of type int64
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-  '/jobs/{jobid}':
+  "/jobs/{jobid}":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get job details, including progress and any error reports.
       parameters:
@@ -167,40 +167,40 @@ paths:
           type: string
           x-example: a1b2c3d4e5
       responses:
-        '200':
+        "200":
           description: OK
           schema:
-            $ref: '#/definitions/RetrieveJobResponse'
-        '401':
+            $ref: "#/definitions/RetrieveJobResponse"
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: Job Expired
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
@@ -221,55 +221,55 @@ paths:
           required: false
           type: boolean
       responses:
-        '200':
+        "200":
           description: The job that was deleted.
           schema:
-            $ref: '#/definitions/DeleteJobResponse'
-        '401':
+            $ref: "#/definitions/DeleteJobResponse"
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: Job Expired
-        '423':
+        "423":
           description: Locked
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 423
               error: Resource Locked
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-  '/jobs/{jobid}/data':
+  "/jobs/{jobid}/data":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the data file used as input to a job.
       produces:
@@ -283,48 +283,48 @@ paths:
           type: string
           x-example: a1b2c3d4e5
       responses:
-        '200':
+        "200":
           description: OK
           schema:
             type: file
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: File Expired
               detail: File deleted from the storage
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-  '/jobs/{jobid}/text':
+  "/jobs/{jobid}/text":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the text file used as input to an alignment job.
       produces:
@@ -338,48 +338,48 @@ paths:
           type: string
           x-example: a1b2c3d4e5
       responses:
-        '200':
+        "200":
           description: OK
           schema:
             type: file
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: File Expired
               detail: File deleted from the storage
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-  '/jobs/{jobid}/transcript':
+  "/jobs/{jobid}/transcript":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the transcript for a transcription job.
       produces:
@@ -405,13 +405,13 @@ paths:
             - txt
             - srt
       responses:
-        '200':
+        "200":
           description: OK
           schema:
-            $ref: '#/definitions/RetrieveTranscriptResponse'
+            $ref: "#/definitions/RetrieveTranscriptResponse"
           examples:
             application/vnd.speechmatics.v2+json:
-              format: '2.7'
+              format: "2.7"
               job:
                 created_at: "2018-01-09T12:29:01.853047Z"
                 data_name: recording.mp3
@@ -420,7 +420,7 @@ paths:
                 tracking:
                   title: ACME Q12018 Statement
                   reference: /data/clients/ACME/statements/segs/2018Q1-seg8
-                  tags: ['quick-review', 'segment']
+                  tags: ["quick-review", "segment"]
                   details:
                     client: ACME Corp
                     segment: 8
@@ -475,51 +475,51 @@ paths:
                   type: punctuation
                   alternatives:
                     - confidence: 0.98
-                      content: '.'
+                      content: "."
                       language: en
                       display:
                         direction: ltr
             text/plain: |
               SPEAKER: S1
               Hello world.
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: File Expired
               detail: File deleted from the storage
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-  '/jobs/{jobid}/alignment':
+  "/jobs/{jobid}/alignment":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the aligned text file for an alignment job.
       produces:
@@ -542,7 +542,7 @@ paths:
             - word_start_and_end
             - one_per_line
       responses:
-        '200':
+        "200":
           description: OK
           schema:
             type: file
@@ -551,47 +551,47 @@ paths:
               <time=0.41>hello<time=0.76> <time=0.89>world<time=1.18>
             one_per_line: |
               [00:00:00.4]    hello world
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Job not found
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: File Expired
               detail: File deleted from the storage
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
       externalDocs:
         description: More details of our alignment service can be found here.
-        url: 'https://docs.speechmatics.com/features-other/word-alignment'
-  '/jobs/{jobid}/log':
+        url: "https://docs.speechmatics.com/features-other/word-alignment"
+  "/jobs/{jobid}/log":
     parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the log file for a job.
       produces:
@@ -605,130 +605,60 @@ paths:
           type: string
           x-example: a1b2c3d4e5
       responses:
-        '200':
+        "200":
           description: OK
           schema:
             type: file
           examples:
             text/plain: |
               2021-01-23 17:58:55,559 INFO    orchestrator.transport.cmd.utils Loading model 'en'
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 401
               error: Permission Denied
-        '404':
+        "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 404
               error: Log file not available
               detail: Could not read log file
-        '410':
+        "410":
           description: Gone
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 410
               error: File Expired
               detail: File deleted from the storage
-        '429':
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 500
               error: Internal Server Error
-        '501':
+        "501":
           description: Not Implemented
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
           examples:
             application/json:
               code: 501
               error: Not Implemented
-  '/jobs/{jobid}/object-urls':
+  "/usage":
     parameters:
-      - $ref: '#/parameters/EARTag'
-    get:
-      summary: Get signed urls for data files associated to the job.
-      produces:
-        - application/octet-stream
-        - application/json
-      parameters:
-        - name: jobid
-          in: path
-          description: ID of the job.
-          required: true
-          type: string
-          x-example: a1b2c3d4e5
-        - name: ttl
-          in: query
-          required: true
-          type: integer
-          description: 'Time to live in seconds for the signed URLs'
-        - name: url_for
-          in: query
-          required: true
-          type: array
-          items:
-            type: string
-            enum:
-              - data
-              - audio_mp3
-              - transcript
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/RetrieveObjectUrlsResponse'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-          examples:
-            application/json:
-              code: 401
-              error: Permission Denied
-        '404':
-          description: Not found
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-          examples:
-            application/json:
-              code: 404
-              error: Job not found
-        '410':
-          description: Gone
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-          examples:
-            application/json:
-              code: 410
-              error: File Expired
-              detail: File deleted from the storage
-        '429':
-          description: Rate Limited
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-          examples:
-            application/json:
-              code: 500
-              error: Internal Server Error
-  '/usage':
-    parameters:
-      - $ref: '#/parameters/EARTag'
+      - $ref: "#/parameters/EARTag"
     get:
       summary: Get the usage statistics.
       produces:
@@ -739,22 +669,22 @@ paths:
           required: false
           type: string
           format: date
-          description: 'Include usage after the given date (inclusive). This is a [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date format: `YYYY-MM-DD`.'
+          description: "Include usage after the given date (inclusive). This is a [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date format: `YYYY-MM-DD`."
         - name: until
           in: query
           required: false
           type: string
           format: date
-          description: 'Include usage before the given date (inclusive). This is a [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date format: `YYYY-MM-DD`.'
+          description: "Include usage before the given date (inclusive). This is a [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) calendar date format: `YYYY-MM-DD`."
       responses:
-        '200':
+        "200":
           description: OK
           schema:
-            $ref: '#/definitions/UsageResponse'
+            $ref: "#/definitions/UsageResponse"
           examples:
             application/json:
-              since: '2021-09-12T00:00:00Z'
-              until: '2022-01-01T23:59:59Z'
+              since: "2021-09-12T00:00:00Z"
+              until: "2022-01-01T23:59:59Z"
               summary:
                 - mode: batch
                   type: transcription
@@ -782,20 +712,20 @@ paths:
                   language: en
                   count: 1
                   duration_hrs: 0.1
-        '401':
+        "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
+            $ref: "#/definitions/ErrorResponse"
+        "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/ErrorResponse'
-        '429':
+            $ref: "#/definitions/ErrorResponse"
+        "429":
           description: Rate Limited
-        '500':
+        "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
 definitions:
   ErrorResponse:
     type: object
@@ -860,7 +790,7 @@ definitions:
     example:
       title: ACME Q12018 Earnings Call
       reference: /data/clients/ACME/statements/segs/2018Q1-seg8
-      tags: ['quick-review', 'segment']
+      tags: ["quick-review", "segment"]
       details:
         client: ACME Corp
         segment: 8
@@ -960,7 +890,7 @@ definitions:
         description: >-
           Language locale to be used when generating the transcription output, normally specified as an ISO language code
       operating_point:
-        $ref: '#/definitions/OperatingPoint'
+        $ref: "#/definitions/OperatingPoint"
         description: |-
           Specify an operating point to use.
           Operating points change the transcription process in a high level way, such as altering the acoustic model.
@@ -1001,7 +931,7 @@ definitions:
             type: array
             items:
               type: string
-              pattern: '^(.|all)$'
+              pattern: "^(.|all)$"
             description: >-
               The punctuation marks which the client is prepared to accept in transcription output, or the special value 'all' (the default). Unsupported marks are ignored. This value is used to guide the transcription process.
         description: >-
@@ -1161,8 +1091,11 @@ definitions:
           A list of additional headers to be added to the notification request when using http or https. This is intended to support authentication or authorization, for example by supplying an OAuth2 bearer token.
     example:
       - url: https://collector.example.org/callback
-        contents: ['transcript:json-v2']
-        auth_headers: ['Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM']
+        contents: ["transcript:json-v2"]
+        auth_headers:
+          [
+            "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM",
+          ]
   LanguagePackInfo:
     description: >-
       Properties of the language pack.
@@ -1230,38 +1163,38 @@ definitions:
       - type
     properties:
       type:
-        $ref: '#/definitions/JobType'
+        $ref: "#/definitions/JobType"
       fetch_data:
-        $ref: '#/definitions/DataFetchConfig'
+        $ref: "#/definitions/DataFetchConfig"
       fetch_text:
-        $ref: '#/definitions/DataFetchConfig'
+        $ref: "#/definitions/DataFetchConfig"
       alignment_config:
-        $ref: '#/definitions/AlignmentConfig'
+        $ref: "#/definitions/AlignmentConfig"
       transcription_config:
-        $ref: '#/definitions/TranscriptionConfig'
+        $ref: "#/definitions/TranscriptionConfig"
       notification_config:
         type: array
         x-omitempty: true
         items:
-          $ref: '#/definitions/NotificationConfig'
+          $ref: "#/definitions/NotificationConfig"
       tracking:
-        $ref: '#/definitions/TrackingData'
+        $ref: "#/definitions/TrackingData"
       output_config:
-        $ref: '#/definitions/OutputConfig'
+        $ref: "#/definitions/OutputConfig"
       translation_config:
-        $ref: '#/definitions/TranslationConfig'
+        $ref: "#/definitions/TranslationConfig"
       language_identification_config:
-        $ref: '#/definitions/LanguageIdentificationConfig'
+        $ref: "#/definitions/LanguageIdentificationConfig"
       summarization_config:
-        $ref: '#/definitions/SummarizationConfig'
+        $ref: "#/definitions/SummarizationConfig"
       sentiment_analysis_config:
-        $ref: '#/definitions/SentimentAnalysisConfig'
+        $ref: "#/definitions/SentimentAnalysisConfig"
       topic_detection_config:
-        $ref: '#/definitions/TopicDetectionConfig'
+        $ref: "#/definitions/TopicDetectionConfig"
       auto_chapters_config:
-        $ref: '#/definitions/AutoChaptersConfig'
+        $ref: "#/definitions/AutoChaptersConfig"
       audio_events_config:
-        $ref: '#/definitions/AudioEventsConfig'
+        $ref: "#/definitions/AudioEventsConfig"
   TranslationConfig:
     required:
       - target_languages
@@ -1380,7 +1313,7 @@ definitions:
           - deleted
           - expired
       config:
-        $ref: '#/definitions/JobConfig'
+        $ref: "#/definitions/JobConfig"
       lang:
         type: string
         description: >-
@@ -1391,7 +1324,7 @@ definitions:
           Optional list of errors that have occurred in user interaction, for example: audio could not be fetched or notification could not be sent.
         type: array
         items:
-          $ref: '#/definitions/JobDetailError'
+          $ref: "#/definitions/JobDetailError"
   RetrieveJobsResponse:
     required:
       - jobs
@@ -1399,7 +1332,7 @@ definitions:
       jobs:
         type: array
         items:
-          $ref: '#/definitions/JobDetails'
+          $ref: "#/definitions/JobDetails"
     example:
       jobs:
         - created_at: "2018-01-09T12:29:01.853047Z"
@@ -1411,7 +1344,7 @@ definitions:
           tracking:
             title: ACME Q12018 Statement
             reference: /data/clients/ACME/statements/segs/2018Q1-seg8
-            tags: ['quick-review', 'segment']
+            tags: ["quick-review", "segment"]
             details:
               client: ACME Corp
               segment: 8
@@ -1438,8 +1371,11 @@ definitions:
               - Caller
           notification_config:
             - url: https://collector.example.org/callback
-              contents: ['transcript', 'data']
-              auth_headers: ['Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM']
+              contents: ["transcript", "data"]
+              auth_headers:
+                [
+                  "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM",
+                ]
         - created_at: "2018-01-09T11:23:42.984612Z"
           data_name: hello.wav
           duration: 130
@@ -1460,7 +1396,7 @@ definitions:
       - job
     properties: &ref_1
       job:
-        $ref: '#/definitions/JobDetails'
+        $ref: "#/definitions/JobDetails"
     example: &ref_2
       job:
         created_at: "2018-01-09T12:29:01.853047Z"
@@ -1490,12 +1426,15 @@ definitions:
             - Caller
         notification_config:
           - url: https://collector.myorg.com/callback
-            contents: ['transcript', 'data']
-            auth_headers: ['Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM']
+            contents: ["transcript", "data"]
+            auth_headers:
+              [
+                "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM",
+              ]
         tracking:
           title: ACME Q12018 Statement
           reference: /data/clients/ACME/statements/segs/2018Q1-seg8
-          tags: ['quick-review', 'segment']
+          tags: ["quick-review", "segment"]
           details:
             client: ACME Corp
             segment: 8
@@ -1533,12 +1472,15 @@ definitions:
             - Caller
         notification_config:
           - url: https://collector.myorg.com/callback
-            contents: ['transcript', 'data']
-            auth_headers: ['Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM']
+            contents: ["transcript", "data"]
+            auth_headers:
+              [
+                "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiJiMDhmODZhZi0zNWRhLTQ4ZjItOGZhYi1jZWYzOTA0NjYwYmQifQ.-xN_h82PHVTCMA9vdoHrcZxH-x5mb11y1537t3rGzcM",
+              ]
         tracking:
           title: ACME Q12018 Statement
           reference: /data/clients/ACME/statements/segs/2018Q1-seg8
-          tags: ['quick-review', 'segment']
+          tags: ["quick-review", "segment"]
           details:
             client: ACME Corp
             segment: 8
@@ -1573,7 +1515,7 @@ definitions:
         type: string
         description: Name of the text file submitted to be aligned to audio.
       tracking:
-        $ref: '#/definitions/TrackingData'
+        $ref: "#/definitions/TrackingData"
   RecognitionMetadata:
     description: >-
       Summary information about the output from an ASR job, comprising the job type and configuration parameters used when generating the output.
@@ -1587,47 +1529,47 @@ definitions:
         example: "2018-01-09T12:29:01.853047Z"
         description: The UTC date time the transcription output was created.
       type:
-        $ref: '#/definitions/JobType'
+        $ref: "#/definitions/JobType"
       transcription_config:
-        $ref: '#/definitions/TranscriptionConfig'
+        $ref: "#/definitions/TranscriptionConfig"
       translation_errors:
         x-omitempty: true
         type: array
         items:
-          $ref: '#/definitions/TranslationError'
+          $ref: "#/definitions/TranslationError"
         description: List of errors that occurred in the translation stage.
       summarization_errors:
         x-omitempty: true
         type: array
         items:
-          $ref: '#/definitions/SummarizationError'
+          $ref: "#/definitions/SummarizationError"
         description: List of errors that occurred in the summarization stage.
       sentiment_analysis_errors:
         x-omitempty: true
         type: array
         items:
-          $ref: '#/definitions/SentimentAnalysisError'
+          $ref: "#/definitions/SentimentAnalysisError"
         description: List of errors that occurred in the sentiment analysis stage.
       topic_detection_errors:
         x-omitempty: true
         type: array
         items:
-          $ref: '#/definitions/TopicDetectionError'
+          $ref: "#/definitions/TopicDetectionError"
         description: List of errors that occurred in the topic detection stage.
       auto_chapters_errors:
         x-omitempty: true
         type: array
         items:
-          $ref: '#/definitions/AutoChaptersResultError'
+          $ref: "#/definitions/AutoChaptersResultError"
         description: List of errors that occurred in the auto chapters stage.
       alignment_config:
-        $ref: '#/definitions/AlignmentConfig'
+        $ref: "#/definitions/AlignmentConfig"
       output_config:
-        $ref: '#/definitions/OutputConfig'
+        $ref: "#/definitions/OutputConfig"
       language_pack_info:
-        $ref: '#/definitions/LanguagePackInfo'
+        $ref: "#/definitions/LanguagePackInfo"
       language_identification:
-        $ref: '#/definitions/LanguageIdentificationResult'
+        $ref: "#/definitions/LanguageIdentificationResult"
         description: >-
           Result of the language identification of the audio, configured using `language_identification_config`, or setting the transcription language to `auto`.
       orchestrator_version:
@@ -1659,7 +1601,7 @@ definitions:
       language:
         type: string
       display:
-        $ref: '#/definitions/RecognitionDisplay'
+        $ref: "#/definitions/RecognitionDisplay"
       speaker:
         x-omitempty: true
         type: string
@@ -1716,7 +1658,7 @@ definitions:
       alternatives:
         type: array
         items:
-          $ref: '#/definitions/RecognitionAlternative'
+          $ref: "#/definitions/RecognitionAlternative"
       attaches_to:
         description: >-
           Attachment direction of the punctuation mark. This only applies to punctuation marks. This information can be used to produce a well-formed text representation by placing the `word_delimiter` from `language_pack_info` on the correct side of the punctuation mark.
@@ -1800,16 +1742,16 @@ definitions:
     properties:
       format:
         type: string
-        example: '2.1'
+        example: "2.1"
         description: Speechmatics JSON transcript format version number.
       job:
-        $ref: '#/definitions/JobInfo'
+        $ref: "#/definitions/JobInfo"
       metadata:
-        $ref: '#/definitions/RecognitionMetadata'
+        $ref: "#/definitions/RecognitionMetadata"
       results:
         type: array
         items:
-          $ref: '#/definitions/RecognitionResult'
+          $ref: "#/definitions/RecognitionResult"
       translations:
         type: object
         description: >-
@@ -1817,7 +1759,7 @@ definitions:
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/TranslationSentence'
+            $ref: "#/definitions/TranslationSentence"
         example:
           de:
             - start_time: 0.5
@@ -1830,19 +1772,19 @@ definitions:
               content: "Bonjour, comment ça va?"
               speaker: UU
       summary:
-        $ref: '#/definitions/SummarizationResult'
+        $ref: "#/definitions/SummarizationResult"
       sentiment_analysis:
-        $ref: '#/definitions/SentimentAnalysisResult'
+        $ref: "#/definitions/SentimentAnalysisResult"
       topics:
-        $ref: '#/definitions/TopicDetectionResult'
+        $ref: "#/definitions/TopicDetectionResult"
       chapters:
-        $ref: '#/definitions/AutoChaptersResult'
+        $ref: "#/definitions/AutoChaptersResult"
       audio_events:
         x-omitempty: true
         type: array
         description: Timestamped audio events, only set if `audio_events_config` is in the config
         items:
-          $ref: '#/definitions/AudioEventItem'
+          $ref: "#/definitions/AudioEventItem"
       audio_event_summary:
         type: object
         description: Summary statistics per event type, keyed by `type`, e.g. music
@@ -1850,13 +1792,13 @@ definitions:
           overall:
             type: object
             description: Overall summary on all channels
-            $ref: '#/definitions/AudioEventSummary'
+            $ref: "#/definitions/AudioEventSummary"
           channels:
             description: Summary keyed by channel, only set if channel diarization is enabled
             type: object
             additionalProperties:
               type: object
-              $ref: '#/definitions/AudioEventSummary'
+              $ref: "#/definitions/AudioEventSummary"
   SummarizationResult:
     description: >-
       Summary of the transcript, configured using `summarization_config`.
@@ -1879,10 +1821,10 @@ definitions:
             description: An array of objects that represent a segment of text and its associated sentiment.
             items:
               description: A an object that holds overall sentiment information, and per-speaker and per-channel sentiment data.
-              $ref: '#/definitions/SentimentSegment'
+              $ref: "#/definitions/SentimentSegment"
           summary:
             description: An object that holds overall sentiment information, and per-speaker and per-channel sentiment data.
-            $ref: '#/definitions/SentimentSummary'
+            $ref: "#/definitions/SentimentSummary"
     example:
       segments:
         - text: "I am happy with the product."
@@ -1918,53 +1860,53 @@ definitions:
     type: object
     description: Represents a segment of text and its associated sentiment.
     properties:
-      text: {type: string}
-      start_time: {type: number, format: float}
-      end_time: {type: number, format: float}
-      sentiment: {type: string}
-      speaker: {type: string}
-      channel: {type: string}
-      confidence: {type: number, format: float}
+      text: { type: string }
+      start_time: { type: number, format: float }
+      end_time: { type: number, format: float }
+      sentiment: { type: string }
+      speaker: { type: string }
+      channel: { type: string }
+      confidence: { type: number, format: float }
   SentimentSummary:
     type: object
     description: Holds overall sentiment information, as well as detailed per-speaker and per-channel sentiment data.
     properties:
       overall:
         description: Summary of overall sentiment data.
-        $ref: '#/definitions/SentimentSummaryDetail'
+        $ref: "#/definitions/SentimentSummaryDetail"
       speakers:
         type: array
         description: An array of objects that represent sentiment data for a specific speaker.
         items:
-          $ref: '#/definitions/SentimentSpeakerSummary'
+          $ref: "#/definitions/SentimentSpeakerSummary"
       channels:
         type: array
         description: An array of objects that represent sentiment data for a specific channel.
         items:
-          $ref: '#/definitions/SentimentChannelSummary'
+          $ref: "#/definitions/SentimentChannelSummary"
   SentimentSummaryDetail:
     type: object
     description: Holds the count of sentiment information grouped by positive, neutral and negative.
     properties:
-      positive_count: {type: integer}
-      negative_count: {type: integer}
-      neutral_count: {type: integer}
+      positive_count: { type: integer }
+      negative_count: { type: integer }
+      neutral_count: { type: integer }
   SentimentSpeakerSummary:
     type: object
     description: Holds sentiment information for a specific speaker.
     properties:
-      speaker: {type: string}
-      positive_count: {type: integer}
-      negative_count: {type: integer}
-      neutral_count: {type: integer}
+      speaker: { type: string }
+      positive_count: { type: integer }
+      negative_count: { type: integer }
+      neutral_count: { type: integer }
   SentimentChannelSummary:
     type: object
     description: Holds sentiment information for a specific channel.
     properties:
-      channel: {type: string}
-      positive_count: {type: integer}
-      negative_count: {type: integer}
-      neutral_count: {type: integer}
+      channel: { type: string }
+      positive_count: { type: integer }
+      negative_count: { type: integer }
+      neutral_count: { type: integer }
   TopicDetectionResult:
     description: Main object that holds topic detection results.
     type: object
@@ -1974,10 +1916,10 @@ definitions:
         description: An array of objects that represent a segment of text and its associated topic information.
         items:
           description: An object that holds topic information for a single segment.
-          $ref: '#/definitions/TopicDetectionSegment'
+          $ref: "#/definitions/TopicDetectionSegment"
       summary:
         description: An object that holds overall information on the topics detected.
-        $ref: '#/definitions/TopicDetectionSummary'
+        $ref: "#/definitions/TopicDetectionSummary"
     example:
       segments:
         - text: "I am happy with the product."
@@ -2000,25 +1942,25 @@ definitions:
     type: object
     description: Represents a segment of text and its associated topic information.
     properties:
-      text: {type: string}
-      start_time: {type: number, format: float}
-      end_time: {type: number, format: float}
+      text: { type: string }
+      start_time: { type: number, format: float }
+      end_time: { type: number, format: float }
       topics:
         type: array
         items:
-          $ref: '#/definitions/TopicDetectionSegmentTopic'
+          $ref: "#/definitions/TopicDetectionSegmentTopic"
   TopicDetectionSegmentTopic:
     type: object
     description: Represents a topic and its associated information.
     properties:
-      topic: {type: string}
+      topic: { type: string }
   TopicDetectionSummary:
     type: object
     description: Holds overall information on the topics detected.
     properties:
       overall:
         description: Summary of overall topic detection results.
-        $ref: '#/definitions/TopicDetectionSummaryOverall'
+        $ref: "#/definitions/TopicDetectionSummaryOverall"
   TopicDetectionSummaryOverall:
     type: object
     description: Holds the count of topics detected.
@@ -2028,7 +1970,7 @@ definitions:
     type: array
     description: An array of objects that represent summarized chapters of the transcript
     items:
-      $ref: '#/definitions/Chapter'
+      $ref: "#/definitions/Chapter"
     example:
       - title: Part 1
         summary: Summary of part 1
@@ -2074,7 +2016,7 @@ definitions:
     type: object
     additionalProperties:
       type: object
-      $ref: '#/definitions/AudioEventSummaryItem'
+      $ref: "#/definitions/AudioEventSummaryItem"
   AudioEventSummaryItem:
     type: object
     description: Summary statistics for this audio event type
@@ -2107,7 +2049,7 @@ definitions:
       results:
         type: array
         items:
-          $ref: '#/definitions/LanguageIdentificationResultItem'
+          $ref: "#/definitions/LanguageIdentificationResultItem"
       error:
         type: string
         enum:
@@ -2140,7 +2082,7 @@ definitions:
       alternatives:
         type: array
         items:
-          $ref: '#/definitions/LanguageIdentificationResultAlternative'
+          $ref: "#/definitions/LanguageIdentificationResultAlternative"
       start_time:
         type: number
       end_time:
@@ -2160,10 +2102,10 @@ definitions:
     properties:
       timestamp:
         type: string
-        example: '2021-07-14T11:53:49.242Z'
+        example: "2021-07-14T11:53:49.242Z"
       message:
         type: string
-        example: 'Audio fetch error, http status 418'
+        example: "Audio fetch error, http status 418"
   OperatingPoint:
     type: string
     enum:
@@ -2192,11 +2134,11 @@ definitions:
       summary:
         type: array
         items:
-          $ref: '#/definitions/UsageDetails'
+          $ref: "#/definitions/UsageDetails"
       details:
         type: array
         items:
-          $ref: '#/definitions/UsageDetails'
+          $ref: "#/definitions/UsageDetails"
   UsageDetails:
     type: object
     required:
@@ -2206,14 +2148,14 @@ definitions:
       - duration_hrs
     properties:
       mode:
-        $ref: '#/definitions/JobMode'
+        $ref: "#/definitions/JobMode"
       type:
-        $ref: '#/definitions/JobType'
+        $ref: "#/definitions/JobType"
       language:
         type: string
-        example: 'en'
+        example: "en"
       operating_point:
-        $ref: '#/definitions/OperatingPoint'
+        $ref: "#/definitions/OperatingPoint"
       count:
         type: integer
         description: Total number of billable jobs in this cycle
@@ -2221,12 +2163,3 @@ definitions:
         type: number
         format: float
         description: Total duration of billable jobs (in hours) this cycle
-  RetrieveObjectUrlsResponse:
-    type: object
-    properties:
-      data:
-        type: string
-      audio_mp3:
-        type: string
-      transcript:
-        type: string
