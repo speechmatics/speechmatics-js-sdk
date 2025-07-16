@@ -20,13 +20,13 @@ import type { OperatingPoint } from './operating-point';
 import type { TranscriptionConfigAdditionalVocabInner } from './transcription-config-additional-vocab-inner';
 // May contain unused imports in some cases
 // @ts-ignore
-import type { TranscriptionConfigAudioFilteringConfig } from './transcription-config-audio-filtering-config';
-// May contain unused imports in some cases
-// @ts-ignore
 import type { TranscriptionConfigPunctuationOverrides } from './transcription-config-punctuation-overrides';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { TranscriptionConfigSpeakerDiarizationConfig } from './transcription-config-speaker-diarization-config';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { TranscriptionConfigTranscriptFilteringConfig } from './transcription-config-transcript-filtering-config';
 
 /**
  *
@@ -71,17 +71,11 @@ export interface TranscriptionConfig {
    */
   punctuation_overrides?: TranscriptionConfigPunctuationOverrides;
   /**
-   * Specify whether speaker or channel labels are added to the transcript. The default is `none`.   - **none**: no speaker or channel labels are added.   - **speaker**: speaker attribution is performed based on acoustic matching;              all input channels are mixed into a single stream for processing.   - **channel**: multiple input channels are processed individually and collated             into a single transcript.   - **speaker_change**: the output indicates when the speaker in the audio changes.                     No speaker attribution is performed. This is a faster method                     than speaker. The reported speaker changes may not agree with speaker.   - **channel_and_speaker_change**: both channel and speaker_change are switched on.                                 The speaker change is indicated if more than one speaker                                 are recorded in one channel.
+   * Specify whether speaker or channel labels are added to the transcript. The default is `none`.   - **none**: no speaker or channel labels are added.   - **speaker**: speaker attribution is performed based on acoustic matching;              all input channels are mixed into a single stream for processing.   - **channel**: multiple input channels are processed individually and collated             into a single transcript.
    * @type {string}
    * @memberof TranscriptionConfig
    */
   diarization?: TranscriptionConfigDiarizationEnum;
-  /**
-   * Ranges between zero and one. Controls how responsive the system is for potential speaker changes. High value indicates high sensitivity. Defaults to 0.4.
-   * @type {number}
-   * @memberof TranscriptionConfig
-   */
-  speaker_change_sensitivity?: number;
   /**
    * Transcript labels to use when using collating separate input channels.
    * @type {Array<string>}
@@ -102,24 +96,22 @@ export interface TranscriptionConfig {
   max_delay_mode?: TranscriptionConfigMaxDelayModeEnum;
   /**
    *
+   * @type {TranscriptionConfigTranscriptFilteringConfig}
+   * @memberof TranscriptionConfig
+   */
+  transcript_filtering_config?: TranscriptionConfigTranscriptFilteringConfig;
+  /**
+   *
    * @type {TranscriptionConfigSpeakerDiarizationConfig}
    * @memberof TranscriptionConfig
    */
   speaker_diarization_config?: TranscriptionConfigSpeakerDiarizationConfig;
-  /**
-   *
-   * @type {TranscriptionConfigAudioFilteringConfig}
-   * @memberof TranscriptionConfig
-   */
-  audio_filtering_config?: TranscriptionConfigAudioFilteringConfig;
 }
 
 export const TranscriptionConfigDiarizationEnum = {
   None: 'none',
   Speaker: 'speaker',
   Channel: 'channel',
-  SpeakerChange: 'speaker_change',
-  ChannelAndSpeakerChange: 'channel_and_speaker_change',
 } as const;
 
 export type TranscriptionConfigDiarizationEnum =

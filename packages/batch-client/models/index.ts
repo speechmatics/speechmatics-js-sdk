@@ -54,6 +54,7 @@ export * from './transcription-config-additional-vocab-inner';
 export * from './transcription-config-audio-filtering-config';
 export * from './transcription-config-punctuation-overrides';
 export * from './transcription-config-speaker-diarization-config';
+export * from './transcription-config-transcript-filtering-config';
 export * from './transcription-config';
 export * from './translation-config';
 export * from './translation-error';

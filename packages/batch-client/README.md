@@ -1,8 +1,5 @@
 # Speechmatics batch client 💬
 
-> [!WARNING]
-> This package is still in beta. It should be as functional as the legacy package, but some behaviour may have changed.
-
 Official JS client for the Speechmatics batch jobs API.
 
 API documentation can be found here: https://docs.speechmatics.com/jobsapi#tag/jobs
