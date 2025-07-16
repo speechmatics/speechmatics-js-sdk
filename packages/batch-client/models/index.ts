@@ -29,7 +29,6 @@ export * from './recognition-metadata';
 export * from './recognition-result';
 export * from './retrieve-job-response';
 export * from './retrieve-jobs-response';
-export * from './retrieve-object-urls-response';
 export * from './retrieve-transcript-response-audio-event-summary';
 export * from './retrieve-transcript-response';
 export * from './sentiment-analysis-error';
