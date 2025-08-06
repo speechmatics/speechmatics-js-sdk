@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/auth",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Library for fetching temporary keys for Speechmatics APIs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -16,7 +16,8 @@
     "authentication",
     "transcription",
     "batch",
-    "real-time"
+    "real-time",
+    "text to speech"
   ],
   "license": "MIT",
   "devDependencies": {

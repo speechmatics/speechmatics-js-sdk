@@ -7,7 +7,7 @@ export async function createSpeechmaticsJWT({
   managementPlatformURL = 'https://mp.speechmatics.com/v1',
   region = 'eu',
 }: {
-  type: 'batch' | 'rt' | 'flow';
+  type: 'batch' | 'rt' | 'flow' | 'tts';
   apiKey: string;
   clientRef?: string;
   ttl?: number;
