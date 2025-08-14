@@ -39,10 +39,13 @@ export class AudioInputDevicesStore extends TypedEventTarget<AudioInputDevicesEv
       this.updateDeviceList();
     });
 
+    if (!navigator.permissions) {
+      console.warn('browser does not support microphone permissions query');
+    }
     // Link permissions API
     navigator.permissions
       // @ts-ignore: "microphone" isn't a supported PermissionName for all browsers
-      .query({ name: 'microphone' })
+      ?.query({ name: 'microphone' })
       .then((permissionStatus) => {
         this.permissionState = permissionStatus.state;
         permissionStatus.addEventListener('change', () => {
