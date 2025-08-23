@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/flow-client",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "Javascript client for the Speechmatics Flow API",
   "main": "dist/index.js",
   "files": ["dist/", "README.md"],
@@ -12,7 +12,8 @@
     "prepare": "pnpm build",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
-    "test": "node --import tsx ./test/index.test.ts"
+    "test": "node --import tsx ./test/index.test.ts",
+    "generate-types": "./scripts/generate-models.ts"
   },
   "keywords": ["voice", "speech", "intelligence", "assistance", "chat", "API"],
   "author": "",
@@ -22,7 +23,9 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@asyncapi/modelina": "^5.2.5",
     "@rollup/plugin-inject": "^5.0.5",
-    "@types/ws": "^8.5.12"
+    "@types/ws": "^8.5.12",
+    "yaml": "^2.5.0"
   }
 }
