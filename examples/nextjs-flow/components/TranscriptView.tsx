@@ -42,6 +42,9 @@ function Component() {
         <div className="card-title">
           <h3>Transcript</h3>
         </div>
+        <div className="flex w-full justify-center">
+          <AudioVisualizer analyser={usePCMAudioPlayerContext().analyser} />
+        </div>
         <TranscriptContainer transcripts={transcriptGroups} />
       </div>
     </div>

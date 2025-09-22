@@ -1,24 +1,22 @@
 'use client';
 
-import { RECORDING_SAMPLE_RATE } from '@/lib/constants';
 import { PCMAudioRecorderProvider } from '@speechmatics/browser-audio-input-react';
 import { PCMPlayerProvider } from '@speechmatics/web-pcm-player-react';
-import {
-  type PropsWithChildren,
-  useEffect,
-  useMemo,
-  useSyncExternalStore,
-} from 'react';
+import { useEffect, useMemo, useSyncExternalStore } from 'react';
 
-export function AudioProvider({ children }: PropsWithChildren) {
-  // Get audio contexts for input and playback
-  // (see note above `useAudioContexts` for more info)
+type SpeechmaticsProviderProps = {
+  children: React.ReactNode;
+};
+
+export const RECORDING_SAMPLE_RATE =
+  typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox')
+    ? undefined
+    : 16_000;
+
+export function AudioProvider({ children }: SpeechmaticsProviderProps) {
   const { inputAudioContext, playbackAudioContext } = useAudioContexts();
 
   return (
-    // Two context providers
-    // 1. For the audio recorder (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/browser-audio-input-react/README.md)
-    // 2. For the audio player (see https://github.com/speechmatics/speechmatics-js-sdk/blob/main/packages/web-pcm-player-react/README.md)
     <PCMAudioRecorderProvider
       audioContext={inputAudioContext}
       workletScriptURL="/js/pcm-audio-worklet.min.js"
@@ -47,7 +45,7 @@ function useAudioContexts() {
   const playbackAudioContext = useMemo(() => {
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     return isFirefox
-      ? new window.AudioContext({ sampleRate: 16_000 })
+      ? new window.AudioContext({ sampleRate: RECORDING_SAMPLE_RATE })
       : inputAudioContext;
   }, [inputAudioContext]);
 

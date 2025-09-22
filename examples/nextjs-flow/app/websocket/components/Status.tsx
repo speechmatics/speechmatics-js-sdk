@@ -1,10 +1,14 @@
 'use client';
 import { usePCMAudioRecorderContext } from '@speechmatics/browser-audio-input-react';
 import { useFlow } from '@speechmatics/flow-client-react';
+import { usePCMAudioPlayerContext } from '@speechmatics/web-pcm-player-react';
 
 export function Status() {
   const { socketState, sessionId } = useFlow();
   const { isRecording } = usePCMAudioRecorderContext();
+
+  const { analyser } = usePCMAudioPlayerContext();
+  console.log('Analyser', analyser);
 
   return (
     <div className="card card-border shadow-md">
