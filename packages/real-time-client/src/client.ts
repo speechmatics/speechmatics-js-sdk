@@ -50,6 +50,12 @@ export interface RealtimeClientOptions {
    * Only set this if you're sure you need it.
    */
   enableLegacy?: boolean;
+  /**
+   *  Optionally specify the timeout (in milliseconds) to wait before throwing an error on starting and stopping
+   *  For example, a value of 10_000 will throw an error if it takes more than 10 seconds to receive acknowledgement from the server after calling `start()` or `stopRecognition()`
+   *  Default value is 10_000 (10 seconds)
+   */
+  connectionTimeout?: number;
 }
 export type RealtimeTranscriptionConfig = Omit<
   StartRecognition,
@@ -58,16 +64,18 @@ export type RealtimeTranscriptionConfig = Omit<
   Partial<Pick<StartRecognition, 'audio_format'>>;
 
 export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
+  readonly url: string;
+  private readonly appId?: string;
+  private readonly enableLegacy: boolean;
+  timeout: number;
+
   constructor(config: RealtimeClientOptions = {}) {
     super();
     this.url = config.url ?? 'wss://eu2.rt.speechmatics.com/v2';
     this.appId = config.appId;
     this.enableLegacy = config.enableLegacy ?? false;
+    this.timeout ??= config.connectionTimeout ?? 10_000;
   }
-
-  readonly url: string;
-  private readonly appId?: string;
-  private readonly enableLegacy: boolean;
 
   private socket?: WebSocket;
 
@@ -229,10 +237,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
     return Promise.race([
       waitForRecognitionStarted,
-      rejectAfter<RecognitionStarted>(
-        RT_CLIENT_RESPONSE_TIMEOUT_MS,
-        'RecognitionStarted',
-      ),
+      rejectAfter<RecognitionStarted>(this.timeout, 'RecognitionStarted'),
     ]);
   }
 
@@ -258,7 +263,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
     return Promise.race([
       waitForEndOfTranscript,
-      rejectAfter(RT_CLIENT_RESPONSE_TIMEOUT_MS, 'EndOfTranscript'),
+      rejectAfter(this.timeout, 'EndOfTranscript'),
     ]);
   }
 
@@ -288,8 +293,6 @@ function dataIsRealtimeTranscriptionMessage(
 const defaultAudioFormat = {
   type: 'file',
 } as const;
-
-const RT_CLIENT_RESPONSE_TIMEOUT_MS = 10_000;
 
 export class SpeechmaticsRealtimeError extends Error {
   constructor(message: string, options?: ErrorOptions) {
