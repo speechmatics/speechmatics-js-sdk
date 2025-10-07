@@ -74,7 +74,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.url = config.url ?? 'wss://eu2.rt.speechmatics.com/v2';
     this.appId = config.appId;
     this.enableLegacy = config.enableLegacy ?? false;
-    this.timeout ??= config.connectionTimeout ?? 10_000;
+    this.timeout = config.connectionTimeout ?? 10_000;
   }
 
   private socket?: WebSocket;
