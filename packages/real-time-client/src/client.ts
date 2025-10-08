@@ -6,6 +6,7 @@ import type {
   RealtimeServerMessage,
   TranscriptionConfig,
   SpeakersResult,
+  MidSessionTranscriptionConfig,
 } from '../models';
 
 export class SocketStateChangeEvent extends Event {
@@ -261,7 +262,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     ]);
   }
 
-  setRecognitionConfig(config: TranscriptionConfig) {
+  setRecognitionConfig(config: MidSessionTranscriptionConfig) {
     this.sendMessage({
       message: 'SetRecognitionConfig' as const,
       transcription_config: config,

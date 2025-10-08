@@ -31,6 +31,13 @@ export function useRealtimeTranscription() {
     [client],
   );
 
+  const setRecognitionConfig = useCallback<RealtimeClient['setRecognitionConfig']>(
+    (config) => {
+      client.setRecognitionConfig(config);
+    },
+    [client],
+  );
+
   const getSpeakers = useCallback<RealtimeClient['getSpeakers']>(
     (final?: boolean) => {
       return client.getSpeakers(final);
@@ -45,8 +52,9 @@ export function useRealtimeTranscription() {
       startTranscription,
       stopTranscription,
       sendAudio,
+      setRecognitionConfig,
       getSpeakers,
     }),
-    [sessionId, socketState, startTranscription, stopTranscription, sendAudio, getSpeakers],
+    [sessionId, socketState, startTranscription, stopTranscription, sendAudio, setRecognitionConfig, getSpeakers],
   );
 }
