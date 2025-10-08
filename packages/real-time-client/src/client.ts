@@ -5,6 +5,7 @@ import type {
   RealtimeClientMessage,
   RealtimeServerMessage,
   TranscriptionConfig,
+  SpeakersResult,
 } from '../models';
 
 export class SocketStateChangeEvent extends Event {
@@ -163,6 +164,38 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
     this.socket.send(data);
+  }
+
+  async getSpeakers(final?: boolean): Promise<SpeakersResult> {
+    await this.sendMessage({
+      message: 'GetSpeakers',
+      final
+    });
+
+    const waitForSpeakers = new Promise<SpeakersResult>(
+      (resolve, reject) => {
+        this.addEventListener('receiveMessage', ({ data }) => {
+          if (data.message === 'SpeakersResult') {
+            resolve(data);
+          }
+          // If client receives an error message before starting, reject immediately
+          else if (data.message === 'Error') {
+            reject(new Error(data.type));
+          }
+        });
+        this.addEventListener("socketStateChange", (state) => {
+          state.socketState === "closed" && reject(new Error("Socket closed"));
+        })
+      },
+    );
+
+    return Promise.race([
+      waitForSpeakers,
+      rejectAfter<SpeakersResult>(
+        RT_CLIENT_RESPONSE_TIMEOUT_MS,
+        'SpeakersResult',
+      ),
+    ]);
   }
 
   async start(

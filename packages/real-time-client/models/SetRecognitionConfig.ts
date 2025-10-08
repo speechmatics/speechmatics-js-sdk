@@ -1,6 +1,9 @@
-import type { TranscriptionConfig } from './TranscriptionConfig';
+import type { MidSessionTranscriptionConfig } from './MidSessionTranscriptionConfig';
 interface SetRecognitionConfig {
   message: 'SetRecognitionConfig';
-  transcription_config: TranscriptionConfig;
+  /**
+   * Contains configuration for this recognition session.
+   */
+  transcription_config: MidSessionTranscriptionConfig;
 }
 export type { SetRecognitionConfig };

@@ -1,5 +1,6 @@
 import type { RecognitionStarted } from './RecognitionStarted';
 import type { AudioAdded } from './AudioAdded';
+import type { ChannelAudioAdded } from './ChannelAudioAdded';
 import type { AddPartialTranscript } from './AddPartialTranscript';
 import type { AddTranscript } from './AddTranscript';
 import type { AddPartialTranslation } from './AddPartialTranslation';
@@ -11,9 +12,11 @@ import type { EndOfUtterance } from './EndOfUtterance';
 import type { Info } from './Info';
 import type { Warning } from './Warning';
 import type { ErrorType } from './ErrorType';
+import type { SpeakersResult } from './SpeakersResult';
 type RealtimeServerMessage =
   | RecognitionStarted
   | AudioAdded
+  | ChannelAudioAdded
   | AddPartialTranscript
   | AddTranscript
   | AddPartialTranslation
@@ -24,5 +27,6 @@ type RealtimeServerMessage =
   | EndOfUtterance
   | Info
   | Warning
-  | ErrorType;
+  | ErrorType
+  | SpeakersResult;
 export type { RealtimeServerMessage };

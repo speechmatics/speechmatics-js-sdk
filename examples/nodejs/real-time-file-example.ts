@@ -24,18 +24,18 @@ const client = new RealtimeClient();
 
 let finalText = '';
 
-client.addEventListener('receiveMessage', ({ data }) => {
+client.addEventListener('receiveMessage', async ({ data }) => {
   if (data.message === 'AddPartialTranscript') {
     const partialText = data.results
       .map((r) => r.alternatives?.[0].content)
       .join(' ');
-    process.stdout.write(`\r${finalText} \x1b[3m${partialText}\x1b[0m`);
+    console.log(`\r${finalText} \x1b[3m${partialText}\x1b[0m`);
   } else if (data.message === 'AddTranscript') {
     const text = data.results.map((r) => r.alternatives?.[0].content).join(' ');
     finalText += text;
-    process.stdout.write(`\r${finalText}`);
+    console.log(`\r${finalText}\n`);
   } else if (data.message === 'EndOfTranscript') {
-    process.stdout.write('\n');
+    console.log('\n');
     process.exit(0);
   }
 });
@@ -55,6 +55,7 @@ await client.start(jwt, {
     language: 'en',
     enable_partials: true,
     operating_point: 'enhanced',
+    diarization: "speaker",
     transcript_filtering_config: {
       remove_disfluencies: true,
       replacements: [{ from: 'hello', to: 'hi' }],
@@ -68,7 +69,7 @@ fileStream.on('data', (sample) => {
 });
 
 //end the session
-fileStream.on('end', () => {
+fileStream.on('end', async () => {
   // Send a stop message to the server when we're done sending audio.
   // We set `noTimeout` because we are streaming faster than real-time,
   // so we should wait for all the data to be processed before closing the connection.

@@ -31,6 +31,13 @@ export function useRealtimeTranscription() {
     [client],
   );
 
+  const getSpeakers = useCallback<RealtimeClient['getSpeakers']>(
+    (final?: boolean) => {
+      return client.getSpeakers(final);
+    },
+    [client],
+  );
+
   return useMemo(
     () => ({
       sessionId,
@@ -38,7 +45,8 @@ export function useRealtimeTranscription() {
       startTranscription,
       stopTranscription,
       sendAudio,
+      getSpeakers,
     }),
-    [sessionId, socketState, startTranscription, stopTranscription, sendAudio],
+    [sessionId, socketState, startTranscription, stopTranscription, sendAudio, getSpeakers],
   );
 }
