@@ -1,14 +1,14 @@
 import type {
-  AddPartialTranscriptMessage,
-  AddTranscriptMessage,
-  FlowClientIncomingMessage,
-  ResponseCompletedMessage,
-  ResponseInterruptedMessage,
-  ResponseStartedMessage,
+  AddPartialTranscript,
+  AddTranscript,
+  FlowServerMessage,
+  ResponseCompleted,
+  ResponseInterrupted,
+  ResponseStarted,
 } from '@speechmatics/flow-client-react';
 import { TypedEventTarget } from 'typescript-event-target';
 import {
-  type TranscriptUpdateMessage,
+  type FlowMessage,
   type Word,
   type AgentResponse,
   type TranscriptGroup,
@@ -61,7 +61,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    * Main entry point for processing incoming messages
    * Routes different message types to their appropriate handlers
    */
-  handleMessage(message: FlowClientIncomingMessage) {
+  handleMessage(message: FlowServerMessage) {
     // Only process messages we care about
     switch (message.message) {
       case 'AddPartialTranscript':
@@ -77,7 +77,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
     }
   }
 
-  private processMessage(message: TranscriptUpdateMessage) {
+  private processMessage(message: FlowMessage) {
     switch (message.message) {
       case 'AddPartialTranscript':
         this.handlePartialTranscript(message);
@@ -99,7 +99,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    * Processes partial transcripts (in-progress speech)
    * These are temporary and will be replaced by final transcripts
    */
-  private handlePartialTranscript(message: AddPartialTranscriptMessage) {
+  private handlePartialTranscript(message: AddPartialTranscript) {
     if (!message.results?.length) return;
     this.partials = this.getWords(message);
     this.notifyUpdate();
@@ -109,7 +109,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    * Processes final transcripts
    * Also handles cleanup of related partial transcripts
    */
-  private handleTranscript(message: AddTranscriptMessage) {
+  private handleTranscript(message: AddTranscript) {
     if (!message.results?.length) return;
     const incomingWords = this.getWords(message);
     this.finals = [...this.finals, ...incomingWords];
@@ -137,7 +137,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    * Handles the start of an AI agent response
    * Creates a new agent response entry with start time
    */
-  private handleAgentResponseStart(message: ResponseStartedMessage) {
+  private handleAgentResponseStart(message: ResponseStarted) {
     if (!message.content || !message.start_time) return;
 
     this.agentResponses.push({
@@ -155,7 +155,7 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    * Updates the existing response or creates a new one if not found
    */
   private handleAgentResponseEnd(
-    message: ResponseCompletedMessage | ResponseInterruptedMessage,
+    message: ResponseCompleted | ResponseInterrupted,
   ) {
     if (!message.content || !message.start_time || !message.end_time) return;
 
@@ -186,10 +186,8 @@ export class TranscriptManager extends TypedEventTarget<TranscriptManagerEvents>
    */
   private getWords(
     message: Exclude<
-      TranscriptUpdateMessage,
-      | ResponseStartedMessage
-      | ResponseCompletedMessage
-      | ResponseInterruptedMessage
+      FlowMessage,
+      ResponseStarted | ResponseCompleted | ResponseInterrupted
     >,
   ): Word[] {
     if (!message.results) return [];
