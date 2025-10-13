@@ -168,7 +168,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   }
 
   async getSpeakers(final?: boolean): Promise<SpeakersResult> {
-    await this.sendMessage({
+    this.sendMessage({
       message: 'GetSpeakers',
       final
     });
