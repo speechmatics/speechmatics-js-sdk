@@ -170,25 +170,23 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   async getSpeakers(final?: boolean): Promise<SpeakersResult> {
     this.sendMessage({
       message: 'GetSpeakers',
-      final
+      final,
     });
 
-    const waitForSpeakers = new Promise<SpeakersResult>(
-      (resolve, reject) => {
-        this.addEventListener('receiveMessage', ({ data }) => {
-          if (data.message === 'SpeakersResult') {
-            resolve(data);
-          }
-          // If client receives an error message before starting, reject immediately
-          else if (data.message === 'Error') {
-            reject(new Error(data.type));
-          }
-        });
-        this.addEventListener("socketStateChange", (state) => {
-          state.socketState === "closed" && reject(new Error("Socket closed"));
-        })
-      },
-    );
+    const waitForSpeakers = new Promise<SpeakersResult>((resolve, reject) => {
+      this.addEventListener('receiveMessage', ({ data }) => {
+        if (data.message === 'SpeakersResult') {
+          resolve(data);
+        }
+        // If client receives an error message before starting, reject immediately
+        else if (data.message === 'Error') {
+          reject(new Error(data.type));
+        }
+      });
+      this.addEventListener('socketStateChange', (state) => {
+        state.socketState === 'closed' && reject(new Error('Socket closed'));
+      });
+    });
 
     return Promise.race([
       waitForSpeakers,
