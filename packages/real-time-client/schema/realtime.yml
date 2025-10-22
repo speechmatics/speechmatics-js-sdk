@@ -34,6 +34,8 @@ channels:
         $ref: "#/components/messages/EndOfStream"
       EndOfChannel:
         $ref: "#/components/messages/EndOfChannel"
+      ForceEndOfUtterance:
+        $ref: "#/components/messages/ForceEndOfUtterance"
       SetRecognitionConfig:
         $ref: "#/components/messages/SetRecognitionConfig"
       GetSpeakers:
@@ -82,6 +84,7 @@ operations:
       - $ref: "#/channels/publish/messages/AddChannelAudio"
       - $ref: "#/channels/publish/messages/EndOfStream"
       - $ref: "#/channels/publish/messages/EndOfChannel"
+      - $ref: "#/channels/publish/messages/ForceEndOfUtterance"
       - $ref: "#/channels/publish/messages/SetRecognitionConfig"
       - $ref: "#/channels/publish/messages/GetSpeakers"
   subscribe:
@@ -141,6 +144,10 @@ components:
       summary: Declares that the channel has no more audio to send.
       payload:
         $ref: "#/components/schemas/EndOfChannel"
+    ForceEndOfUtterance:
+      summary: Requests a finalized transcript.
+      payload:
+        $ref: "#/components/schemas/ForceEndOfUtterance"
     SetRecognitionConfig:
       summary: |
         Allows the client to re-configure the recognition session.
@@ -389,6 +396,18 @@ components:
         - message
         - channel
         - last_seq_no
+    ForceEndOfUtterance:
+      summary: Requests a finalized transcript.
+      payload:
+      type: object
+      properties:
+        message:
+          const: ForceEndOfUtterance
+        channel:
+          type: string
+          description: The channel to request finalized transcript from.
+      required:
+      - message
     SetRecognitionConfig:
       type: object
       properties:
@@ -1084,11 +1103,11 @@ components:
           description: |
             This is a set list of profanities and disfluencies respectively that cannot be altered by the end user. `[disfluency]` is only present in English, and `[profanity]` is present in English, Spanish, and Italian
           items:
-            $ref: "#/components/schemas/RecognitionTagsEnum"
+            $ref: "#/components/schemas/RecognitionAlternativeTagsEnum"
       required:
         - content
         - confidence
-    RecognitionTagsEnum:
+    RecognitionAlternativeTagsEnum:
       type: string
       enum:
         - disfluency
