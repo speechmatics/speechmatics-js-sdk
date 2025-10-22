@@ -36,7 +36,7 @@ await client.start(jwt, {
   transcription_config: {
     language: 'en',
     operating_point: 'enhanced',
-    diarization: "speaker",
+    diarization: 'speaker',
   },
 });
 
