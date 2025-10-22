@@ -167,10 +167,10 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.socket.send(data);
   }
 
-  async getSpeakers(final?: boolean): Promise<SpeakersResult> {
+  async getSpeakers(options: { final?: boolean, timeout?: number } = {}): Promise<SpeakersResult> {
     this.sendMessage({
       message: 'GetSpeakers',
-      final,
+      final: options.final,
     });
 
     const waitForSpeakers = new Promise<SpeakersResult>((resolve, reject) => {
@@ -188,13 +188,16 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       });
     });
 
-    return Promise.race([
-      waitForSpeakers,
-      rejectAfter<SpeakersResult>(
-        RT_CLIENT_RESPONSE_TIMEOUT_MS,
-        'SpeakersResult',
+    if (options.timeout) {
+      return Promise.race([
+        waitForSpeakers,
+        rejectAfter<SpeakersResult>(
+          options.timeout,
+          'SpeakersResult',
       ),
     ]);
+    }
+    return waitForSpeakers;
   }
 
   async start(

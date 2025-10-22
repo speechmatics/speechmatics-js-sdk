@@ -15,9 +15,9 @@ import { createSpeechmaticsJWT } from '@speechmatics/auth';
 
 dotenv.config();
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.SPEECHMATICS_API_KEY;
 if (!apiKey) {
-  throw new Error('Please set the API_KEY environment variable');
+  throw new Error('Please set the SPEECHMATICS_API_KEY environment variable');
 }
 
 const client = new RealtimeClient();
@@ -36,6 +36,7 @@ await client.start(jwt, {
   transcription_config: {
     language: 'en',
     operating_point: 'enhanced',
+    diarization: "speaker",
   },
 });
 
@@ -54,5 +55,5 @@ fileStream.on('end', () => {
 
 // We wait for the speakers to be available.
 // With final = true, the speakers are only returned when the session is finished
-const speakers = await client.getSpeakers(true);
+const speakers = await client.getSpeakers({ final: true, timeout: 10000 });
 console.log(speakers);

@@ -14,9 +14,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.SPEECHMATICS_API_KEY;
 if (!apiKey) {
-  throw new Error('Please set API_KEY in the .env file');
+  throw new Error('Please set SPEECHMATICS_API_KEY in the .env file');
 }
 
 const client = new BatchClient({ apiKey, appId: 'nodeJS-example' });

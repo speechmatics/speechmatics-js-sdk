@@ -15,9 +15,9 @@ import { createSpeechmaticsJWT } from '@speechmatics/auth';
 
 dotenv.config();
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.SPEECHMATICS_API_KEY;
 if (!apiKey) {
-  throw new Error('Please set the API_KEY environment variable');
+  throw new Error('Please set the SPEECHMATICS_API_KEY environment variable');
 }
 
 const client = new RealtimeClient();
