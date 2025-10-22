@@ -41,8 +41,8 @@ export function useRealtimeTranscription() {
   );
 
   const getSpeakers = useCallback<RealtimeClient['getSpeakers']>(
-    (final?: boolean) => {
-      return client.getSpeakers(final);
+    (options?: { final?: boolean; timeout?: number }) => {
+      return client.getSpeakers(options);
     },
     [client],
   );
