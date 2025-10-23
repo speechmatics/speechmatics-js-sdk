@@ -56,4 +56,4 @@ fileStream.on('end', () => {
 // We wait for the speakers to be available.
 // With final = true, the speakers are only returned when the session is finished
 const speakers = await client.getSpeakers({ final: true, timeout: 10000 });
-console.log(speakers);
+console.log(JSON.stringify(speakers, null, 2));
