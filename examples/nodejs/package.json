@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "run:batch": "node --import tsx/esm batch-example.ts",
-    "run:real-time-file": "node --import tsx/esm real-time-file-example.ts"
+    "run:real-time-file": "node --import tsx/esm real-time-file-example.ts",
+    "run:speaker-id": "node --import tsx/esm speaker-id-example.ts"
   },
   "keywords": [],
   "author": "",

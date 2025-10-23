@@ -31,6 +31,22 @@ export function useRealtimeTranscription() {
     [client],
   );
 
+  const setRecognitionConfig = useCallback<
+    RealtimeClient['setRecognitionConfig']
+  >(
+    (config) => {
+      client.setRecognitionConfig(config);
+    },
+    [client],
+  );
+
+  const getSpeakers = useCallback<RealtimeClient['getSpeakers']>(
+    (options?: { final?: boolean; timeout?: number }) => {
+      return client.getSpeakers(options);
+    },
+    [client],
+  );
+
   return useMemo(
     () => ({
       sessionId,
@@ -38,7 +54,17 @@ export function useRealtimeTranscription() {
       startTranscription,
       stopTranscription,
       sendAudio,
+      setRecognitionConfig,
+      getSpeakers,
     }),
-    [sessionId, socketState, startTranscription, stopTranscription, sendAudio],
+    [
+      sessionId,
+      socketState,
+      startTranscription,
+      stopTranscription,
+      sendAudio,
+      setRecognitionConfig,
+      getSpeakers,
+    ],
   );
 }

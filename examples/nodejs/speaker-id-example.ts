@@ -1,7 +1,7 @@
 /**
- * This file showcases the real-time-client package being used in NodeJS.
+ * This file showcases the speaker ID feature of the real-time-client package being used in NodeJS.
  *
- * It will connect to the real-time API and transcribe a file in real-time.
+ * It will connect to the real-time API and transcribe a file in real-time, then return the speakers.
  * To run this example, you will need to have a Speechmatics API key,
  * which can be generated from the Speechmatics Portal: https://portal.speechmatics.com/api-keys
  *
@@ -22,24 +22,6 @@ if (!apiKey) {
 
 const client = new RealtimeClient();
 
-let finalText = '';
-
-client.addEventListener('receiveMessage', ({ data }) => {
-  if (data.message === 'AddPartialTranscript') {
-    const partialText = data.results
-      .map((r) => r.alternatives?.[0].content)
-      .join(' ');
-    process.stdout.write(`\r${finalText} \x1b[3m${partialText}\x1b[0m`);
-  } else if (data.message === 'AddTranscript') {
-    const text = data.results.map((r) => r.alternatives?.[0].content).join(' ');
-    finalText += text;
-    process.stdout.write(`\r${finalText}`);
-  } else if (data.message === 'EndOfTranscript') {
-    process.stdout.write('\n');
-    process.exit(0);
-  }
-});
-
 const jwt = await createSpeechmaticsJWT({
   type: 'rt',
   apiKey,
@@ -53,12 +35,8 @@ const fileStream = fs.createReadStream('./example.wav', {
 await client.start(jwt, {
   transcription_config: {
     language: 'en',
-    enable_partials: true,
     operating_point: 'enhanced',
-    transcript_filtering_config: {
-      remove_disfluencies: true,
-      replacements: [{ from: 'hello', to: 'hi' }],
-    },
+    diarization: 'speaker',
   },
 });
 
@@ -74,3 +52,8 @@ fileStream.on('end', () => {
   // so we should wait for all the data to be processed before closing the connection.
   client.stopRecognition({ noTimeout: true });
 });
+
+// We wait for the speakers to be available.
+// With final = true, the speakers are only returned when the session is finished
+const speakers = await client.getSpeakers({ final: true, timeout: 10000 });
+console.log(speakers);

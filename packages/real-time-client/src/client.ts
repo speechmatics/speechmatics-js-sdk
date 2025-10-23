@@ -5,6 +5,8 @@ import type {
   RealtimeClientMessage,
   RealtimeServerMessage,
   TranscriptionConfig,
+  SpeakersResult,
+  MidSessionTranscriptionConfig,
 } from '../models';
 
 export class SocketStateChangeEvent extends Event {
@@ -165,6 +167,38 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     this.socket.send(data);
   }
 
+  async getSpeakers(
+    options: { final?: boolean; timeout?: number } = {},
+  ): Promise<SpeakersResult> {
+    this.sendMessage({
+      message: 'GetSpeakers',
+      final: options.final,
+    });
+
+    const waitForSpeakers = new Promise<SpeakersResult>((resolve, reject) => {
+      this.addEventListener('receiveMessage', ({ data }) => {
+        if (data.message === 'SpeakersResult') {
+          resolve(data);
+        }
+        // If client receives an error message before starting, reject immediately
+        else if (data.message === 'Error') {
+          reject(new Error(data.type));
+        }
+      });
+      this.addEventListener('socketStateChange', (state) => {
+        state.socketState === 'closed' && reject(new Error('Socket closed'));
+      });
+    });
+
+    if (options.timeout) {
+      return Promise.race([
+        waitForSpeakers,
+        rejectAfter<SpeakersResult>(options.timeout, 'SpeakersResult'),
+      ]);
+    }
+    return waitForSpeakers;
+  }
+
   async start(
     jwt: string,
     config: RealtimeTranscriptionConfig,
@@ -228,7 +262,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     ]);
   }
 
-  setRecognitionConfig(config: TranscriptionConfig) {
+  setRecognitionConfig(config: MidSessionTranscriptionConfig) {
     this.sendMessage({
       message: 'SetRecognitionConfig' as const,
       transcription_config: config,

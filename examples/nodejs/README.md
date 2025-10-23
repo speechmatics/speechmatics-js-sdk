@@ -29,3 +29,9 @@ pnpm run:batch
 ```
 pnpm run:real-time-file
 ```
+
+### Get speakers (real-time)
+
+```
+pnpm run:speaker-id
+```
