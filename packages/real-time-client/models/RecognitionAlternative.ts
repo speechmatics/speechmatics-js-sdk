@@ -1,5 +1,5 @@
 import type { RecognitionDisplay } from './RecognitionDisplay';
-import type { RecognitionTagsEnum } from './RecognitionTagsEnum';
+import type { TagsEnum } from './TagsEnum';
 interface RecognitionAlternative {
   /**
    * A word or punctuation mark.
@@ -24,6 +24,6 @@ interface RecognitionAlternative {
   /**
    * This is a set list of profanities and disfluencies respectively that cannot be altered by the end user. `[disfluency]` is only present in English, and `[profanity]` is present in English, Spanish, and Italian
    */
-  tags?: RecognitionTagsEnum[];
+  tags?: TagsEnum[];
 }
 export type { RecognitionAlternative };
