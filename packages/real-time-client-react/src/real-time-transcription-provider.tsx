@@ -5,17 +5,25 @@ import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { RealtimeContext } from './real-time-context';
 import { useClientEventListener } from './use-real-time-event-listener';
 
+type Options = ConstructorParameters<typeof RealtimeClient>[0];
+
 export function RealtimeTranscriptionProvider({
   children,
   ...options
-}: React.PropsWithChildren<ConstructorParameters<typeof RealtimeClient>[0]>) {
+}: React.PropsWithChildren<Options>) {
   const client = useMemo(() => {
     return new RealtimeClient({
       url: options.url,
       appId: options.appId,
       enableLegacy: options.enableLegacy,
+      connectionTimeout: options.connectionTimeout,
     });
-  }, [options.url, options.appId, options.enableLegacy]);
+  }, [
+    options.url,
+    options.appId,
+    options.enableLegacy,
+    options.connectionTimeout,
+  ]);
 
   // Clean up on unmount (or if the client somehow changes)
   useEffect(() => {
