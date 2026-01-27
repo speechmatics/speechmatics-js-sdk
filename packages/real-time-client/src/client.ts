@@ -273,6 +273,13 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       transcription_config: config,
     });
   }
+
+  forceEndOfUtterance(channel?: string) {
+    this.sendMessage({
+      message: 'ForceEndOfUtterance' as const,
+      channel,
+    });
+  }
 }
 
 function dataIsRealtimeTranscriptionMessage(
