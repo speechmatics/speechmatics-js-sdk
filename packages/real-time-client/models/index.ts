@@ -5,7 +5,7 @@ export * from './Raw';
 export * from './RawAudioEncodingEnum';
 export * from './FileType';
 export * from './TranscriptionConfig';
-export * from './ObjectType';
+export * from './AdditionalVocabObject';
 export * from './DiarizationConfig';
 export * from './MaxDelayModeConfig';
 export * from './SpeakerDiarizationConfig';

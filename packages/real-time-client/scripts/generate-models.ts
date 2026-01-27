@@ -39,9 +39,6 @@ const generator = new TypeScriptGenerator({
         return name;
       },
       NO_RESERVED_KEYWORDS: (value) => {
-        if (value === 'Object') {
-          return 'ObjectType';
-        }
         if (value === 'File') {
           return 'FileType';
         }
@@ -68,6 +65,22 @@ const generator = new TypeScriptGenerator({
         );
       }
       return TypeScriptGenerator.defaultOptions.typeMapping.Union(context);
+    },
+    Object(context) {
+      // When rendering Object types, if the 'title' prop is set to "Object", use the x-parser-schema-id instead
+      if (context.constrainedModel.name === 'Object') {
+        context.constrainedModel.name =
+          context.constrainedModel.originalInput['x-parser-schema-id'];
+      }
+      return TypeScriptGenerator.defaultOptions.typeMapping.Object(context);
+    },
+    Reference(context) {
+      // When rendering references to Object types, if the 'title' prop is set to "Object", use the x-parser-schema-id instead
+      if (context.constrainedModel.name === 'Object') {
+        context.constrainedModel.name =
+          context.constrainedModel.originalInput['x-parser-schema-id'];
+      }
+      return TypeScriptGenerator.defaultOptions.typeMapping.Reference(context);
     },
   },
   processorOptions: {
