@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/real-time-client-react",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "React hooks for interacting with the Speechmatics Real-Time API",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

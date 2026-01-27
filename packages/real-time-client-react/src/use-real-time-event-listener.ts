@@ -15,7 +15,7 @@ export function useRealtimeEventListener<
 ) {
   const context = useContext(RealtimeContext);
   if (context === null) {
-    throw new Error('Flow client uninitialized in context');
+    throw new Error('Realtime client uninitialized in context');
   }
 
   return useClientEventListener(context.client, message, cb);

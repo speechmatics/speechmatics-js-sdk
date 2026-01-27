@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/real-time-client",
-  "version": "8.2.0",
+  "version": "8.3.0",
   "description": "Client for the Speechmatics real-time API",
   "main": "dist/index.js",
   "browser": "dist/index.browser.js",

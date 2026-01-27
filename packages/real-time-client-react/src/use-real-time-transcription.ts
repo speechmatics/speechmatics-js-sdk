@@ -6,7 +6,7 @@ export function useRealtimeTranscription() {
   const context = useContext(RealtimeContext);
 
   if (context === null) {
-    throw new Error('Flow client uninitialized in context');
+    throw new Error('Realtime client uninitialized in context');
   }
 
   const { client, sessionId, socketState } = context;
