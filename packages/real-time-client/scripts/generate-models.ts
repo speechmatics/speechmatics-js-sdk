@@ -38,6 +38,15 @@ const generator = new TypeScriptGenerator({
         }
         return name;
       },
+      NO_RESERVED_KEYWORDS: (value) => {
+        if (value === 'Object') {
+          return 'ObjectType';
+        }
+        if (value === 'File') {
+          return 'FileType';
+        }
+        return value;
+      },
     }),
   },
 
@@ -81,6 +90,7 @@ export async function generate(): Promise<void> {
     'utf-8',
   );
   const parsed = parse(realtimeSpec);
+
   const models = await generator.generateCompleteModels(parsed, {
     exportType: 'named',
   });

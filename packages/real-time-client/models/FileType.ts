@@ -3,7 +3,7 @@
  *
  * Note: Only the following formats are supported: `wav`, `mp3`, `aac`, `ogg`, `mpeg`, `amr`, `m4a`, `mp4`, `flac`
  */
-interface File {
+interface FileType {
   type: 'file';
 }
-export type { File };
+export type { FileType };

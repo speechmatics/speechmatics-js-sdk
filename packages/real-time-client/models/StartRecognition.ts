@@ -1,11 +1,11 @@
 import type { Raw } from './Raw';
-import type { File } from './File';
+import type { FileType } from './FileType';
 import type { TranscriptionConfig } from './TranscriptionConfig';
 import type { TranslationConfig } from './TranslationConfig';
 import type { AudioEventsConfig } from './AudioEventsConfig';
 interface StartRecognition {
   message: 'StartRecognition';
-  audio_format: Raw | File;
+  audio_format: Raw | FileType;
   /**
    * Contains configuration for this recognition session.
    */

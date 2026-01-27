@@ -11,10 +11,11 @@ interface SpeakerDiarizationConfig {
   prefer_current_speaker?: boolean;
   speaker_sensitivity?: number;
   /**
-   * Use this option to provide speaker labels linked to their speaker identifiers. When passed, the transcription system will tag spoken words in the transcript with the provided speaker labels whenever any of the specified speakers is detected in the audio.
-   * :::note
-   * This feature is currently in [preview mode](https://docs.speechmatics.com/private/preview-mode).
-   * :::
+   * If true, speaker identifiers will be returned at the end of transcript.
+   */
+  get_speakers?: boolean;
+  /**
+   * Use this option to provide speaker labels linked to their speaker identifiers. When passed, the transcription system will tag spoken words in the transcript with the provided speaker labels whenever any of the specified speakers is detected in the audio. A maximum of 50 speakers identifiers across all speakers can be provided.
    */
   speakers?: SpeakersInputItem[];
 }

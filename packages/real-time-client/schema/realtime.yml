@@ -13,7 +13,7 @@ info:
     url: "https://docs.speechmatics.com/rt-api-ref"
 servers:
   default:
-    host: eu2.rt.speechmatics.com/v2
+    host: eu.rt.speechmatics.com/v2
     protocol: wss
     protocolVersion: v13 (RFC 6455)
     description: RealTime ASR server
@@ -111,11 +111,9 @@ components:
   messages:
     GetSpeakers:
       summary: Requests any detected speaker identifiers to be returned.
-      x-preview-mode: true
       payload:
         $ref: "#/components/schemas/GetSpeakers"
     SpeakersResult:
-      x-preview-mode: true
       summary: Server response to GetSpeakers request returning any detected speaker identifiers.
       payload:
         $ref: "#/components/schemas/SpeakersResult"
@@ -129,8 +127,6 @@ components:
       payload:
         $ref: "#/components/schemas/AddAudio"
     AddChannelAudio:
-      x-available-deployments: ["container"]
-      x-preview-mode: true
       summary: Audio belonging to a specific channel.
       payload:
         $ref: "#/components/schemas/AddChannelAudio"
@@ -139,8 +135,6 @@ components:
       payload:
         $ref: "#/components/schemas/EndOfStream"
     EndOfChannel:
-      x-available-deployments: ["container"]
-      x-preview-mode: true
       summary: Declares that the channel has no more audio to send.
       payload:
         $ref: "#/components/schemas/EndOfChannel"
@@ -154,7 +148,8 @@ components:
 
         :::note
 
-        Only the specified parameters can be changed through a SetRecognitionConfig message. Attempting to change other transcription config parameters will result in an error.
+        The language field can be included in SetRecognitionConfig, but its value must match the language specified in the initial StartRecognition message.
+        Attempting to change the language or any other transcription configuration parameter not listed below will result in an error.
 
         :::
       payload:
@@ -175,8 +170,6 @@ components:
       payload:
         $ref: "#/components/schemas/AudioAdded"
     ChannelAudioAdded:
-      x-available-deployments: ["container"]
-      x-preview-mode: true
       summary: Server response to AddChannelAudio, indicating that audio has been added successfully.
       payload:
         $ref: "#/components/schemas/ChannelAudioAdded"
@@ -202,7 +195,7 @@ components:
     EndOfUtterance:
       summary: |
         Indicates the end of an utterance, triggered by a configurable period of non-speech.
-        The message is sent when no speech has been detected for a short period of time, configurable by the `end_of_utterance_silence_trigger` parameter in `conversation_config` (see [End Of Utterance](https://docs.speechmatics.com/speech-to-text/realtime/end-of-turn#end-of-utterance-configuration)).
+        The message is sent when no speech has been detected for a short period of time, configurable by the `end_of_utterance_silence_trigger` parameter in `conversation_config` (see [End Of Utterance](https://docs.speechmatics.com/speech-to-text/realtime/turn-detection#configuration)).
 
         Like punctuation, an `EndOfUtterance` has zero duration.
       payload:
@@ -332,27 +325,21 @@ components:
       example:
         {
           "message": "StartRecognition",
-          "audio_format": {
-            "type": "raw",
-            "encoding": "pcm_f32le",
-            "sample_rate": 16000
-          },
-          "transcription_config": {
-            "language": "en",
-            "operating_point": "enhanced",
-            "output_locale": "en-US",
-            "additional_vocab": ["gnocchi", "bucatini", "bigoli"],
-            "diarization": "speaker",
-            "max_delay": 1.0,
-            "enable_partials": true
-          },
-          "translation_config": {
-            "target_languages": ["es", "de"],
-            "enable_partials": true
-          },
-          "audio_events_config": {
-            "types": ["applause", "music"]
-          }
+          "audio_format":
+            { "type": "raw", "encoding": "pcm_f32le", "sample_rate": 16000 },
+          "transcription_config":
+            {
+              "language": "en",
+              "operating_point": "enhanced",
+              "output_locale": "en-US",
+              "additional_vocab": ["gnocchi", "bucatini", "bigoli"],
+              "diarization": "speaker",
+              "max_delay": 1.0,
+              "enable_partials": true,
+            },
+          "translation_config":
+            { "target_languages": ["es", "de"], "enable_partials": true },
+          "audio_events_config": { "types": ["applause", "music"] },
         }
     AddAudio:
       type: string
@@ -405,9 +392,9 @@ components:
           const: ForceEndOfUtterance
         channel:
           type: string
-          description: The channel to request finalized transcript from.
+          description: The channel to request finalized transcript from. This field is only seen in multichannel.
       required:
-      - message
+        - message
     SetRecognitionConfig:
       type: object
       properties:
@@ -429,20 +416,25 @@ components:
           type: string
         language_pack_info:
           $ref: "#/components/schemas/LanguagePackInfo"
+        channel_ids:
+          type: array
+          items:
+            type: string
       required:
         - message
       example:
         {
           "message": "RecognitionStarted",
-          "orchestrator_version": "2024.12.26085+a0a32e61ad.HEAD",
+          "orchestrator_version": "2025.11.07+cd4ff775c0+14.7.0",
           "id": "807670e9-14af-4fa2-9e8f-5d525c22156e",
-          "language_pack_info": {
-            "adapted": false,
-            "itn": true,
-            "language_description": "English",
-            "word_delimiter": " ",
-            "writing_direction": "left-to-right"
-          }
+          "language_pack_info":
+            {
+              "adapted": false,
+              "itn": true,
+              "language_description": "English",
+              "word_delimiter": " ",
+              "writing_direction": "left-to-right",
+            },
         }
     AudioAdded:
       type: object
@@ -486,12 +478,6 @@ components:
           type: string
           description: |
             The channel identifier to which the audio belongs. This field is only seen in multichannel.
-
-            :::note
-
-            This field is only available in [preview mode](https://docs.speechmatics.com/private/preview-mode).
-
-            :::
       required:
         - message
         - metadata
@@ -515,12 +501,6 @@ components:
           type: string
           description: |
             The channel identifier to which the audio belongs. This field is only seen in multichannel.
-
-            :::note
-
-            This field is only available in [preview mode](https://docs.speechmatics.com/private/preview-mode).
-
-            :::
       required:
         - message
         - metadata
@@ -603,6 +583,9 @@ components:
           const: AudioEventStarted
         event:
           $ref: "#/components/schemas/AudioEventStartData"
+        channel:
+          type: string
+          description: The channel identifier to which the audio belongs. This field is only seen in multichannel.
       required:
         - message
         - event
@@ -613,6 +596,9 @@ components:
           const: AudioEventEnded
         event:
           $ref: "#/components/schemas/AudioEventEndData"
+        channel:
+          type: string
+          description: The channel identifier to which the audio belongs. This field is only seen in multichannel.
       required:
         - message
         - event
@@ -783,6 +769,10 @@ components:
           $ref: "#/components/schemas/PunctuationOverrides"
         conversation_config:
           $ref: "#/components/schemas/ConversationConfig"
+        channel_diarization_labels:
+          items:
+            type: string
+          type: array
       required:
         - language
     MidSessionTranscriptionConfig:
@@ -871,7 +861,7 @@ components:
     AudioEventsConfig:
       type: object
       description: |
-       Contains configuration for [Audio Events](https://docs.speechmatics.com/speech-to-text/features/audio-events)
+        Contains configuration for [Audio Events](https://docs.speechmatics.com/speech-to-text/features/audio-events)
       properties:
         types:
           type: array
@@ -893,6 +883,8 @@ components:
         - $ref: "#/components/schemas/AdditionalVocabObject"
     AdditionalVocabObject:
       type: object
+      title: Object
+      name: AdditionalVocabObject
       properties:
         content:
           type: string
@@ -912,6 +904,8 @@ components:
       enum:
         - none
         - speaker
+        - channel
+        - channel_and_speaker
       default: "none"
     SpeakerDiarizationConfig:
       type: object
@@ -921,8 +915,6 @@ components:
           description: |
             Configure the maximum number of speakers to detect. See [Max Speakers](http://docs.speechmatics.com/speech-to-text/features/diarization#max-speakers).
           minimum: 2
-          maximum: 100
-          default: 50
         prefer_current_speaker:
           description: |
             When set to `true`, reduces the likelihood of incorrectly switching between similar sounding speakers.
@@ -934,19 +926,18 @@ components:
           format: float
           minimum: 0
           maximum: 1
+        get_speakers:
+          type: boolean
+          description: >-
+            If true, speaker identifiers will be returned at the end of transcript.
         speakers:
           type: array
           description: >-
             Use this option to provide speaker labels linked to their speaker identifiers.
             When passed, the transcription system will tag spoken words in the transcript
             with the provided speaker labels whenever any of the specified speakers
-            is detected in the audio.
-
-            :::note
-
-            This feature is currently in [preview mode](https://docs.speechmatics.com/private/preview-mode).
-
-            :::
+            is detected in the audio. A maximum of 50 speakers identifiers across all speakers
+            can be provided.
           items:
             $ref: "#/components/schemas/SpeakersInputItem"
     AudioFilteringConfig:
@@ -979,9 +970,7 @@ components:
     LanguagePackInfo:
       type: object
       description: Properties of the language pack.
-      required: [
-        word_delimiter
-      ]
+      required: [word_delimiter]
       properties:
         language_description:
           type: string
@@ -997,13 +986,6 @@ components:
         adapted:
           type: boolean
           description: Whether or not language model adaptation has been applied to the language pack.
-    WritingDirectionEnum:
-      type: string
-      enum: [
-        left-to-right,
-        right-to-left
-      ]
-      description: The direction that words in the language should be written and read in.
     RecognitionMetadata:
       type: object
       properties:
@@ -1022,6 +1004,10 @@ components:
         - start_time
         - end_time
         - transcript
+    WritingDirectionEnum:
+      type: string
+      enum: [left-to-right, right-to-left]
+      description: The direction that words in the language should be written and read in.
     RecognitionResult:
       type: object
       properties:
@@ -1033,9 +1019,6 @@ components:
         end_time:
           type: number
           format: float
-        channel:
-          x-available-deployments: ["container"]
-          type: string
         attaches_to:
           $ref: "#/components/schemas/AttachesToEnum"
         is_eos:
@@ -1044,16 +1027,24 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/RecognitionAlternative"
-        score:
-          type: number
-          format: float
-          minimum: 0
-          maximum: 1
         volume:
           type: number
           format: float
           minimum: 0
           maximum: 100
+        entity_class:
+          description: "For 'entity' results only, the class the entity has been formatted as. Examples: 'date', 'money', 'number'"
+          type: string
+        spoken_form:
+          description: For 'entity' results only, the spoken_form is the transcript of the individual words directly spoken.
+          items:
+            $ref: "#/components/schemas/SpokenFormRecognitionResult"
+          type: array
+        written_form:
+          description: For 'entity' results only, the written_form is a standardized form of the spoken words. It contains the formatted entity split into individual words.
+          items:
+            $ref: "#/components/schemas/WrittenFormRecognitionResult"
+          type: array
       required:
         - type
         - start_time
@@ -1134,6 +1125,7 @@ components:
       enum:
         - word
         - punctuation
+        - entity
     AttachesToEnum:
       type: string
       enum:
@@ -1161,6 +1153,64 @@ components:
       example:
         from: "hello"
         to: "hi"
+    SpokenFormRecognitionResult:
+      description:
+        A SpokenFormRecognitionResult describes a simple object which consists
+        solely of 'word' or 'punctuation' type entries with a start and end time. It
+        can occur only inside the spoken_form property of a full RecognitionResult
+      properties:
+        alternatives:
+          items:
+            $ref: "#/components/schemas/RecognitionAlternative"
+          type: array
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          $ref: "#/components/schemas/SpokenFormRecognitionResultTypeEnum"
+      required:
+        - start_time
+        - end_time
+        - type
+        - alternatives
+      type: object
+    WrittenFormRecognitionResult:
+      description:
+        A WrittenFormRecognitionResult describes a simple object which consists
+        solely of 'word' type entries with a start and end time. It can occur only inside
+        the written_form property of a full RecognitionResult
+      properties:
+        alternatives:
+          items:
+            $ref: "#/components/schemas/RecognitionAlternative"
+          type: array
+        end_time:
+          format: float
+          type: number
+        start_time:
+          format: float
+          type: number
+        type:
+          $ref: "#/components/schemas/WrittenFormRecognitionResultTypeEnum"
+      required:
+        - start_time
+        - end_time
+        - type
+        - alternatives
+      type: object
+    SpokenFormRecognitionResultTypeEnum:
+      type: string
+      enum: [word, punctuation]
+      description: |
+        What kind of object this is. See #/Definitions/RecognitionResult for definitions of the enums.
+    WrittenFormRecognitionResultTypeEnum:
+      type: string
+      enum: [word]
+      description: |
+        What kind of object this is. See #/Definitions/RecognitionResult for definitions of the enums.
     InfoTypeEnum:
       type: string
       description: |
@@ -1169,14 +1219,9 @@ components:
         | Info Type | Description |
         | --- | --- |
         | `recognition_quality` | Informs the client what particular quality-based model is used to handle the recognition. Sent to the client immediately after the WebSocket handshake is completed.|
-        |`model_redirect`| Informs the client that a deprecated language code has been specified, and will be handled with a different model. For example, if the model parameter is set to one of `en-US`, `en-GB`, or `en-AU`, then the request may be internally redirected to the Global English model (`en`).
-        |`deprecated`| Informs about using a feature that is going to be removed in a future release.
-        |`session_transfer`| Informs that the session has been seamlessly transferred to another backend, with the reason: Session has been transferred to a new backend. This typically occurs due to backend maintenance operations or migration from a faulty backend.
-
+        | `concurrent_session_usage` | Informs the client of their quota for concurrent sessions and how much of it they are using. Sent to the client immediately after the WebSocket handshake is completed.|
       enum:
         - recognition_quality
-        - model_redirect
-        - deprecated
         - concurrent_session_usage
     WarningTypeEnum:
       type: string
@@ -1212,21 +1257,18 @@ components:
         | --- | --- |
         | `invalid_message` | The message received was not understood. |
         | `invalid_model` | Unable to use the model for the recognition. This can happen if the language is not supported at all, or is not available for the user. |
+        | `invalid_language` | The requested language is not valid or is not supported. |
         | `invalid_config` | The config received contains some wrong or unsupported fields, or too many translation target languages were requested. |
         | `invalid_audio_type` | Audio type is not supported, is deprecated, or the `audio_type` is malformed. |
         | `invalid_output_format` | Output format is not supported, is deprecated, or the `output_format` is malformed. |
         | `not_authorised` | User was not recognised, or the API key provided is not valid. |
-        | `insufficient_funds` | User doesn't have enough credits or any other reason preventing the user to be charged for the job properly. |
         | `not_allowed` | User is not allowed to use this message (is not allowed to perform the action the message would invoke). |
         | `job_error` | Unable to do any work on this job, the server might have timed out etc. |
-        | `data_error` | Unable to accept the data specified - usually because there is too much data being sent at once |
-        | `buffer_error` | Unable to fit the data in a corresponding buffer. This can happen for clients sending the input data faster than real-time. |
         | `protocol_error` | Message received was syntactically correct, but could not be accepted due to protocol limitations. This is usually caused by messages sent in the wrong order. |
         | `quota_exceeded` | Maximum number of concurrent connections allowed for the contract has been reached |
         | `timelimit_exceeded` | Usage quota for the contract has been reached |
         | `idle_timeout` | Idle duration limit was reached (no audio data sent within the last hour), a closing handshake with code 1008 follows this in-band error. |
         | `session_timeout` | Max session duration was reached (maximum session duration of 48 hours), a closing handshake with code 1008 follows this in-band error. |
-        | `session_transfer` | An error while transferring session to another backend with the reason: Session transfer failed. This may occur when moving sessions due to backend maintenance operations or migration from a faulty backend. |
         | `unknown_error` | An error that did not fit any of the types above. |
 
         :::info
@@ -1234,25 +1276,21 @@ components:
         `invalid_message`, `protocol_error` and `unknown_error` can be triggered as a response to any type of messages.
 
         :::
-
       enum:
         - invalid_message
         - invalid_model
+        - invalid_language
         - invalid_config
         - invalid_audio_type
         - invalid_output_format
         - not_authorised
-        - insufficient_funds
         - not_allowed
         - job_error
-        - data_error
-        - buffer_error
         - protocol_error
         - quota_exceeded
         - timelimit_exceeded
         - idle_timeout
         - session_timeout
-        - session_transfer
         - unknown_error
     AudioEventStartData:
       type: object

@@ -1,2 +1,2 @@
-type RecognitionResultTypeEnum = 'word' | 'punctuation';
+type RecognitionResultTypeEnum = 'word' | 'punctuation' | 'entity';
 export type { RecognitionResultTypeEnum };

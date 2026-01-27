@@ -7,5 +7,6 @@ interface RecognitionStarted {
    * Properties of the language pack.
    */
   language_pack_info?: LanguagePackInfo;
+  channel_ids?: string[];
 }
 export type { RecognitionStarted };

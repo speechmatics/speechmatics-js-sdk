@@ -1,4 +1,4 @@
-import type { AdditionalVocabObject } from './AdditionalVocabObject';
+import type { ObjectType } from './ObjectType';
 import type { DiarizationConfig } from './DiarizationConfig';
 import type { MaxDelayModeConfig } from './MaxDelayModeConfig';
 import type { SpeakerDiarizationConfig } from './SpeakerDiarizationConfig';
@@ -26,7 +26,7 @@ interface TranscriptionConfig {
   /**
    * Configure [custom dictionary](https://docs.speechmatics.com/speech-to-text/features/custom-dictionary). Default is an empty list. You should be aware that there is a performance penalty (latency degradation and memory increase) from using `additional_vocab`, especially if you use a large word list. When initializing a session that uses `additional_vocab` in the config, you should expect a delay of up to 15 seconds (depending on the size of the list).
    */
-  additional_vocab?: (string | AdditionalVocabObject)[];
+  additional_vocab?: (string | ObjectType)[];
   /**
    * Set to `speaker` to apply [Speaker Diarization](https://docs.speechmatics.com/speech-to-text/features/diarization) to the audio.
    */
@@ -63,5 +63,6 @@ interface TranscriptionConfig {
    * This mode will detect when a speaker has stopped talking. The `end_of_utterance_silence_trigger` is the time in seconds after which the server will assume that the speaker has finished speaking, and will emit an `EndOfUtterance` message. A value of 0 disables the feature.
    */
   conversation_config?: ConversationConfig;
+  channel_diarization_labels?: string[];
 }
 export type { TranscriptionConfig };
