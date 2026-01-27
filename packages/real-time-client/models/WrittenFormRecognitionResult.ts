@@ -7,9 +7,6 @@ interface WrittenFormRecognitionResult {
   alternatives: RecognitionAlternative[];
   end_time: number;
   start_time: number;
-  /**
-   * What kind of object this is. See #/Definitions/RecognitionResult for definitions of the enums.
-   */
   type: WrittenFormRecognitionResultTypeEnum;
 }
 export type { WrittenFormRecognitionResult };

@@ -878,13 +878,14 @@ components:
     VocabWord:
       oneOf:
         - type: string
+          description: Pass a non-empty string to add a single word to the dictionary.
           title: String
           minLength: 1
         - $ref: "#/components/schemas/AdditionalVocabObject"
     AdditionalVocabObject:
       type: object
+      description: Pass an object to add a single word to the dictionary, with an array of words which it sounds like.
       title: Object
-      name: AdditionalVocabObject
       properties:
         content:
           type: string
@@ -1126,6 +1127,15 @@ components:
         - word
         - punctuation
         - entity
+    SpokenFormRecognitionResultTypeEnum:
+      type: string
+      enum:
+        - word
+        - punctuation
+    WrittenFormRecognitionResultTypeEnum:
+      type: string
+      enum:
+        - word
     AttachesToEnum:
       type: string
       enum:
@@ -1201,16 +1211,6 @@ components:
         - type
         - alternatives
       type: object
-    SpokenFormRecognitionResultTypeEnum:
-      type: string
-      enum: [word, punctuation]
-      description: |
-        What kind of object this is. See #/Definitions/RecognitionResult for definitions of the enums.
-    WrittenFormRecognitionResultTypeEnum:
-      type: string
-      enum: [word]
-      description: |
-        What kind of object this is. See #/Definitions/RecognitionResult for definitions of the enums.
     InfoTypeEnum:
       type: string
       description: |
