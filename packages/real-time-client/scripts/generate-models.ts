@@ -98,11 +98,11 @@ async function clearModels(): Promise<void> {
 }
 
 export async function generate(): Promise<void> {
-  const realtimeSpec = await readFile(
-    `${packageDir}/schema/realtime.yml`,
-    'utf-8',
+  const realtimeSpec = await fetch(
+    'https://raw.githubusercontent.com/speechmatics/docs/refs/heads/main/spec/realtime.yaml',
   );
-  const parsed = parse(realtimeSpec);
+  const realtimeSpecText = await realtimeSpec.text();
+  const parsed = parse(realtimeSpecText);
 
   const models = await generator.generateCompleteModels(parsed, {
     exportType: 'named',
