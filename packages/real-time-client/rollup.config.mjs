@@ -44,6 +44,24 @@ export default function rollup() {
     ],
   };
 
+  const minified = {
+    plugins: [
+      esbuild({
+        minify: true,
+        optimizeDeps: {
+          include: ['typescript-event-target'],
+        },
+      }),
+    ],
+    input: 'src/index.ts',
+    output: {
+      file: packageJSON.module.replace(/\.js$/, '.min.js'),
+      name: 'BrowserAudioInput',
+      format: 'umd',
+      strict: false,
+    },
+  };
+
   const typeDefinitions = {
     plugins: [
       dts({
