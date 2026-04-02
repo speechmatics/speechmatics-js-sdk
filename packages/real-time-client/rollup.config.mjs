@@ -76,5 +76,5 @@ export default function rollup() {
     },
   };
 
-  return [browserESM, nodeCJS, typeDefinitions];
+  return [browserESM, nodeCJS, minified, typeDefinitions];
 }
