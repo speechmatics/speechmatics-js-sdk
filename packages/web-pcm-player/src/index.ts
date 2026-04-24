@@ -14,6 +14,7 @@ export class PCMPlayer extends TypedEventTarget<{
   private playbackTime = 0;
   private gainNode: GainNode;
   private _analyser: AnalyserNode;
+  private scheduledSources: AudioBufferSourceNode[] = [];
 
   constructor(private audioContext: AudioContext) {
     super();
@@ -49,6 +50,11 @@ export class PCMPlayer extends TypedEventTarget<{
 
     source.connect(this.gainNode);
     source.start(this.playbackTime);
+    this.scheduledSources.push(source);
+    source.onended = () => {
+      const index = this.scheduledSources.indexOf(source);
+      if (index > -1) this.scheduledSources.splice(index, 1);
+    };
 
     this.playbackTime += audioBuffer.duration;
   }
@@ -64,6 +70,14 @@ export class PCMPlayer extends TypedEventTarget<{
 
   get analyser() {
     return this._analyser;
+  }
+
+  interrupt() {
+    for (const source of this.scheduledSources) {
+      source.stop();
+    }
+    this.scheduledSources = [];
+    this.playbackTime = this.audioContext.currentTime;
   }
 }
 
