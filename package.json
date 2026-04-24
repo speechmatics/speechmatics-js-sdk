@@ -19,7 +19,7 @@
     "lint:check": "biome lint .",
 
     "build:packages": "pnpm --filter '{packages/*}' build",
-    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public"
+    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public --provenance"
   },
   "keywords": [],
   "author": "",
