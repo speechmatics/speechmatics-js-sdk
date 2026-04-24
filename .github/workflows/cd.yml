@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - fix-trusted-publish
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,20 +14,26 @@ jobs:
       matrix:
         node-version: [22]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          registry-url: 'https://registry.npmjs.org'
+      - name: Configure npm registry
+        run: echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
       - name: Install dependencies
         run: pnpm recursive install
       - name: Build packages
         run: pnpm build:packages
+      - name: Install npm 11
+        run: npm install -g npm@11
       - name: Publish all packages
+        env:
+          # Empty token ensures we use more secure OIDC exchange
+          NODE_AUTH_TOKEN: ""
         run: pnpm publish:packages
