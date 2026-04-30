@@ -25,7 +25,7 @@ export function FlowProvider({
     if (data.message === 'Error') {
       console.error(data);
     } else if (data.message === 'ConversationStarted') {
-      setSessionId(data.asr_session_id);
+      setSessionId(data.id);
     }
   });
 
