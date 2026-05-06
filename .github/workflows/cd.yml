@@ -4,29 +4,29 @@ on:
     branches:
       - main
 jobs:
-  build:
+  publish:
+    name: Publish to NPM
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    strategy:
-      matrix:
-        node-version: [22]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Use Node.js version from .nvmrc
+        uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version-file: .nvmrc
           cache: "pnpm"
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://registry.npmjs.org/'
       - name: Install dependencies
-        run: pnpm recursive install
+        run: pnpm install --frozen-lockfile
       - name: Build packages
         run: pnpm build:packages
       - name: Publish all packages
+        env:
+          NPM_CONFIG_PROVENANCE: true
         run: pnpm publish:packages
