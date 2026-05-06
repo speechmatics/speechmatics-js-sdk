@@ -28,4 +28,6 @@ jobs:
       - name: Build packages
         run: pnpm build:packages
       - name: Publish all packages
+        env:
+          NPM_CONFIG_PROVENANCE: true
         run: pnpm publish:packages

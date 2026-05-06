@@ -7,6 +7,10 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "engineStrict": true,
   "scripts": {
     "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
