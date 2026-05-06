@@ -11,6 +11,10 @@
     "access": "public",
     "provenance": true
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/speechmatics/speechmatics-js-sdk.git"
+  },
   "engineStrict": true,
   "scripts": {
     "clean:deps": "rm -rf node_modules && pnpm -r exec rm -rf node_modules",
