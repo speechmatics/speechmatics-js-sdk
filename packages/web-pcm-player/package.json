@@ -10,7 +10,14 @@
   "files": ["dist/", "README.md"],
   "module": "dist/index.js",
   "type": "module",
-  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/web-pcm-player",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/speechmatics/speechmatics-js-sdk.git"
+  },
   "scripts": {
     "build": "rm -rf dist/ && pnpm rollup -c",
     "prepare": "pnpm build"
