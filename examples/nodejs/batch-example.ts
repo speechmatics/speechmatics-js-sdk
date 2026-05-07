@@ -8,23 +8,23 @@
  * NOTE: This script is run as an ES Module via tsx, letting us use top-level await.
  * The library also works with CommonJS, but the code would need to be wrapped in an async function.
  */
-import { BatchClient } from "@speechmatics/batch-client";
-import { openAsBlob } from "node:fs";
-import dotenv from "dotenv";
+import { BatchClient } from '@speechmatics/batch-client';
+import { openAsBlob } from 'node:fs';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const apiKey = process.env.SPEECHMATICS_API_KEY;
 if (!apiKey) {
-  throw new Error("Please set SPEECHMATICS_API_KEY in the .env file");
+  throw new Error('Please set SPEECHMATICS_API_KEY in the .env file');
 }
 
-const client = new BatchClient({ apiKey, appId: "nodeJS-example" });
+const client = new BatchClient({ apiKey, appId: 'nodeJS-example' });
 
-console.log("Sending file for transcription...");
+console.log('Sending file for transcription...');
 
-const blob = await openAsBlob("./example.wav");
-const file = new File([blob], "example.wav");
+const blob = await openAsBlob('./example.wav');
+const file = new File([blob], 'example.wav');
 
 const response = await client.transcribe(
   // You can pass a File object...
@@ -37,18 +37,18 @@ const response = await client.transcribe(
   // },
   {
     transcription_config: {
-      language: "en",
-      operating_point: "enhanced",
+      language: 'en',
+      operating_point: 'enhanced',
     },
   },
-  "json-v2"
+  'json-v2',
 );
 
-console.log("Transcription finished!");
+console.log('Transcription finished!');
 
 console.log(
   // Transcripts can be strings when the 'txt' format is chosen
-  typeof response === "string"
+  typeof response === 'string'
     ? response
-    : response.results.map((r) => r.alternatives?.[0].content).join(" ")
+    : response.results.map((r) => r.alternatives?.[0].content).join(' '),
 );

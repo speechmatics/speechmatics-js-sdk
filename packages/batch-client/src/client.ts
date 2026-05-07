@@ -174,9 +174,13 @@ export class BatchClient {
   ): Promise<RetrieveObjectUrlsResponse> {
     const params = {
       ttl,
-      url_for: urlFor.join(","),
+      url_for: urlFor.join(','),
     };
-    return this.get(`/v2/jobs/${jobId}/object-urls`, "application/json", params);
+    return this.get(
+      `/v2/jobs/${jobId}/object-urls`,
+      'application/json',
+      params,
+    );
   }
 }
 
