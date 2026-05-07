@@ -803,11 +803,7 @@ paths:
           required: true
           type: array
           items:
-            type: string
-            enum:
-              - data
-              - audio_mp3
-              - transcript
+            $ref: "#/definitions/ObjectUrlForEnum"
       responses:
         "200":
           description: OK
@@ -2596,6 +2592,13 @@ definitions:
       transcript:
         type: string
     title: RetrieveObjectUrlsResponse
+  ObjectUrlForEnum:
+    type: string
+    enum:
+      - data
+      - audio_mp3
+      - transcript
+    title: ObjectUrlForEnum
   SpeakersInputItem:
     type: object
     properties:

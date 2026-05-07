@@ -9,6 +9,7 @@ import type { TranscriptionConfig } from '../models/transcription-config';
 import type { BatchFeatureDiscovery } from './features';
 import { type QueryParams, request, SM_APP_PARAM_NAME } from './request';
 import { poll } from './poll';
+import type { ObjectUrlForEnum, RetrieveObjectUrlsResponse } from '../models';
 
 export class BatchClient {
   public apiKey: string;
@@ -164,6 +165,18 @@ export class BatchClient {
 
   async getFeatureDiscovery(): Promise<BatchFeatureDiscovery> {
     return this.get('/v1/discovery/features');
+  }
+
+  async getObjectURLs(
+    jobId: string,
+    ttl: number,
+    urlFor: ObjectUrlForEnum[],
+  ): Promise<RetrieveObjectUrlsResponse> {
+    const params = {
+      ttl,
+      url_for: urlFor.join(","),
+    };
+    return this.get(`/v2/jobs/${jobId}/object-urls`, "application/json", params);
   }
 }
 
