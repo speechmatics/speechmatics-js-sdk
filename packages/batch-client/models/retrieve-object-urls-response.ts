@@ -15,31 +15,25 @@
 /**
  *
  * @export
- * @interface Chapter
+ * @interface RetrieveObjectUrlsResponse
  */
-export interface Chapter {
+export interface RetrieveObjectUrlsResponse {
   /**
-   * The auto-generated title for the chapter
+   *
    * @type {string}
-   * @memberof Chapter
+   * @memberof RetrieveObjectUrlsResponse
    */
-  title?: string;
+  data?: string;
   /**
-   * An auto-generated paragraph-style, short summary of the chapter
+   *
    * @type {string}
-   * @memberof Chapter
+   * @memberof RetrieveObjectUrlsResponse
    */
-  summary?: string;
+  audio_mp3?: string;
   /**
-   * The start time of the chapter in the audio file
-   * @type {number}
-   * @memberof Chapter
+   *
+   * @type {string}
+   * @memberof RetrieveObjectUrlsResponse
    */
-  start_time?: number;
-  /**
-   * The end time of the chapter in the audio file
-   * @type {number}
-   * @memberof Chapter
-   */
-  end_time?: number;
+  transcript?: string;
 }

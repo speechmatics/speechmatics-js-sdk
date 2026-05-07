@@ -13,19 +13,19 @@
  */
 
 /**
- * Configuration for applying filtering to the transcription
+ * Configuration for applying filtering to the transcription.
  * @export
  * @interface TranscriptionConfigTranscriptFilteringConfig
  */
 export interface TranscriptionConfigTranscriptFilteringConfig {
   /**
-   * If true, words that are identified as disfluencies will be removed from the transcript. If false (default), they are tagged in the transcript as \'disfluency\'.
+   * If true, words identified as disfluencies (e.g., \'um\', \'uh\') will be removed from the transcript. If false (default), they are tagged in the transcript as \'disfluency\'.
    * @type {boolean}
    * @memberof TranscriptionConfigTranscriptFilteringConfig
    */
   remove_disfluencies?: boolean;
   /**
-   * A list of replacements to apply to the transcript. Each replacement is a pair of strings, where the first string is the pattern to be replaced and the second string is the replacement text.
+   * An array of objects defining custom replacements. Each replacement contains a pair of strings: the text to find (\"from:\") and the text to replace it with (\"to:\").
    * @type {Array<object>}
    * @memberof TranscriptionConfigTranscriptFilteringConfig
    */

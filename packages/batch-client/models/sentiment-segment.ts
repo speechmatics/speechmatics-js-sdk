@@ -19,43 +19,43 @@
  */
 export interface SentimentSegment {
   /**
-   *
+   * Represents the transcript of the analysed segment
    * @type {string}
    * @memberof SentimentSegment
    */
   text?: string;
   /**
-   *
-   * @type {number}
-   * @memberof SentimentSegment
-   */
-  start_time?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SentimentSegment
-   */
-  end_time?: number;
-  /**
-   *
+   * The assigned sentiment to the segment, which can be positive, neutral or negative
    * @type {string}
    * @memberof SentimentSegment
    */
   sentiment?: string;
   /**
-   *
+   * The timestamp corresponding to the beginning of the transcription segment
+   * @type {number}
+   * @memberof SentimentSegment
+   */
+  start_time?: number;
+  /**
+   * The timestamp corresponding to the end of the transcription segment
+   * @type {number}
+   * @memberof SentimentSegment
+   */
+  end_time?: number;
+  /**
+   * The speaker label for the segment, if speaker diarization is enabled
    * @type {string}
    * @memberof SentimentSegment
    */
   speaker?: string;
   /**
-   *
+   * The channel label for the segment, if channel diarization is enabled
    * @type {string}
    * @memberof SentimentSegment
    */
   channel?: string;
   /**
-   *
+   * A confidence score in the range of 0-1
    * @type {number}
    * @memberof SentimentSegment
    */

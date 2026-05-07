@@ -13,19 +13,19 @@
  */
 
 /**
- *
+ * Configuration options for summarization.
  * @export
  * @interface SummarizationConfig
  */
 export interface SummarizationConfig {
   /**
-   *
+   * Choose from three options: - `conversational` - Best suited for dialogues involving multiple participants, such as calls, meetings or discussions. It focuses on summarizing key points of the conversation. - `informative` - Recommended for more structured information delivered by one or more people, making it ideal for videos, podcasts, lectures, and presentations. - `auto` - Automatically selects the most appropriate content type based on an analysis of the transcript.
    * @type {string}
    * @memberof SummarizationConfig
    */
   content_type?: SummarizationConfigContentTypeEnum;
   /**
-   *
+   * Determines the depth of the summary: - `brief` - Provides a succinct summary, condensing the content into just a few sentences. - `detailed` - Provide a longer, structured summary. For _conversational_ content, it includes key topics and a summary of the entire conversation. For _informative_ content, it logically divides the audio into sections and provides a summary for each.
    * @type {string}
    * @memberof SummarizationConfig
    */

@@ -71,6 +71,12 @@ export interface RecognitionMetadata {
    */
   transcription_config?: TranscriptionConfig;
   /**
+   * The engine version used to generate transcription output.
+   * @type {string}
+   * @memberof RecognitionMetadata
+   */
+  orchestrator_version?: string;
+  /**
    * List of errors that occurred in the translation stage.
    * @type {Array<TranslationError>}
    * @memberof RecognitionMetadata
