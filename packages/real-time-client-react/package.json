@@ -6,6 +6,7 @@
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "files": ["dist/", "src/", "README.md"],
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/real-time-client-react",
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
     "prepare": "pnpm build",
