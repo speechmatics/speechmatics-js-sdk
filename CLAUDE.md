@@ -7,7 +7,7 @@ This file describes the repository structure, conventions, and common workflows 
 Monorepo containing official Speechmatics JavaScript/TypeScript libraries, published to NPM under the `@speechmatics` scope.
 
 - **Package manager**: pnpm v9.15.4 (via Corepack)
-- **Node version**: ≥ 22 (see `.nvmrc`)
+- **Node version**: ≥ 24 (see `.nvmrc`)
 - **Build tool**: Rollup + esbuild (TypeScript via `rollup-plugin-esbuild`, types via `rollup-plugin-dts`)
 - **Linter / formatter**: Biome v1.9.4 (replaces ESLint + Prettier)
 - **Versioning / changelogs**: `@changesets/cli`
