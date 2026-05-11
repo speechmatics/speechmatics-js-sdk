@@ -6,6 +6,7 @@
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "files": ["dist/", "README.md"],
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/auth",
   "scripts": {
     "build": "rm -rf dist && rollup -c",
     "prepare": "pnpm build",

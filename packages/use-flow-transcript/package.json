@@ -8,6 +8,7 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/use-flow-transcript",
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../real-time-client build && pnpm rollup -c",
     "prepare": "pnpm build",
