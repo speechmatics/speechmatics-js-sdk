@@ -15,31 +15,19 @@
 /**
  *
  * @export
- * @interface Chapter
+ * @interface SpeakersResultItem
  */
-export interface Chapter {
+export interface SpeakersResultItem {
   /**
-   * The auto-generated title for the chapter
+   * Speaker label.
    * @type {string}
-   * @memberof Chapter
+   * @memberof SpeakersResultItem
    */
-  title?: string;
+  label: string;
   /**
-   * An auto-generated paragraph-style, short summary of the chapter
-   * @type {string}
-   * @memberof Chapter
+   *
+   * @type {Set<string>}
+   * @memberof SpeakersResultItem
    */
-  summary?: string;
-  /**
-   * The start time of the chapter in the audio file
-   * @type {number}
-   * @memberof Chapter
-   */
-  start_time?: number;
-  /**
-   * The end time of the chapter in the audio file
-   * @type {number}
-   * @memberof Chapter
-   */
-  end_time?: number;
+  speaker_identifiers: Set<string>;
 }

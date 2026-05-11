@@ -35,6 +35,9 @@ import type { RetrieveTranscriptResponseAudioEventSummary } from './retrieve-tra
 import type { SentimentAnalysisResult } from './sentiment-analysis-result';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { SpeakersResultItem } from './speakers-result-item';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { SummarizationResult } from './summarization-result';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -73,6 +76,12 @@ export interface RetrieveTranscriptResponse {
    * @memberof RetrieveTranscriptResponse
    */
   results: Array<RecognitionResult>;
+  /**
+   * List of unique speaker identifiers detected in the transcript.
+   * @type {Array<SpeakersResultItem>}
+   * @memberof RetrieveTranscriptResponse
+   */
+  speakers?: Array<SpeakersResultItem>;
   /**
    * Translations of the transcript into other languages. It is a map of ISO language codes to arrays of translated sentences. Configured using `translation_config`.
    * @type {{ [key: string]: Array<TranslationSentence>; }}

@@ -20,6 +20,9 @@ import type { OperatingPoint } from './operating-point';
 import type { TranscriptionConfigAdditionalVocabInner } from './transcription-config-additional-vocab-inner';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { TranscriptionConfigAudioFilteringConfig } from './transcription-config-audio-filtering-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { TranscriptionConfigPunctuationOverrides } from './transcription-config-punctuation-overrides';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -94,6 +97,12 @@ export interface TranscriptionConfig {
    * @memberof TranscriptionConfig
    */
   max_delay_mode?: TranscriptionConfigMaxDelayModeEnum;
+  /**
+   *
+   * @type {TranscriptionConfigAudioFilteringConfig}
+   * @memberof TranscriptionConfig
+   */
+  audio_filtering_config?: TranscriptionConfigAudioFilteringConfig;
   /**
    *
    * @type {TranscriptionConfigTranscriptFilteringConfig}
