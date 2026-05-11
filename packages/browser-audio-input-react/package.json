@@ -7,6 +7,7 @@
   "module": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "files": ["dist/", "README.md"],
+  "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/browser-audio-input-react",
   "scripts": {
     "build": "rm -rf dist/ && pnpm -C ../browser-audio-input build && pnpm rollup -c",
     "prepare": "pnpm build",
