@@ -211,6 +211,12 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     jwt: string,
     config: RealtimeTranscriptionConfig,
   ): Promise<RecognitionStarted> {
+    if (config.transcription_config?.operating_point) {
+      console.warn(
+        '[Speechmatics] transcription_config.operating_point is deprecated. Use transcription_config.model instead.',
+      );
+    }
+
     await this.connect(jwt);
 
     const waitForRecognitionStarted = new Promise<RecognitionStarted>(

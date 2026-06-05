@@ -14,6 +14,7 @@ export * from './AudioFilteringConfig';
 export * from './TranscriptFilteringConfig';
 export * from './WordReplacementItem';
 export * from './OperatingPoint';
+export * from './Model';
 export * from './PunctuationOverrides';
 export * from './ConversationConfig';
 export * from './TranslationConfig';

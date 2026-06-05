@@ -5,6 +5,7 @@ import type { SpeakerDiarizationConfig } from './SpeakerDiarizationConfig';
 import type { AudioFilteringConfig } from './AudioFilteringConfig';
 import type { TranscriptFilteringConfig } from './TranscriptFilteringConfig';
 import type { OperatingPoint } from './OperatingPoint';
+import type { Model } from './Model';
 import type { PunctuationOverrides } from './PunctuationOverrides';
 import type { ConversationConfig } from './ConversationConfig';
 /**
@@ -52,9 +53,13 @@ interface TranscriptionConfig {
   enable_partials?: boolean;
   enable_entities?: boolean;
   /**
-   * Which model you wish to use. See [Operating points](http://docs.speechmatics.com/speech-to-text/#operating-points) for more details.
+   * @deprecated **Deprecated**: Kept for backward compatibility only. Use `model` instead going forward.
    */
   operating_point?: OperatingPoint;
+  /**
+   * Which model you wish to use. See [Operating points](http://docs.speechmatics.com/speech-to-text/#models) for more details.
+   */
+  model?: Model;
   /**
    * Options for controlling punctuation in the output transcripts. See [Punctuation Settings](https://docs.speechmatics.com/speech-to-text/formatting#punctuation)
    */

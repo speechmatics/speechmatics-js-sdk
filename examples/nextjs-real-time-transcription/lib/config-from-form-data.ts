@@ -14,7 +14,7 @@ export function configFromFormData(
     transcription_config: {
       language,
       max_delay: 1,
-      operating_point: 'enhanced',
+      model: 'enhanced',
       enable_partials: true,
     },
   };

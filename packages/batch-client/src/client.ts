@@ -102,6 +102,12 @@ export class BatchClient {
     input: JobInput,
     jobConfig: CreateJobConfig,
   ): Promise<CreateJobResponse> {
+    if (jobConfig.transcription_config?.operating_point) {
+      console.warn(
+        '[Speechmatics] transcription_config.operating_point is deprecated. Use transcription_config.model instead.',
+      );
+    }
+
     const config: JobConfig = {
       ...jobConfig,
       type: 'transcription',

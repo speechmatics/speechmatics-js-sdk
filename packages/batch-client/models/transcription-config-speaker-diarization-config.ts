@@ -23,7 +23,7 @@ import type { SpeakersInputItem } from './speakers-input-item';
  */
 export interface TranscriptionConfigSpeakerDiarizationConfig {
   /**
-   * If true, the algorithm will prefer to stay with the current active speaker if it is a close enough match, even if other speakers may be closer.  This is useful for cases where we can flip incorrectly between similar speakers during a single speaker section.\"
+   * If true, the algorithm will prefer to stay with the current active speaker if it is a close enough match, even if other speakers may be closer.  This is useful for cases where we can flip incorrectly between similar speakers during a single speaker section.
    * @type {boolean}
    * @memberof TranscriptionConfigSpeakerDiarizationConfig
    */

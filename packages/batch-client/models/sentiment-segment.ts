@@ -54,10 +54,4 @@ export interface SentimentSegment {
    * @memberof SentimentSegment
    */
   channel?: string;
-  /**
-   * A confidence score in the range of 0-1
-   * @type {number}
-   * @memberof SentimentSegment
-   */
-  confidence?: number;
 }
