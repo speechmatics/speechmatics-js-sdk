@@ -64,9 +64,8 @@ export const ErrorResponseErrorEnum = {
   RequestedProductNotAvailable: 'Requested product not available',
   TranscriptionNotReady: 'Transcription not ready',
   LogFileNotAvailable: 'Log file not available',
-  RequestedEarlyAccessReleaseNotAvailable:
-    'Requested Early Access Release not available',
   UnprocessableEntity: 'Unprocessable Entity',
+  MaxConcurrentRunningJobsExceeded: 'Max concurrent running jobs exceeded',
 } as const;
 
 export type ErrorResponseErrorEnum =

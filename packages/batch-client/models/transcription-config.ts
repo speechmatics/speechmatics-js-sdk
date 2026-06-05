@@ -14,6 +14,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { Model } from './model';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { OperatingPoint } from './operating-point';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -44,7 +47,7 @@ export interface TranscriptionConfig {
    */
   language: string;
   /**
-   * Request a specialized model based on \'language\' but optimized for a particular field, e.g. \"finance\" or \"medical\".
+   * Request a specialized model based on \'language\' but optimized for a particular field, e.g. \'finance\' or \'medical\'.
    * @type {string}
    * @memberof TranscriptionConfig
    */
@@ -57,8 +60,15 @@ export interface TranscriptionConfig {
   output_locale?: string;
   /**
    *
+   * @type {Model}
+   * @memberof TranscriptionConfig
+   */
+  model?: Model;
+  /**
+   *
    * @type {OperatingPoint}
    * @memberof TranscriptionConfig
+   * @deprecated: Use `model` instead. This property is only kept for backward compatability, and may be removed in the future.
    */
   operating_point?: OperatingPoint;
   /**

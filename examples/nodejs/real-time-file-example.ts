@@ -54,7 +54,7 @@ await client.start(jwt, {
   transcription_config: {
     language: 'en',
     enable_partials: true,
-    operating_point: 'enhanced',
+    model: 'enhanced',
     transcript_filtering_config: {
       remove_disfluencies: true,
       replacements: [{ from: 'hello', to: 'hi' }],

@@ -71,12 +71,6 @@ export interface RecognitionMetadata {
    */
   transcription_config?: TranscriptionConfig;
   /**
-   * The engine version used to generate transcription output.
-   * @type {string}
-   * @memberof RecognitionMetadata
-   */
-  orchestrator_version?: string;
-  /**
    * List of errors that occurred in the translation stage.
    * @type {Array<TranslationError>}
    * @memberof RecognitionMetadata
@@ -130,4 +124,10 @@ export interface RecognitionMetadata {
    * @memberof RecognitionMetadata
    */
   language_identification?: LanguageIdentificationResult;
+  /**
+   * Orchestrator version in PEP 440 Format or set to \'version_not_found\' as default.
+   * @type {string}
+   * @memberof RecognitionMetadata
+   */
+  orchestrator_version?: string;
 }

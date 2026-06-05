@@ -19,6 +19,7 @@ export * from './language-identification-result-alternative';
 export * from './language-identification-result-item';
 export * from './language-identification-result';
 export * from './language-pack-info';
+export * from './model';
 export * from './notification-config';
 export * from './object-url-for-enum';
 export * from './operating-point';

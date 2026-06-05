@@ -2,7 +2,6 @@
 
 import { dirname } from 'node:path';
 import {
-  TS_DESCRIPTION_PRESET,
   typeScriptDefaultModelNameConstraints,
   TypeScriptGenerator,
 } from '@asyncapi/modelina';
@@ -10,6 +9,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { rm } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { exec } from 'node:child_process';
+import { TS_DESCRIPTION_PRESET } from './description';
 
 const packageDir = `${dirname(require.main?.filename ?? '')}/..`;
 const rootDir = `${packageDir}/../..`;
@@ -98,8 +98,9 @@ async function clearModels(): Promise<void> {
 }
 
 export async function generate(): Promise<void> {
+  const branch = process.env.GITHUB_HEAD_REF ?? 'main';
   const realtimeSpec = await fetch(
-    'https://raw.githubusercontent.com/speechmatics/docs/refs/heads/main/spec/realtime.yaml',
+    `https://raw.githubusercontent.com/speechmatics/docs/refs/heads/${branch}/spec/realtime.yaml`,
   );
   const realtimeSpecText = await realtimeSpec.text();
   const parsed = parse(realtimeSpecText);

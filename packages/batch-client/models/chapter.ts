@@ -37,7 +37,7 @@ export interface Chapter {
    */
   start_time?: number;
   /**
-   * The end time of the chapter in the audio file
+   *
    * @type {number}
    * @memberof Chapter
    */
