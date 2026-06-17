@@ -57,7 +57,7 @@ interface TranscriptionConfig {
    */
   operating_point?: OperatingPoint;
   /**
-   * Which model you wish to use. See [Operating points](http://docs.speechmatics.com/speech-to-text/#models) for more details.
+   * Which model you wish to use. See [Models](http://docs.speechmatics.com/speech-to-text/models) for more details.
    */
   model?: Model;
   /**

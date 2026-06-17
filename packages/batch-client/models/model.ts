@@ -21,6 +21,7 @@
 export const Model = {
   Standard: 'standard',
   Enhanced: 'enhanced',
+  Melia1: 'melia-1',
 } as const;
 
 export type Model = (typeof Model)[keyof typeof Model];
