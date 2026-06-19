@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/batch-client",
-  "version": "5.4.1",
+  "version": "5.4.2",
   "description": "Javascript client for the Speechmatics batch jobs API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

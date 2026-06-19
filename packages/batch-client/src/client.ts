@@ -21,7 +21,7 @@ export class BatchClient {
     appId,
   }: { apiKey: string; apiUrl?: string; appId: string }) {
     this.apiKey = apiKey;
-    this.apiUrl = apiUrl ?? 'https://asr.api.speechmatics.com/v2';
+    this.apiUrl = apiUrl ?? 'https://asr.api.speechmatics.com';
     this.appId = appId;
   }
 
