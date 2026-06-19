@@ -28,7 +28,16 @@ export async function request<T>(
     body: payload,
   };
 
+<<<<<<< HEAD
   let fullUrl = getFullURL(path, baseURL, params);
+=======
+  // Add sdk information as url query parameter
+  let fullUrl = getFullURL(path, baseURL).href;
+  fullUrl = addSDKInfoToRequestUrl(fullUrl);
+  if (params) {
+    fullUrl = addQueryParamsToUrl(fullUrl, params);
+  }
+>>>>>>> main
 
   let response: Response;
   try {
@@ -69,6 +78,7 @@ export async function request<T>(
   return result;
 }
 
+<<<<<<< HEAD
 // This function adds SDK version query params
 // and ensures we respect subpaths of custom base URLs
 // (see https://github.com/speechmatics/speechmatics-js-sdk/issues/209)
@@ -83,6 +93,14 @@ export function getFullURL(path: string, base: string, params?: QueryParams) {
   }
 
   return fullUrl;
+=======
+// This function ensures we respect subpaths of custom base URLs
+// https://github.com/speechmatics/speechmatics-js-sdk/issues/209
+function getFullURL(path: string, base: string) {
+  const baseURL = new URL(base);
+  const joined = `${baseURL.pathname.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+  return new URL(joined, baseURL.origin);
+>>>>>>> main
 }
 
 export const SM_SDK_PARAM_NAME = 'sm-sdk';
