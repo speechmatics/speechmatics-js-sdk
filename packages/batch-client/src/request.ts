@@ -28,7 +28,7 @@ export async function request<T>(
     body: payload,
   };
 
-  let fullUrl = getFullURL(path, baseURL, params);
+  const fullUrl = getFullURL(path, baseURL, params);
 
   let response: Response;
   try {
