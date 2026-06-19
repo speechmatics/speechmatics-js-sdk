@@ -28,16 +28,7 @@ export async function request<T>(
     body: payload,
   };
 
-<<<<<<< HEAD
   let fullUrl = getFullURL(path, baseURL, params);
-=======
-  // Add sdk information as url query parameter
-  let fullUrl = getFullURL(path, baseURL).href;
-  fullUrl = addSDKInfoToRequestUrl(fullUrl);
-  if (params) {
-    fullUrl = addQueryParamsToUrl(fullUrl, params);
-  }
->>>>>>> main
 
   let response: Response;
   try {
