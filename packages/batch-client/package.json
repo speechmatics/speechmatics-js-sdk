@@ -10,7 +10,8 @@
   "scripts": {
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c",
-    "prepare": "pnpm build"
+    "prepare": "pnpm build",
+    "test": "node --import ./test/setup.ts --import tsx ./test/index.test.ts"
   },
   "keywords": [
     "speech",
