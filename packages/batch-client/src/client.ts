@@ -45,6 +45,7 @@ export class BatchClient {
     endpoint: string,
     body: FormData | null = null,
     contentType?: string,
+    extraHeaders?: Record<string, string>,
   ): Promise<T> {
     return await request(
       this.apiKey,
@@ -54,6 +55,7 @@ export class BatchClient {
       body,
       { [SM_APP_PARAM_NAME]: this.appId },
       contentType,
+      extraHeaders,
     );
   }
 
@@ -76,8 +78,13 @@ export class BatchClient {
     jobConfig: Parameters<typeof this.createTranscriptionJob>[1],
     format?: TranscriptionFormat,
     timeoutMS?: number,
+    options?: { parallelEngines?: number; userId?: string },
   ): Promise<RetrieveTranscriptResponse | string> {
-    const submitResponse = await this.createTranscriptionJob(input, jobConfig);
+    const submitResponse = await this.createTranscriptionJob(
+      input,
+      jobConfig,
+      options,
+    );
 
     if (submitResponse === null || submitResponse === undefined) {
       throw 'Error: submitResponse is undefined';
@@ -101,6 +108,7 @@ export class BatchClient {
   async createTranscriptionJob(
     input: JobInput,
     jobConfig: CreateJobConfig,
+    options?: { parallelEngines?: number; userId?: string },
   ): Promise<CreateJobResponse> {
     if (jobConfig.transcription_config?.operating_point) {
       console.warn(
@@ -123,7 +131,17 @@ export class BatchClient {
     }
     formData.append('config', JSON.stringify(config));
 
-    return this.post('/v2/jobs', formData);
+    const processingData: Record<string, unknown> = {};
+    if (options?.parallelEngines != null)
+      processingData.parallel_engines = options.parallelEngines;
+    if (options?.userId != null) processingData.user_id = options.userId;
+
+    const extraHeaders =
+      Object.keys(processingData).length > 0
+        ? { 'X-SM-Processing-Data': JSON.stringify(processingData) }
+        : undefined;
+
+    return this.post('/v2/jobs', formData, undefined, extraHeaders);
   }
 
   async listJobs(
