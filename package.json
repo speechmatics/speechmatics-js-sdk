@@ -22,12 +22,11 @@
     "clean": "pnpm clean:deps && pnpm clean:builds",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
-
     "format:check": "biome format .",
     "lint:check": "biome lint .",
-
     "build:packages": "pnpm --filter '{packages/*}' build",
-    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public --provenance"
+    "publish:packages": "pnpm --filter '{packages/*}' publish --access=public --provenance",
+    "knip": "knip"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +37,7 @@
     "@openapitools/openapi-generator-cli": "^2.13.5",
     "@types/node": "^22.5.2",
     "esbuild": "^0.23.1",
+    "knip": "^6.27.0",
     "rollup": "^4.21.2",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-esbuild": "^6.1.1",

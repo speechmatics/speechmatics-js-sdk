@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      // CLI tools invoked via commands, not imported, so knip can't see usage:
+      // changesets drives releases; openapi-generator regenerates RT models.
+      "ignoreDependencies": [
+        "@changesets/cli",
+        "@openapitools/openapi-generator-cli"
+      ]
+    },
+    "packages/real-time-client": {
+      // `ws` is injected into the bundle via @rollup/plugin-inject
+      // (WebSocket: ['ws', 'WebSocket']), which knip does not analyze.
+      "ignoreDependencies": ["ws"],
+      // `pnpm lint && pnpm format` inside generate-models.ts — these are pnpm
+      // scripts, which knip misreads as unresolved binaries.
+      "ignoreBinaries": ["lint", "format"]
+    },
+    "packages/browser-audio-input": {
+      // Provides the AudioWorkletProcessor / registerProcessor globals used by
+      // src/worklets/pcm-audio-worklet.ts (ambient types, no explicit import).
+      "ignoreDependencies": ["@types/audioworklet"]
+    }
+  }
+}

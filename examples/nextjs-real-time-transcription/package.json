@@ -14,8 +14,6 @@
     "@speechmatics/auth": "workspace:*",
     "@speechmatics/browser-audio-input": "workspace:*",
     "@speechmatics/browser-audio-input-react": "workspace:*",
-    "@speechmatics/flow-client": "workspace:*",
-    "@speechmatics/flow-client-react": "workspace:*",
     "@speechmatics/real-time-client-react": "workspace:*",
     "next": "16.2.10",
     "react": "19.0.0-rc-69d4b800-20241021",
