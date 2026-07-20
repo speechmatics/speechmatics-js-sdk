@@ -36,11 +36,34 @@ export default function rollup() {
     },
   };
 
+  // The worklet is consumed as an asset (a URL passed to
+  // `audioWorklet.addModule()`), not imported as a JS module. Emit a matching
+  // declaration so bundlers that resolve the `./pcm-audio-worklet.min.js`
+  // subpath as an asset (e.g. Turbopack `asset`, webpack `asset/resource`) get
+  // a typed string URL without consumers writing their own `declare module`.
+  /** @type {import("rollup").Plugin} */
+  const emitWorkletTypes = {
+    name: 'emit-worklet-types',
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'pcm-audio-worklet.min.d.ts',
+        source: [
+          '/** URL of the compiled PCM audio worklet, for `AudioWorklet.addModule()`. */',
+          'declare const workletScriptURL: string;',
+          'export default workletScriptURL;',
+          '',
+        ].join('\n'),
+      });
+    },
+  };
+
   const audioWorklet = {
     plugins: [
       esbuildPlugin({
         minify: true,
       }),
+      emitWorkletTypes,
     ],
     input: 'src/worklets/pcm-audio-worklet.ts',
     output: {

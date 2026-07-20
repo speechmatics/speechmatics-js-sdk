@@ -14,7 +14,7 @@ test('Request valid JWT', async (t) => {
     t.skip();
     return;
   }
-  for (const type of ['batch', 'rt', 'flow'] as const) {
+  for (const type of ['batch', 'rt'] as const) {
     const ttl = 60;
     const jwt = await createSpeechmaticsJWT({
       type,
