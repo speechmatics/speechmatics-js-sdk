@@ -4,9 +4,7 @@
     ".": {
       // CLI tools invoked via commands, not imported, so knip can't see usage:
       // openapi-generator regenerates RT models.
-      "ignoreDependencies": [
-        "@openapitools/openapi-generator-cli"
-      ]
+      "ignoreDependencies": ["@openapitools/openapi-generator-cli"]
     },
     "packages/real-time-client": {
       // `ws` is injected into the bundle via @rollup/plugin-inject
