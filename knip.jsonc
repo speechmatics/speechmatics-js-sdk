@@ -3,9 +3,8 @@
   "workspaces": {
     ".": {
       // CLI tools invoked via commands, not imported, so knip can't see usage:
-      // changesets drives releases; openapi-generator regenerates RT models.
+      // openapi-generator regenerates RT models.
       "ignoreDependencies": [
-        "@changesets/cli",
         "@openapitools/openapi-generator-cli"
       ]
     },
