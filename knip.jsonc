@@ -1,8 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  // The React Native / Expo example is being moved out of this monorepo
-  // (Expo integrates poorly with pnpm), so exclude it from analysis.
-  "ignoreWorkspaces": ["examples/react-native-flow"],
   "workspaces": {
     ".": {
       // CLI tools invoked via commands, not imported, so knip can't see usage:
