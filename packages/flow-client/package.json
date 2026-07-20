@@ -20,10 +20,10 @@
   "license": "MIT",
   "dependencies": {
     "typescript-event-target": "^1.1.1",
-    "ws": "^8.18.0"
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^5.0.5",
-    "@types/ws": "^8.5.12"
+    "@types/ws": "^8.18.1"
   }
 }

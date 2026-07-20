@@ -26,7 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "typescript-event-target": "^1.1.1",
-    "ws": "^8.18.0"
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@asyncapi/modelina": "^5.2.5",
