@@ -33,7 +33,7 @@ export function Controls({
       deviceId,
       ...config
     }: RealtimeTranscriptionConfig & { deviceId?: string }) => {
-      const jwt = await getJWT('rt');
+      const jwt = await getJWT();
       await startTranscription(jwt, config);
       await startRecording({ deviceId });
     },

@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/real-time-client",
-  "version": "8.5.0",
+  "version": "8.5.1",
   "description": "Client for the Speechmatics real-time API",
   "main": "dist/index.js",
   "browser": "dist/index.browser.js",
@@ -26,10 +26,10 @@
   "license": "MIT",
   "dependencies": {
     "typescript-event-target": "^1.1.1",
-    "ws": "^8.18.0"
+    "ws": "^8.21.0"
   },
   "devDependencies": {
-    "@asyncapi/modelina": "^5.2.5",
+    "@asyncapi/modelina": "^5.10.1",
     "@rollup/plugin-inject": "^5.0.5",
     "yaml": "^2.5.0"
   }
