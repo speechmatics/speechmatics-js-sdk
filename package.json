@@ -41,6 +41,6 @@
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-esbuild": "^6.1.1",
     "tsx": "^4.23.1",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   }
 }
