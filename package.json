@@ -39,7 +39,7 @@
     "knip": "^6.27.0",
     "rollup": "^4.59.0",
     "rollup-plugin-dts": "^6.1.1",
-    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.2.1",
     "tsx": "^4.23.1",
     "typescript": "^5.9.3"
   }
