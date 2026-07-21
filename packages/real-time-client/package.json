@@ -6,10 +6,7 @@
   "browser": "dist/index.browser.js",
   "module": "dist/index.browser.js",
   "typings": "dist/index.d.ts",
-  "files": [
-    "dist/",
-    "README.md"
-  ],
+  "files": ["dist/", "README.md"],
   "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/real-time-client",
   "scripts": {
     "build": "pnpm rollup -c",
