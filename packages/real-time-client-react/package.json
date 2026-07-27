@@ -32,7 +32,7 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
+    "@types/react": "^19.2.17",
     "rollup-plugin-preserve-directives": "^0.4.0",
     "typescript-event-target": "^1.1.1"
   }
