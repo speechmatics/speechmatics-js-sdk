@@ -16,6 +16,6 @@
     "@speechmatics/batch-client": "workspace:*",
     "@speechmatics/real-time-client": "workspace:*",
     "@speechmatics/auth": "workspace:*",
-    "dotenv": "^16.4.5"
+    "dotenv": "^17.4.2"
   }
 }
