@@ -17,7 +17,7 @@
     "@speechmatics/real-time-client-react": "workspace:*",
     "next": "16.2.10",
     "react": "19.0.0-rc-69d4b800-20241021",
-    "react-dom": "19.0.0-rc-69d4b800-20241021",
+    "react-dom": "19.2.8",
     "react-error-boundary": "^4.1.2"
   },
   "devDependencies": {
