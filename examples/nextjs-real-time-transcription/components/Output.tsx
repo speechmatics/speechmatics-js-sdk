@@ -17,7 +17,7 @@ export function Output() {
   );
 }
 
-export function Component() {
+function Component() {
   const [transcription, dispatch] = useReducer(transcriptReducer, []);
 
   useRealtimeEventListener('receiveMessage', (e) => dispatch(e.data));
