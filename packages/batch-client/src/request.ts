@@ -95,10 +95,7 @@ function getSmSDKVersion(): string {
   return `js-${SDK_VERSION}`;
 }
 
-function addQueryParamsToUrl(
-  url: string,
-  queryParams: QueryParams,
-): string {
+function addQueryParamsToUrl(url: string, queryParams: QueryParams): string {
   const parsedUrl = new URL(url);
   const params = new URLSearchParams(parsedUrl.search);
 
