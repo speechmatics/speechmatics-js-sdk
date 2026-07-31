@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # needed so `changeset status` can diff against the base branch
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
@@ -24,6 +26,9 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Ensure a changeset is present
+        if: github.event_name == 'pull_request'
+        run: pnpm changeset status --since=origin/${{ github.base_ref }}
       - name: Check
         run: "pnpm lint:check && pnpm format:check"
       - name: Test
