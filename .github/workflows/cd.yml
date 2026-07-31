@@ -1,15 +1,32 @@
-name: Publish to NPM
+# NOTE: The filename `cd.yml` is significant — the npm trusted-publisher config for each
+# package is keyed to this workflow filename. Keep both the stable and snapshot jobs in this
+# file so a single trusted-publisher entry per package covers them. Renaming the file requires
+# updating the trusted-publisher settings for every package on npmjs.com.
+name: Release
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "dist-tag to publish the snapshot under (e.g. beta, next)"
+        required: true
+        default: "beta"
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
-  publish:
-    name: Publish to NPM
+  # Stable channel: opens/updates the "Version Packages" PR on merges to main, and publishes
+  # (with tags + GitHub Releases) when that PR is merged.
+  release:
+    name: Release
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write
+      contents: write # create version commits, git tags and GitHub Releases
+      pull-requests: write # open/update the "Version Packages" PR
+      id-token: write # OIDC tokenless publish + provenance
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -21,12 +38,51 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: "pnpm"
-          registry-url: 'https://registry.npmjs.org/'
+          registry-url: "https://registry.npmjs.org/"
+      - name: Ensure npm supports trusted publishing
+        run: npm install -g npm@latest
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Create Release PR or publish
+        uses: changesets/action@v1
+        with:
+          version: pnpm run version
+          publish: pnpm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+  # Beta channel: manual trigger publishes the current state of the selected branch as an
+  # ephemeral prerelease (e.g. 8.6.0-beta-<sha>) under the chosen dist-tag. No version commit,
+  # no git tag. Requires pending changesets on the branch (run from the feature branch/PR).
+  snapshot:
+    name: Snapshot release
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC tokenless publish + provenance
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9.15.4
+      - name: Use Node.js version from .nvmrc
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org/"
+      - name: Ensure npm supports trusted publishing
+        run: npm install -g npm@latest
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Version as snapshot
+        run: pnpm changeset version --snapshot ${{ inputs.tag }}
       - name: Build packages
         run: pnpm build:packages
-      - name: Publish all packages
+      - name: Publish snapshot
+        run: pnpm changeset publish --tag ${{ inputs.tag }} --no-git-tag
         env:
           NPM_CONFIG_PROVENANCE: true
-        run: pnpm publish:packages
