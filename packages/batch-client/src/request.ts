@@ -18,12 +18,14 @@ export async function request<T>(
   payload?: BodyInit | null | undefined,
   params?: QueryParams,
   contentType?: string,
+  extraHeaders?: Record<string, string>,
 ): Promise<T> {
   const requestOptions: RequestInit = {
     method,
     headers: {
       ...(contentType ? { 'Content-Type': contentType } : {}),
       Authorization: `Bearer ${apiKey}`,
+      ...(extraHeaders ?? {}),
     },
     body: payload,
   };
