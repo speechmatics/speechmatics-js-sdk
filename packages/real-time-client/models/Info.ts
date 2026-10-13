@@ -29,5 +29,9 @@ interface Info {
    * Only set when `type` is `concurrent_session_usage`. Indicates the timestamp of the most recent usage update, in the format `YYYY-MM-DDTHH:MM:SSZ` (UTC). This value is updated even when usage exceeds the quota, as it represents the most recent known data. In some cases, it may be empty or outdated due to internal errors preventing successful update.
    */
   last_updated?: string;
+  /**
+   * Only set when `type` is `concurrent_session_usage`. The region that reported this usage, for example `eu`.
+   */
+  region?: string;
 }
 export type { Info };
