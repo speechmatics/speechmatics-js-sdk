@@ -17,6 +17,10 @@ interface TranscriptionConfig {
    */
   language: string;
   /**
+   * The languages expected in the audio, specified as [ISO Language Codes](https://docs.speechmatics.com/speech-to-text/languages). Biases language detection toward these languages without restricting it to them. Only used by the `melia-1` model, which requires `language` to be set to `multi`. See [Language hints](https://docs.speechmatics.com/speech-to-text/realtime/input#language-hints).
+   */
+  language_hints?: string[];
+  /**
    * Request a specialized model based on 'language' but optimized for a particular field, e.g. `finance` or `medical`.
    */
   domain?: string;

@@ -4,9 +4,9 @@ import type {
   RecognitionStarted,
   RealtimeClientMessage,
   RealtimeServerMessage,
-  TranscriptionConfig,
   SpeakersResult,
   MidSessionTranscriptionConfig,
+  AddAudio,
 } from '../models';
 
 export class SocketStateChangeEvent extends Event {
@@ -32,8 +32,6 @@ export interface RealtimeClientEventMap {
   receiveMessage: ReceiveMessageEvent;
   socketStateChange: SocketStateChangeEvent;
 }
-
-export type AddAudio = Parameters<WebSocket['send']>[0];
 
 export interface RealtimeClientOptions {
   /**

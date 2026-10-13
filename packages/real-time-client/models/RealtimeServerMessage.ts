@@ -9,6 +9,7 @@ import type { EndOfTranscript } from './EndOfTranscript';
 import type { AudioEventStarted } from './AudioEventStarted';
 import type { AudioEventEnded } from './AudioEventEnded';
 import type { EndOfUtterance } from './EndOfUtterance';
+import type { LanguageInfo } from './LanguageInfo';
 import type { Info } from './Info';
 import type { Warning } from './Warning';
 import type { ErrorType } from './ErrorType';
@@ -25,6 +26,7 @@ type RealtimeServerMessage =
   | AudioEventStarted
   | AudioEventEnded
   | EndOfUtterance
+  | LanguageInfo
   | Info
   | Warning
   | ErrorType

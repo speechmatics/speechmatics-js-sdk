@@ -66,6 +66,13 @@ const generator = new TypeScriptGenerator({
       }
       return TypeScriptGenerator.defaultOptions.typeMapping.Union(context);
     },
+    String(context) {
+      if (context.constrainedModel.name === 'AddAudio') {
+        // Type AddAudio as whatever the consumer's WebSocket accepts, rather than a plain string
+        return "Parameters<WebSocket['send']>[0]";
+      }
+      return TypeScriptGenerator.defaultOptions.typeMapping.String(context);
+    },
     Object(context) {
       // When rendering Object types, if the 'title' prop is set to "Object", use the x-parser-schema-id instead
       if (context.constrainedModel.name === 'Object') {

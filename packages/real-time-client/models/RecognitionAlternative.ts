@@ -10,7 +10,7 @@ interface RecognitionAlternative {
    */
   confidence: number;
   /**
-   * The language that the alternative word is assumed to be spoken in. Currently, this will always be equal to the language that was requested in the initial `StartRecognition` message.
+   * The language that the alternative word is assumed to be spoken in. For the `standard` and `enhanced` models this is always the language requested in the initial `StartRecognition` message. The `melia-1` model detects the language per word, so this value can vary across the transcript.
    */
   language?: string;
   /**
@@ -22,7 +22,7 @@ interface RecognitionAlternative {
    */
   speaker?: string;
   /**
-   * This is a set list of profanities and disfluencies respectively that cannot be altered by the end user. `[disfluency]` is only present in English, and `[profanity]` is present in English, Spanish, and Italian
+   * This is a set list of profanities and disfluencies respectively that cannot be altered by the end user. `[disfluency]` is present in the [supported languages](https://docs.speechmatics.com/speech-to-text/formatting#supported-languages-for-disfluencies), and `[profanity]` is present in English, Spanish, and Italian
    */
   tags?: RecognitionAlternativeTagsEnum[];
 }
