@@ -85,20 +85,17 @@ export function getFullURL(path: string, base: string, params?: QueryParams) {
   return fullUrl;
 }
 
-export const SM_SDK_PARAM_NAME = 'sm-sdk';
+const SM_SDK_PARAM_NAME = 'sm-sdk';
 export const SM_APP_PARAM_NAME = 'sm-app';
 
 // This is templated by the build process
 declare const SDK_VERSION: string;
 
-export function getSmSDKVersion(): string {
+function getSmSDKVersion(): string {
   return `js-${SDK_VERSION}`;
 }
 
-export function addQueryParamsToUrl(
-  url: string,
-  queryParams: QueryParams,
-): string {
+function addQueryParamsToUrl(url: string, queryParams: QueryParams): string {
   const parsedUrl = new URL(url);
   const params = new URLSearchParams(parsedUrl.search);
 
@@ -111,6 +108,6 @@ export function addQueryParamsToUrl(
   return parsedUrl.href;
 }
 
-export function addSDKInfoToRequestUrl(url: string): string {
+function addSDKInfoToRequestUrl(url: string): string {
   return addQueryParamsToUrl(url, { [SM_SDK_PARAM_NAME]: getSmSDKVersion() });
 }
