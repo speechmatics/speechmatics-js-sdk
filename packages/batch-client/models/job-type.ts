@@ -19,7 +19,6 @@
  */
 
 export const JobType = {
-  Alignment: 'alignment',
   Transcription: 'transcription',
 } as const;
 

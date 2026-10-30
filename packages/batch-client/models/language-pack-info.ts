@@ -19,6 +19,18 @@
  */
 export interface LanguagePackInfo {
   /**
+   * Mapping from language codes to their word delimiters
+   * @type {{ [key: string]: string; }}
+   * @memberof LanguagePackInfo
+   */
+  per_language_word_delimiters?: { [key: string]: string };
+  /**
+   * Mapping from languages codes to their writing direction, left-to-right or right-to-left
+   * @type {{ [key: string]: string; }}
+   * @memberof LanguagePackInfo
+   */
+  per_language_writing_direction?: { [key: string]: string };
+  /**
    * Full descriptive name of the language, e.g. \'Japanese\'.
    * @type {string}
    * @memberof LanguagePackInfo
@@ -50,6 +62,13 @@ export interface LanguagePackInfo {
   adapted?: boolean;
 }
 
+export const LanguagePackInfoPerLanguageWritingDirectionEnum = {
+  LeftToRight: 'left-to-right',
+  RightToLeft: 'right-to-left',
+} as const;
+
+export type LanguagePackInfoPerLanguageWritingDirectionEnum =
+  (typeof LanguagePackInfoPerLanguageWritingDirectionEnum)[keyof typeof LanguagePackInfoPerLanguageWritingDirectionEnum];
 export const LanguagePackInfoWritingDirectionEnum = {
   LeftToRight: 'left-to-right',
   RightToLeft: 'right-to-left',

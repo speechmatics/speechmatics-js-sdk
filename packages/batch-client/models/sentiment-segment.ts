@@ -19,7 +19,7 @@
  */
 export interface SentimentSegment {
   /**
-   * Represents the transcript of the analysed segment
+   * Represents the transcript of the analyzed segment
    * @type {string}
    * @memberof SentimentSegment
    */
@@ -54,4 +54,10 @@ export interface SentimentSegment {
    * @memberof SentimentSegment
    */
   channel?: string;
+  /**
+   * A confidence score in the range of 0-1, indicating the model\'s certainty in the predicted sentiment,
+   * @type {number}
+   * @memberof SentimentSegment
+   */
+  confidence?: number;
 }
