@@ -10,7 +10,7 @@ interface RecognitionAlternative {
    */
   confidence: number;
   /**
-   * The language that the alternative word is assumed to be spoken in. For the `standard` and `enhanced` models this is always the language requested in the initial `StartRecognition` message. The `melia-1` model detects the language per word, so this value can vary across the transcript.
+   * The language that the alternative word is assumed to be spoken in. For the `standard` and `enhanced` models this is always the language requested in the initial `StartRecognition` message. The `melia-1` and `oak-1` models detect the language per word, so this value can vary across the transcript.
    */
   language?: string;
   /**
