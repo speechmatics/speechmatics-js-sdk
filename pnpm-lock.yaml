@@ -66,8 +66,8 @@ importers:
         specifier: 19.2.8
         version: 19.2.8(react@19.0.0-rc-69d4b800-20241021)
       react-error-boundary:
-        specifier: ^4.1.2
-        version: 4.1.2(react@19.0.0-rc-69d4b800-20241021)
+        specifier: ^6.1.2
+        version: 6.1.2(react@19.0.0-rc-69d4b800-20241021)
     devDependencies:
       '@types/node':
         specifier: ^20
@@ -306,10 +306,6 @@ packages:
 
   '@babel/helper-validator-identifier@7.25.9':
     resolution: {integrity: sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/runtime@7.29.7':
-    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
   '@biomejs/biome@1.9.4':
@@ -2111,8 +2107,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@3.15.0:
-    resolution: {integrity: sha512-ttBQIIQPDeLjpPOohtUdXuXUVoA2uIB6fEH9HyJ7234s5mBJ5wTx20njxplLZQgLaOfpmPQA7X2t5AX6tIPbog==}
+  js-yaml@3.15.1:
+    resolution: {integrity: sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==}
     hasBin: true
 
   js-yaml@4.3.0:
@@ -2434,10 +2430,10 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
-  react-error-boundary@4.1.2:
-    resolution: {integrity: sha512-GQDxZ5Jd+Aq/qUxbCm1UtzmL/s++V7zKgE8yMktJiCQXCCFZnMZh9ng+6/Ne6PjNSXH0L9CjeOEREfRnq6Duag==}
+  react-error-boundary@6.1.2:
+    resolution: {integrity: sha512-3DpCr5HVdZ0caUjYE/kIHBEJN0mNP3ZCgf16c48uJ5TbWjorKVp+YG8W3XqlJ7vJAVNw6wNIImyPXmFydwmyng==}
     peerDependencies:
-      react: '>=16.13.1'
+      react: ^18.0.0 || ^19.0.0
 
   react@18.0.0:
     resolution: {integrity: sha512-x+VL6wbT4JRVPm7EGxXhZ8w8LTROaxPXOqhlGyVSrv0sB1jkyFGgXxJ8LVoPRLvPR6/CIZGFmfzqUa2NYeMr2A==}
@@ -3072,8 +3068,6 @@ snapshots:
 
   '@babel/helper-validator-identifier@7.25.9':
     optional: true
-
-  '@babel/runtime@7.29.7': {}
 
   '@biomejs/biome@1.9.4':
     optionalDependencies:
@@ -4815,7 +4809,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@3.15.0:
+  js-yaml@3.15.1:
     dependencies:
       argparse: 1.0.10
       esprima: 4.0.1
@@ -5164,7 +5158,7 @@ snapshots:
   ramldt2jsonschema@1.2.3:
     dependencies:
       commander: 5.1.0
-      js-yaml: 3.15.0
+      js-yaml: 3.15.1
       json-schema-migrate: 0.2.0
       webapi-parser: 0.5.0
 
@@ -5173,9 +5167,8 @@ snapshots:
       react: 19.0.0-rc-69d4b800-20241021
       scheduler: 0.27.0
 
-  react-error-boundary@4.1.2(react@19.0.0-rc-69d4b800-20241021):
+  react-error-boundary@6.1.2(react@19.0.0-rc-69d4b800-20241021):
     dependencies:
-      '@babel/runtime': 7.29.7
       react: 19.0.0-rc-69d4b800-20241021
 
   react@18.0.0:
