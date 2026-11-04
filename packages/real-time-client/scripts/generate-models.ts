@@ -259,8 +259,13 @@ function normalizeSpec(spec: SpecObject): SpecObject {
 /**
  * Modelina generates one union per operation with multiple messages, but names
  * it after the operation's *channel*. Since both operations here share a single
- * channel, the second union silently overwrites the first. So we drop Modelina's
- * channel unions, and render our own per-operation unions instead.
+ * channel, one union silently overwrites the other. So we drop Modelina's
+ * channel unions (see {@link isChannelUnion}), and render our own per-operation
+ * unions instead.
+ *
+ * TODO: Remove this workaround (along with `isChannelUnion`,
+ * `getOperationUnions` and `renderUnion`) if this issue is resolved in Modelina:
+ * https://github.com/asyncapi/modelina/issues/2703
  */
 function buildOperationUnions(
   spec: SpecObject,
@@ -287,6 +292,10 @@ function buildOperationUnions(
   });
 }
 
+/**
+ * Whether a model is one of Modelina's channel-named unions, which we replace
+ * with per-operation unions. See https://github.com/asyncapi/modelina/issues/2703
+ */
 function isChannelUnion(spec: SpecObject, model: OutputModel): boolean {
   const id = model.model.originalInput?.$id;
   return (
