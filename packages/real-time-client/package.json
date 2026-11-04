@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@asyncapi/modelina": "^5.10.1",
+    "@asyncapi/parser": "^3.4.0",
     "@rollup/plugin-inject": "^5.0.5",
     "yaml": "^2.9.0"
   }

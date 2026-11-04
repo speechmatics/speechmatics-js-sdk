@@ -7,6 +7,11 @@ import {
   typeScriptDefaultModelNameConstraints,
   TypeScriptGenerator,
 } from '@asyncapi/modelina';
+import {
+  type AsyncAPIDocumentInterface,
+  DiagnosticSeverity,
+  Parser,
+} from '@asyncapi/parser';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { rm } from 'node:fs/promises';
 import { parse } from 'yaml';
@@ -94,28 +99,8 @@ async function clearModels(): Promise<void> {
 // biome-ignore lint/suspicious/noExplicitAny: raw, untyped YAML document
 type SpecObject = Record<string, any>;
 
-/** Resolve a local JSON pointer `$ref` (e.g. `#/components/messages/Foo`) */
-function resolveRef(spec: SpecObject, ref: string): SpecObject {
-  if (!ref.startsWith('#/')) {
-    throw new Error(`Only local $refs are supported, got ${ref}`);
-  }
-  return ref
-    .slice(2)
-    .split('/')
-    .map((p) => p.replace(/~1/g, '/').replace(/~0/g, '~'))
-    .reduce((node, key) => {
-      if (node?.[key] === undefined)
-        throw new Error(`Unresolvable $ref ${ref}`);
-      return node[key];
-    }, spec);
-}
-
-/** Follow a chain of `$ref`s (e.g. operation -> channel message -> component message) */
-function deref(spec: SpecObject, node: SpecObject): SpecObject {
-  let current = node;
-  while (current.$ref) current = resolveRef(spec, current.$ref);
-  return current;
-}
+/** A raw spec whose `asyncapi` version field has been checked */
+type AsyncAPISpec = SpecObject & { asyncapi: string };
 
 /**
  * The name of each union type we export, keyed by operation action. The spec is
@@ -132,45 +117,39 @@ const UNION_NAME_FOR_ACTION: Record<string, string> = {
  * carries. Binary messages (e.g. `AddAudio`) are excluded, since the client sends
  * them separately from the JSON messages.
  *
- * Must run after {@link hoistInlinePayloads}, so every payload is a component
- * schema `$ref`.
+ * Must run on a spec normalized by {@link hoistInlinePayloads}, so every payload
+ * is a component schema, whose parser ID is its name in `components.schemas`.
  */
-function getOperationUnions(spec: SpecObject): Map<string, string[]> {
+function getOperationUnions(document: AsyncAPIDocumentInterface) {
   const unions = new Map<string, string[]>();
-  const defaultContentType = spec.defaultContentType ?? 'application/json';
+  const componentSchemas = document.components().schemas();
 
-  for (const [operationId, operation] of Object.entries<SpecObject>(
-    spec.operations ?? {},
-  )) {
-    const unionName = UNION_NAME_FOR_ACTION[operation.action];
+  for (const operation of document.operations()) {
+    const action = operation.action();
+    const unionName = UNION_NAME_FOR_ACTION[action];
     if (!unionName) {
       throw new Error(
-        `Unexpected action '${operation.action}' for operation ${operationId}`,
+        `Unexpected action '${action}' for operation ${operation.id()}`,
       );
     }
     if (unions.has(unionName)) {
-      throw new Error(`More than one '${operation.action}' operation in spec`);
+      throw new Error(`More than one '${action}' operation in spec`);
     }
 
-    // Per AsyncAPI 3, an operation with no `messages` carries all its channel's messages
-    const messageRefs: SpecObject[] =
-      operation.messages ??
-      Object.values(deref(spec, operation.channel).messages ?? {});
-
-    const schemaNames = messageRefs
-      .map((ref) => deref(spec, ref))
-      .filter(
-        (message) =>
-          (message.contentType ?? defaultContentType) === 'application/json',
-      )
+    const schemaNames = operation
+      .messages()
+      // Parser collections subclass Array, but can't be constructed by `filter`/`map`
+      .all()
+      // `contentType()` falls back to the document's `defaultContentType`
+      .filter((message) => message.contentType() === 'application/json')
       .map((message) => {
-        const payloadRef: string | undefined = message.payload?.$ref;
-        if (!payloadRef?.startsWith('#/components/schemas/')) {
+        const schemaId = message.payload()?.id();
+        if (!schemaId || !componentSchemas.has(schemaId)) {
           throw new Error(
-            `Expected payload of ${message.name ?? 'message'} in ${operationId} to be a component schema $ref`,
+            `Expected payload of ${message.id()} in ${operation.id()} to be a component schema`,
           );
         }
-        return payloadRef.replace('#/components/schemas/', '');
+        return schemaId;
       });
 
     unions.set(unionName, schemaNames);
@@ -247,13 +226,13 @@ function convertConstOneOfToEnum(spec: SpecObject) {
  * Adapt the AsyncAPI 3 spec so Modelina produces the same payload models (and
  * model names) as earlier versions of the spec.
  */
-function normalizeSpec(spec: SpecObject): SpecObject {
-  if (!String(spec.asyncapi).startsWith('3.')) {
+function normalizeSpec(spec: SpecObject): AsyncAPISpec {
+  if (typeof spec.asyncapi !== 'string' || !spec.asyncapi.startsWith('3.')) {
     throw new Error(`Expected an AsyncAPI 3.x spec, got ${spec.asyncapi}`);
   }
   hoistInlinePayloads(spec);
   convertConstOneOfToEnum(spec);
-  return spec;
+  return spec as AsyncAPISpec;
 }
 
 /**
@@ -268,7 +247,7 @@ function normalizeSpec(spec: SpecObject): SpecObject {
  * https://github.com/asyncapi/modelina/issues/2703
  */
 function buildOperationUnions(
-  spec: SpecObject,
+  document: AsyncAPIDocumentInterface,
   models: OutputModel[],
 ): { name: string; result: string }[] {
   const modelNameForSchema = new Map<string, string>();
@@ -278,7 +257,7 @@ function buildOperationUnions(
       modelNameForSchema.set(schemaId, m.modelName);
   }
 
-  return [...getOperationUnions(spec)].map(([unionName, schemaNames]) => {
+  return [...getOperationUnions(document)].map(([unionName, schemaNames]) => {
     const members = schemaNames.map((schemaName) => {
       const modelName = modelNameForSchema.get(schemaName);
       if (!modelName) {
@@ -296,13 +275,33 @@ function buildOperationUnions(
  * Whether a model is one of Modelina's channel-named unions, which we replace
  * with per-operation unions. See https://github.com/asyncapi/modelina/issues/2703
  */
-function isChannelUnion(spec: SpecObject, model: OutputModel): boolean {
+function isChannelUnion(
+  document: AsyncAPIDocumentInterface,
+  model: OutputModel,
+): boolean {
   const id = model.model.originalInput?.$id;
   return (
     model.model instanceof ConstrainedUnionModel &&
     typeof id === 'string' &&
-    id in (spec.channels ?? {})
+    document.channels().has(id)
   );
+}
+
+/**
+ * Parse (and validate) the spec. The parsed document is passed to Modelina
+ * directly, so the spec is only parsed once.
+ */
+async function parseSpec(
+  spec: AsyncAPISpec,
+): Promise<AsyncAPIDocumentInterface> {
+  const { document, diagnostics } = await new Parser().parse(spec);
+  if (!document) {
+    const errors = diagnostics
+      .filter((d) => d.severity === DiagnosticSeverity.Error)
+      .map((d) => `  ${d.path.join('.')}: ${d.message}`);
+    throw new Error(`Invalid AsyncAPI spec:\n${errors.join('\n')}`);
+  }
+  return document;
 }
 
 export async function generate(): Promise<void> {
@@ -311,13 +310,13 @@ export async function generate(): Promise<void> {
     `https://raw.githubusercontent.com/speechmatics/docs/refs/heads/${branch}/spec/realtime.yaml`,
   );
   const realtimeSpecText = await realtimeSpec.text();
-  const parsed = normalizeSpec(parse(realtimeSpecText));
+  const document = await parseSpec(normalizeSpec(parse(realtimeSpecText)));
 
-  const generated = await generator.generateCompleteModels(parsed, {
+  const generated = await generator.generateCompleteModels(document, {
     exportType: 'named',
   });
-  const models = generated.filter((m) => !isChannelUnion(parsed, m));
-  const unions = buildOperationUnions(parsed, models);
+  const models = generated.filter((m) => !isChannelUnion(document, m));
+  const unions = buildOperationUnions(document, models);
 
   const files = [
     ...unions,
