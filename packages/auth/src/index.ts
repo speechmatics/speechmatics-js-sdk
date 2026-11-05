@@ -21,7 +21,7 @@ export async function createSpeechmaticsJWT({
     );
   }
 
-  const resp = await fetch(`${managementPlatformURL}/api_keys?type=${type}`, {
+  const resp = await fetch(`${managementPlatformURL}/jwts?type=${type}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
