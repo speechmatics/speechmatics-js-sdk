@@ -91,6 +91,18 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
   // https://docs.speechmatics.com/rt-api-ref#audioadded
   private lastAudioAddedSeqNo = 0;
 
+  // Multichannel state. When channel diarization is enabled, audio is sent per channel via `AddChannelAudio`,
+  // and each channel is closed with its own `EndOfChannel` message rather than a single `EndOfStream`.
+  // https://docs.speechmatics.com/speech-to-text/features/diarization#channel-diarization
+  private multichannel = false;
+  // Channel IDs declared in the config / confirmed by the server in `RecognitionStarted`
+  private channelIds: string[] = [];
+  // Number of `AddChannelAudio` messages sent per channel. Sequence numbers start at 1,
+  // so this count equals the `seq_no` of the last chunk sent on that channel.
+  private channelSeqNos = new Map<string, number>();
+  private endedChannels = new Set<string>();
+  private endOfTranscriptReceived = false;
+
   private async connect(jwt: string) {
     return new Promise<void>((resolve, reject) => {
       const url = new URL(this.url);
@@ -148,6 +160,13 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
 
         if (data.message === 'AudioAdded') {
           this.lastAudioAddedSeqNo = data.seq_no;
+        } else if (
+          data.message === 'RecognitionStarted' &&
+          data.channel_ids?.length
+        ) {
+          this.channelIds = data.channel_ids;
+        } else if (data.message === 'EndOfTranscript') {
+          this.endOfTranscriptReceived = true;
         }
 
         this.dispatchTypedEvent(
@@ -171,6 +190,53 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
     this.socket.send(data);
+  }
+
+  /**
+   * Sends a chunk of audio for a single channel, for use with multichannel sessions
+   * (`transcription_config.diarization` set to `"channel"` or `"channel_and_speaker"`).
+   *
+   * @param channel The channel ID. Must be one of the labels in `transcription_config.channel_diarization_labels`.
+   * @param data Raw audio bytes (in the encoding given by `audio_format`), or a string that is already base64 encoded.
+   */
+  sendChannelAudio(
+    channel: string,
+    data: string | ArrayBuffer | ArrayBufferView,
+  ) {
+    if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
+      throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
+    }
+    if (this.endedChannels.has(channel)) {
+      throw new SpeechmaticsRealtimeError(
+        `Cannot send audio on channel "${channel}" after it has been ended`,
+      );
+    }
+
+    this.sendMessage({
+      message: 'AddChannelAudio',
+      channel,
+      data: typeof data === 'string' ? data : toBase64(data),
+    });
+    this.channelSeqNos.set(channel, (this.channelSeqNos.get(channel) ?? 0) + 1);
+  }
+
+  /**
+   * Signals that no more audio will be sent on the given channel, by sending an `"EndOfChannel"` message.
+   * The server sends `"EndOfTranscript"` once every channel has ended.
+   *
+   * You don't usually need to call this directly: `stopRecognition()` ends any channels that are still open.
+   * It's useful when one channel finishes before the others (e.g. one participant hangs up).
+   */
+  endChannel(channel: string) {
+    if (this.endedChannels.has(channel)) {
+      return;
+    }
+    this.sendMessage({
+      message: 'EndOfChannel',
+      channel,
+      last_seq_no: this.channelSeqNos.get(channel) ?? 0,
+    });
+    this.endedChannels.add(channel);
   }
 
   async getSpeakers(
@@ -215,6 +281,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       );
     }
 
+    this.resetSessionState(config);
     await this.connect(jwt);
 
     const waitForRecognitionStarted = new Promise<RecognitionStarted>(
@@ -245,9 +312,34 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     ]);
   }
 
-  /** Sends an `"EndOfStream"` message, resolving if acknowledged by an `"EndOfTranscript"` from server, rejecting if not received */
+  private resetSessionState(config: RealtimeTranscriptionConfig) {
+    const diarization = config.transcription_config?.diarization;
+    this.multichannel =
+      diarization === 'channel' || diarization === 'channel_and_speaker';
+    this.channelIds =
+      config.transcription_config?.channel_diarization_labels ?? [];
+    this.channelSeqNos.clear();
+    this.endedChannels.clear();
+    this.lastAudioAddedSeqNo = 0;
+    this.endOfTranscriptReceived = false;
+  }
+
+  /**
+   * Signals the end of audio, resolving if acknowledged by an `"EndOfTranscript"` from server, rejecting if not received.
+   *
+   * For single-channel sessions this sends `"EndOfStream"`.
+   * For multichannel sessions it sends `"EndOfChannel"` for every channel that hasn't already been ended.
+   */
   async stopRecognition({ noTimeout }: { noTimeout?: true } = {}) {
     const waitForEndOfTranscript = new Promise<void>((resolve) => {
+      // In multichannel sessions, all channels may have been ended individually already,
+      // in which case the server may have sent EndOfTranscript before we got here.
+      if (this.endOfTranscriptReceived) {
+        this.socket?.close();
+        resolve();
+        return;
+      }
+
       this.addEventListener('receiveMessage', ({ data }) => {
         if (data.message === 'EndOfTranscript') {
           this.socket?.close();
@@ -255,10 +347,20 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
         }
       });
 
-      this.sendMessage({
-        message: 'EndOfStream',
-        last_seq_no: this.lastAudioAddedSeqNo,
-      });
+      if (this.multichannel) {
+        const channels = new Set([
+          ...this.channelIds,
+          ...this.channelSeqNos.keys(),
+        ]);
+        for (const channel of channels) {
+          this.endChannel(channel);
+        }
+      } else {
+        this.sendMessage({
+          message: 'EndOfStream',
+          last_seq_no: this.lastAudioAddedSeqNo,
+        });
+      }
     });
 
     if (noTimeout) {
@@ -299,6 +401,21 @@ function dataIsRealtimeTranscriptionMessage(
     return false;
   }
   return true;
+}
+
+function toBase64(data: ArrayBuffer | ArrayBufferView): string {
+  const bytes =
+    data instanceof ArrayBuffer
+      ? new Uint8Array(data)
+      : new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+
+  // Build the binary string in chunks to avoid exceeding the max call stack size for large buffers
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 
 const defaultAudioFormat = {
