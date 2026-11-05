@@ -14,9 +14,6 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { AlignmentConfig } from './alignment-config';
-// May contain unused imports in some cases
-// @ts-ignore
 import type { AutoChaptersResultError } from './auto-chapters-result-error';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -100,12 +97,6 @@ export interface RecognitionMetadata {
    * @memberof RecognitionMetadata
    */
   auto_chapters_errors?: Array<AutoChaptersResultError>;
-  /**
-   *
-   * @type {AlignmentConfig}
-   * @memberof RecognitionMetadata
-   */
-  alignment_config?: AlignmentConfig;
   /**
    *
    * @type {OutputConfig}

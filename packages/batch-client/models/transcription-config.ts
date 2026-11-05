@@ -14,9 +14,6 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Model } from './model';
-// May contain unused imports in some cases
-// @ts-ignore
 import type { OperatingPoint } from './operating-point';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -53,22 +50,33 @@ export interface TranscriptionConfig {
    */
   domain?: string;
   /**
-   * Language locale to be used when generating the transcription output, normally specified as an ISO language code
+   * Language locale to be used when generating the transcription output, normally specified as an ISO language code job-config v3 defines this field as \"one of\" which is not supported by swagger 2.0, so we had to workaround this with x-go-type
    * @type {string}
    * @memberof TranscriptionConfig
    */
   output_locale?: string;
   /**
-   *
-   * @type {Model}
+   * Specific model to use in transcription, alias to operating point.
+   * @type {string}
    * @memberof TranscriptionConfig
    */
-  model?: Model;
+  model?: string;
+  /**
+   * List of languages expected to be present in the audio, specified as ISO language codes. This is used to guide the transcription process, particularly for multilingual audio.
+   * @type {Array<string>}
+   * @memberof TranscriptionConfig
+   */
+  language_hints?: Array<string>;
+  /**
+   * Whether to treat the provided language hints as strict.
+   * @type {boolean}
+   * @memberof TranscriptionConfig
+   */
+  language_hints_strict?: boolean;
   /**
    *
    * @type {OperatingPoint}
    * @memberof TranscriptionConfig
-   * @deprecated: Use `model` instead. This property is only kept for backward compatability, and may be removed in the future.
    */
   operating_point?: OperatingPoint;
   /**
