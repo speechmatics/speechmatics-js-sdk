@@ -4,6 +4,7 @@ import {
   type ErrorResponse,
   ErrorResponseErrorEnum,
 } from '../models/error-response';
+import type { JobDetails } from '../models/job-details';
 
 const ErrorResponseSchema: z.ZodType<ErrorResponse> = z.object({
   code: z.number(),
@@ -43,6 +44,7 @@ export const InternalErrorEnum = {
   UnexpectedMessage: 'Unexpected message',
   UnexpectedResponse: 'Unexpected response',
   InvalidTypeError: 'Invalid type error',
+  JobFailed: 'Job failed',
 } as const;
 
 export type InternalErrorEnum =
@@ -94,6 +96,30 @@ export class SpeechmaticsInvalidTypeError extends SpeechmaticsInternalError {
   constructor(message?: string, cause?: unknown) {
     super(InternalErrorEnum.InvalidTypeError, message, cause);
     this.name = 'SpeechmaticsInvalidTypeError';
+  }
+}
+
+/**
+ * Thrown by `BatchClient.transcribe` when the job reaches a terminal state
+ * other than `done` (i.e. `rejected`, `deleted` or `expired`).
+ */
+export class SpeechmaticsJobFailedError extends SpeechmaticsInternalError {
+  jobId: string;
+  status: string;
+  /** Job details at the time of failure, including any `errors`, if they could be retrieved */
+  job?: JobDetails;
+
+  constructor(jobId: string, status: string, job?: JobDetails) {
+    const reasons = job?.errors?.map((e) => e.message).join('; ');
+    super(
+      InternalErrorEnum.JobFailed,
+      `Job ${jobId} finished with status '${status}'${reasons ? `: ${reasons}` : ''}`,
+      job,
+    );
+    this.name = 'SpeechmaticsJobFailedError';
+    this.jobId = jobId;
+    this.status = status;
+    this.job = job;
   }
 }
 
