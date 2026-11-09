@@ -77,6 +77,12 @@ export interface RecognitionResult {
    */
   spoken_form?: Array<SpokenFormRecognitionResult>;
   /**
+   * For \'entity\' results only, the class the entity has been formatted as, e.g. \'date\', \'money\', \'number\' with the default entity detection, or the specific advanced entity type (e.g. \'name_given\', \'dob\') with advanced entity detection or redaction.
+   * @type {string}
+   * @memberof RecognitionResult
+   */
+  entity_class?: string;
+  /**
    *
    * @type {Array<RecognitionAlternative>}
    * @memberof RecognitionResult

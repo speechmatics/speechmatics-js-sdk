@@ -13,7 +13,7 @@
  */
 
 /**
- * Specific model to use in transcription (previously called operating point).
+ *
  * @export
  * @enum {string}
  */
@@ -22,6 +22,7 @@ export const Model = {
   Standard: 'standard',
   Enhanced: 'enhanced',
   Melia1: 'melia-1',
+  Oak1: 'oak-1',
 } as const;
 
 export type Model = (typeof Model)[keyof typeof Model];
