@@ -14,9 +14,6 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { AlignmentConfig } from './alignment-config';
-// May contain unused imports in some cases
-// @ts-ignore
 import type { AudioEventsConfig } from './audio-events-config';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -73,12 +70,6 @@ export interface JobConfig {
    * @memberof JobConfig
    */
   fetch_text?: DataFetchConfig;
-  /**
-   *
-   * @type {AlignmentConfig}
-   * @memberof JobConfig
-   */
-  alignment_config?: AlignmentConfig;
   /**
    *
    * @type {TranscriptionConfig}

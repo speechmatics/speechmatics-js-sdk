@@ -24,4 +24,38 @@ export interface CreateJobResponse {
    * @memberof CreateJobResponse
    */
   id: string;
+  /**
+   * The outcome of the request. Only present when the `wait` query parameter was specified on the request; when `wait` is omitted the field is absent and the legacy response (just `id`) is returned. * `created` - The job record was created, but the wait elapsed before the job reached a terminal state. The job can still be polled or retrieved as usual. * `done` - The job finished. The result is embedded under the key named after the requested `format` when available; if that field is absent (e.g. the format was not produced, or the result is not yet readable), fetch it from `GET /jobs/{id}/transcript`. * `rejected` - The job was created but could not be processed. * `deleted` - Theoretical race condition handling.
+   * @type {string}
+   * @memberof CreateJobResponse
+   */
+  status?: CreateJobResponseStatusEnum;
+  /**
+   * The transcript as a JSON object (the Speechmatics JSON v2 transcript — see RetrieveTranscriptResponse), returned verbatim from the stored transcript. Best-effort: present when `status` is `done` and `format` was `json-v2` (the default) and the result is readable; if absent, fetch it from `GET /jobs/{id}/transcript`.
+   * @type {object}
+   * @memberof CreateJobResponse
+   */
+  'json-v2'?: object;
+  /**
+   * The transcript as plain text. Best-effort: present when `status` is `done` and `format` was `txt` and the result is readable; if absent, fetch it from `GET /jobs/{id}/transcript`.
+   * @type {string}
+   * @memberof CreateJobResponse
+   */
+  txt?: string;
+  /**
+   * The transcript as SubRip (SRT) subtitles. Best-effort: present when `status` is `done` and `format` was `srt` and the result is readable; if absent, fetch it from `GET /jobs/{id}/transcript`.
+   * @type {string}
+   * @memberof CreateJobResponse
+   */
+  srt?: string;
 }
+
+export const CreateJobResponseStatusEnum = {
+  Created: 'created',
+  Done: 'done',
+  Rejected: 'rejected',
+  Deleted: 'deleted',
+} as const;
+
+export type CreateJobResponseStatusEnum =
+  (typeof CreateJobResponseStatusEnum)[keyof typeof CreateJobResponseStatusEnum];
