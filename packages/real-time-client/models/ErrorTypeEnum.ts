@@ -1,7 +1,13 @@
 /**
- * The following are the possible error types:
+ * The kind of error an `Error` message reports.
  *
- * | Error Type | Description |
+ * :::info
+ *
+ * `invalid_message`, `protocol_error` and `unknown_error` can be triggered as a response to any type of messages.
+ *
+ * :::
+ *
+ * | Value | Description |
  * | --- | --- |
  * | `invalid_message` | The message received was not understood. |
  * | `invalid_model` | Unable to use the model for the recognition. This can happen if the language is not supported at all, or is not available for the user. |
@@ -18,12 +24,6 @@
  * | `idle_timeout` | Idle duration limit was reached (no audio data sent within the last hour), a closing handshake with code 1008 follows this in-band error. |
  * | `session_timeout` | Max session duration was reached (maximum session duration of 48 hours), a closing handshake with code 1008 follows this in-band error. |
  * | `unknown_error` | An error that did not fit any of the types above. |
- *
- * :::info
- *
- * `invalid_message`, `protocol_error` and `unknown_error` can be triggered as a response to any type of messages.
- *
- * :::
  */
 type ErrorTypeEnum =
   | 'invalid_message'

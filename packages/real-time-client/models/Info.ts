@@ -2,12 +2,12 @@ import type { InfoTypeEnum } from './InfoTypeEnum';
 interface Info {
   message: 'Info';
   /**
-   * The following are the possible info types:
+   * The kind of information an `Info` message carries.
    *
-   * | Info Type | Description |
+   * | Value | Description |
    * | --- | --- |
-   * | `recognition_quality` | Informs the client what particular quality-based model is used to handle the recognition. Sent to the client immediately after the WebSocket handshake is completed.|
-   * | `concurrent_session_usage` | Informs the client of their quota for concurrent sessions and how much of it they are using. Sent to the client immediately after the WebSocket handshake is completed.|
+   * | `recognition_quality` | Informs the client what particular quality-based model is used to handle the recognition. Sent to the client immediately after the WebSocket handshake is completed. |
+   * | `concurrent_session_usage` | Informs the client of their quota for concurrent sessions and how much of it they are using. Sent to the client immediately after the WebSocket handshake is completed. |
    */
   type: InfoTypeEnum;
   reason: string;
@@ -29,5 +29,9 @@ interface Info {
    * Only set when `type` is `concurrent_session_usage`. Indicates the timestamp of the most recent usage update, in the format `YYYY-MM-DDTHH:MM:SSZ` (UTC). This value is updated even when usage exceeds the quota, as it represents the most recent known data. In some cases, it may be empty or outdated due to internal errors preventing successful update.
    */
   last_updated?: string;
+  /**
+   * Only set when `type` is `concurrent_session_usage`. The region that reported this usage, for example `eu`.
+   */
+  region?: string;
 }
 export type { Info };
