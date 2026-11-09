@@ -189,6 +189,11 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
+    if (this.multichannel) {
+      throw new SpeechmaticsRealtimeError(
+        'sendAudio() cannot be used in a multichannel session. Use sendChannelAudio() instead.',
+      );
+    }
     this.socket.send(data);
   }
 
@@ -206,6 +211,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
     if (!this.socket || this.socket.readyState !== this.socket.OPEN) {
       throw new SpeechmaticsRealtimeError('Socket not ready to receive audio');
     }
+    this.assertMultichannel('sendChannelAudio');
     if (this.endedChannels.has(channel)) {
       throw new SpeechmaticsRealtimeError(
         `Cannot send audio on channel "${channel}" after it has been ended`,
@@ -228,6 +234,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
    * It's useful when one channel finishes before the others (e.g. one participant hangs up).
    */
   endChannel(channel: string) {
+    this.assertMultichannel('endChannel');
     if (this.endedChannels.has(channel)) {
       return;
     }
@@ -281,6 +288,7 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       );
     }
 
+    validateChannelLabels(config);
     this.resetSessionState(config);
     await this.connect(jwt);
 
@@ -310,6 +318,14 @@ export class RealtimeClient extends TypedEventTarget<RealtimeClientEventMap> {
       waitForRecognitionStarted,
       rejectAfter<RecognitionStarted>(this.timeout, 'RecognitionStarted'),
     ]);
+  }
+
+  private assertMultichannel(method: string) {
+    if (!this.multichannel) {
+      throw new SpeechmaticsRealtimeError(
+        `${method}() can only be used in a multichannel session (transcription_config.diarization set to "channel" or "channel_and_speaker").`,
+      );
+    }
   }
 
   private resetSessionState(config: RealtimeTranscriptionConfig) {
@@ -401,6 +417,18 @@ function dataIsRealtimeTranscriptionMessage(
     return false;
   }
   return true;
+}
+
+function validateChannelLabels(config: RealtimeTranscriptionConfig) {
+  const labels = config.transcription_config?.channel_diarization_labels;
+  if (!labels) return;
+
+  const duplicates = labels.filter((label, i) => labels.indexOf(label) !== i);
+  if (duplicates.length) {
+    throw new SpeechmaticsRealtimeError(
+      `Channel labels must be unique. Duplicated: ${[...new Set(duplicates)].join(', ')}`,
+    );
+  }
 }
 
 function toBase64(data: ArrayBuffer | ArrayBufferView): string {

@@ -14,6 +14,7 @@ import type { RealtimeClientMessage } from '../models';
 type FakeServer = {
   url: string;
   received: RealtimeClientMessage[];
+  onConnection: (listener: () => void) => void;
   close: () => Promise<void>;
 };
 
@@ -59,6 +60,7 @@ async function startFakeServer(channelIds?: string[]): Promise<FakeServer> {
   return {
     url: `ws://localhost:${port}`,
     received,
+    onConnection: (listener) => server.on('connection', listener),
     close: () => new Promise((r) => server.close(() => r())),
   };
 }
@@ -191,6 +193,74 @@ test('RealtimeClient multichannel', async (t) => {
       name: 'SpeechmaticsRealtimeError',
     });
   });
+
+  await t.test(
+    'sendChannelAudio and endChannel throw in single-channel sessions',
+    async () => {
+      const server = await startFakeServer();
+      const client = new RealtimeClient({ url: server.url });
+      await client.start('jwt', { transcription_config: { language: 'en' } });
+
+      assert.throws(() => client.sendChannelAudio('inbound', 'AA=='), {
+        name: 'SpeechmaticsRealtimeError',
+        message: /multichannel session/,
+      });
+      assert.throws(() => client.endChannel('inbound'), {
+        name: 'SpeechmaticsRealtimeError',
+        message: /multichannel session/,
+      });
+
+      await client.stopRecognition();
+      await server.close();
+
+      assert.ok(
+        !server.received.some(
+          (m) =>
+            m.message === 'AddChannelAudio' || m.message === 'EndOfChannel',
+        ),
+      );
+    },
+  );
+
+  await t.test('sendAudio throws in multichannel sessions', async () => {
+    const server = await startFakeServer(['inbound', 'outbound']);
+    const client = new RealtimeClient({ url: server.url });
+    await client.start('jwt', multichannelConfig);
+
+    assert.throws(() => client.sendAudio(new Uint8Array([1, 2, 3])), {
+      name: 'SpeechmaticsRealtimeError',
+      message: /sendChannelAudio/,
+    });
+
+    await client.stopRecognition();
+    await server.close();
+  });
+
+  await t.test(
+    'start rejects duplicate channel labels before connecting',
+    async () => {
+      const server = await startFakeServer(['a', 'b']);
+      let connections = 0;
+      server.onConnection(() => connections++);
+      const client = new RealtimeClient({ url: server.url });
+
+      await assert.rejects(
+        client.start('jwt', {
+          transcription_config: {
+            language: 'en',
+            diarization: 'channel',
+            channel_diarization_labels: ['a', 'b', 'a'],
+          },
+        }),
+        {
+          name: 'SpeechmaticsRealtimeError',
+          message: 'Channel labels must be unique. Duplicated: a',
+        },
+      );
+      await server.close();
+      assert.strictEqual(connections, 0);
+    },
+  );
 
   await t.test('single-channel sessions still send EndOfStream', async () => {
     const server = await startFakeServer();

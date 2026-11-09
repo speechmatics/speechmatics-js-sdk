@@ -23,37 +23,7 @@ More examples will be available soon. For now, you can checkout the [NodeJS exam
 You can generate a long-lived API key through our self service portal here: https://portal.speechmatics.com/api-keys
 
 See our documentation about generating short-lived JWTs here: https://docs.speechmatics.com/introduction/authentication
+
 ### Multichannel audio 🎧
 
-If you have separate audio streams per speaker (e.g. the two legs of a phone call), enable channel diarization and send each stream with `sendChannelAudio`. Transcripts will include a `channel` field identifying the source.
-
-```typescript
-import { RealtimeClient } from '@speechmatics/real-time-client';
-
-const client = new RealtimeClient();
-
-client.addEventListener('receiveMessage', ({ data }) => {
-  if (data.message === 'AddTranscript') {
-    console.log(`[${data.channel}]`, data.metadata.transcript);
-  }
-});
-
-await client.start(jwt, {
-  audio_format: { type: 'raw', encoding: 'mulaw', sample_rate: 8000 },
-  transcription_config: {
-    language: 'en',
-    diarization: 'channel',
-    channel_diarization_labels: ['agent', 'customer'],
-  },
-});
-
-// Raw bytes (ArrayBuffer / Uint8Array / Buffer) or a base64-encoded string
-client.sendChannelAudio('agent', agentChunk);
-client.sendChannelAudio('customer', customerChunkBase64);
-
-// Optionally end a single channel early, e.g. when one participant leaves
-client.endChannel('customer');
-
-// Ends any remaining channels and waits for the final transcript
-await client.stopRecognition();
-```
+If you have a separate audio stream per speaker (e.g. the two sides of a phone call), enable channel diarization and send each stream with `sendChannelAudio()`. See the [multichannel NodeJS example](/examples/nodejs/real-time-multichannel-example.ts).
