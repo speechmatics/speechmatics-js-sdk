@@ -33,7 +33,7 @@
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@openapitools/openapi-generator-cli": "^2.40.0",
+    "@openapitools/openapi-generator-cli": "^2.40.1",
     "@types/node": "^22.5.2",
     "esbuild": "^0.28.1",
     "knip": "^6.27.0",
