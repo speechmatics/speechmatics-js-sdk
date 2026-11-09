@@ -41,14 +41,17 @@ const response = await client.transcribe(
       model: 'enhanced',
     },
   },
-  'json-v2',
+  // Optional: format can be 'json-v2' (default), 'txt' or 'srt'.
+  // An AbortSignal can be passed to stop waiting after some time.
+  { format: 'json-v2', signal: AbortSignal.timeout(15 * 60 * 1000) },
 );
 
 console.log('Transcription finished!');
 
 console.log(
-  // Transcripts can be strings when the 'txt' format is chosen
-  typeof response === 'string'
-    ? response
-    : response.results.map((r) => r.alternatives?.[0].content).join(' '),
+  // With 'json-v2', the transcript is typed as a JSON object.
+  // With 'txt' or 'srt', it is a string.
+  response.results
+    .map((r) => r.alternatives?.[0].content)
+    .join(' '),
 );

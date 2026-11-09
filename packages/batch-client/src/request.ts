@@ -18,9 +18,11 @@ export async function request<T>(
   payload?: BodyInit | null | undefined,
   params?: QueryParams,
   contentType?: string,
+  signal?: AbortSignal,
 ): Promise<T> {
   const requestOptions: RequestInit = {
     method,
+    signal,
     headers: {
       ...(contentType ? { 'Content-Type': contentType } : {}),
       Authorization: `Bearer ${apiKey}`,
@@ -34,6 +36,8 @@ export async function request<T>(
   try {
     response = await fetch(fullUrl, requestOptions);
   } catch (err) {
+    // Let aborts propagate as-is, so callers can distinguish cancellation
+    if (signal?.aborted) throw signal.reason ?? err;
     throw new SpeechmaticsNetworkError(`Error fetching from ${path}`, err);
   }
 

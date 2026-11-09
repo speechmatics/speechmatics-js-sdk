@@ -30,3 +30,4 @@ test('getFullURL', async (t) => {
       'https://gateway.com/speechmatics/v2/jobs?sm-sdk=js-0.0.0-test',
   );
 });
+import './wait.test';
