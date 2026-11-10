@@ -4,7 +4,10 @@ import {
   type ErrorResponse,
   ErrorResponseErrorEnum,
 } from '../models/error-response';
-import type { JobDetails } from '../models/job-details';
+import type { JobDetails, JobDetailsStatusEnum } from '../models/job-details';
+
+/** Terminal job statuses other than `done` */
+export type JobFailedStatus = Exclude<JobDetailsStatusEnum, 'running' | 'done'>;
 
 const ErrorResponseSchema: z.ZodType<ErrorResponse> = z.object({
   code: z.number(),
@@ -105,11 +108,11 @@ export class SpeechmaticsInvalidTypeError extends SpeechmaticsInternalError {
  */
 export class SpeechmaticsJobFailedError extends SpeechmaticsInternalError {
   jobId: string;
-  status: string;
+  status: JobFailedStatus;
   /** Job details at the time of failure, including any `errors`, if they could be retrieved */
   job?: JobDetails;
 
-  constructor(jobId: string, status: string, job?: JobDetails) {
+  constructor(jobId: string, status: JobFailedStatus, job?: JobDetails) {
     const reasons = job?.errors?.map((e) => e.message).join('; ');
     super(
       InternalErrorEnum.JobFailed,
