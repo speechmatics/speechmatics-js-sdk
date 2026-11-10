@@ -6,6 +6,7 @@ Welcome to the Speechmatics Javascript SDK! We're open to contributions from any
 
 - [Useful Links](#useful-links)
 - [How to Submit Changes](#how-to-submit-changes)
+- [Releasing](#releasing)
 - [How to Report a Bug](#how-to-report-a-bug)
 - [How to Request a Feature](#how-to-request-a-feature)
 - [Style Guide](#style-guide)
@@ -53,6 +54,41 @@ We try not to be too prescreptive about how people work, but we also believe in 
 3. Make sure your changes are tested - ideally both manually and in the unit tests.
 4. When opening a PR back into our repo, provide some simple descriptive comments that list the changes being made in the PR.
 5. Give your PR a short, descriptive title.
+
+## Releasing
+
+We use [Changesets](https://github.com/changesets/changesets) to version and publish packages. Publishing runs from CI using GitHub OIDC trusted publishing — there are no npm tokens to manage.
+
+### Adding a changeset (do this in every PR)
+
+If your PR changes a publishable package, add a changeset describing the change:
+
+```sh
+pnpm changeset
+```
+
+Pick the affected package(s), choose a bump level (`patch` / `minor` / `major`), and write a short summary. That summary becomes the changelog entry and the GitHub Release notes, so write it for consumers of the package. Commit the generated file in `.changeset/`.
+
+For changes that should **not** trigger a release (docs, CI, internal refactors), add an empty changeset:
+
+```sh
+pnpm changeset --empty
+```
+
+CI fails a PR that changes a package without a changeset, so this is enforced rather than optional.
+
+### Publishing a stable release
+
+Merging to `main` does **not** publish directly. Instead, Changesets opens (and keeps updating) a **"Version Packages"** PR that bumps versions and writes each package's `CHANGELOG.md`. When you merge that PR, CI publishes the new versions to npm and creates the git tags and GitHub Releases automatically. Internal `-react` wrappers are bumped and republished automatically when the client they depend on changes.
+
+### Publishing a beta / prerelease
+
+To publish an ad-hoc prerelease (the replacement for the old local `pnpm publish --tag beta`):
+
+1. Make sure your branch contains a changeset for the change you want to release.
+2. Go to **Actions → Release → Run workflow**, select your branch, and set the `tag` input (e.g. `beta`).
+
+This publishes an ephemeral version like `8.6.0-beta-<sha>` under the chosen dist-tag. It does not create commits or tags, and it never affects the `latest` tag. Consumers opt in with `pnpm add @speechmatics/<pkg>@beta`.
 
 ## How to Report a Bug
 
