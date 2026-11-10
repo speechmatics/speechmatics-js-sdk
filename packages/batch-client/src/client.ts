@@ -2,7 +2,7 @@ import type { CreateJobResponse } from '../models/create-job-response';
 import type { RetrieveJobResponse } from '../models/retrieve-job-response';
 import type { RetrieveTranscriptResponse } from '../models/retrieve-transcript-response';
 import type { RetrieveJobsResponse } from '../models/retrieve-jobs-response';
-import type { JobDetails } from '../models/job-details';
+import { type JobDetails, JobDetailsStatusEnum } from '../models/job-details';
 import type { DeleteJobResponse } from '../models/delete-job-response';
 import type { DataFetchConfig } from '../models/data-fetch-config';
 import type { JobConfig } from '../models/job-config';
@@ -113,9 +113,12 @@ export class BatchClient {
 
     // Servers without `wait` support (e.g. on-prem) return no `status`,
     // in which case this degrades into a regular polling loop.
-    let status: string | undefined = created.status;
+    let status:
+      | JobDetailsStatusEnum
+      | CreateJobWaitResponse['status']
+      | undefined = created.status;
     let job: JobDetails | undefined;
-    while (status === undefined || !isTerminal(status)) {
+    while (!isTerminal(status)) {
       const start = Date.now();
       ({ job } = await this.getJob(created.id, { wait, signal }));
       status = job.status;
@@ -263,15 +266,17 @@ export const DEFAULT_TRANSCRIBE_WAIT_SECONDS = 60;
 
 const MIN_POLL_INTERVAL_MS = 1000;
 
-const TERMINAL_STATUSES: readonly string[] = [
-  'done',
-  'rejected',
-  'deleted',
-  'expired',
+type TerminalStatus = Exclude<JobDetailsStatusEnum, 'running'>;
+
+const TERMINAL_STATUSES: readonly TerminalStatus[] = [
+  JobDetailsStatusEnum.Done,
+  JobDetailsStatusEnum.Rejected,
+  JobDetailsStatusEnum.Deleted,
+  JobDetailsStatusEnum.Expired,
 ];
 
-function isTerminal(status: string) {
-  return TERMINAL_STATUSES.includes(status);
+function isTerminal(status: string | undefined): status is TerminalStatus {
+  return TERMINAL_STATUSES.includes(status as TerminalStatus);
 }
 
 function validateWait(wait: number): number {
