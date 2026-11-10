@@ -11,7 +11,8 @@
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c",
     "prepare": "pnpm build",
-    "test": "node --import ./test/setup.ts --import tsx ./test/index.test.ts"
+    "test": "node --import ./test/setup.ts --import tsx ./test/index.test.ts",
+    "test:live": "node --import ./test/setup.ts --import tsx ./test/live.test.ts"
   },
   "keywords": [
     "speech",
