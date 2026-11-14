@@ -50,9 +50,6 @@ export const NotificationConfigContentsEnum = {
   TranscriptJsonV2: 'transcript.json-v2',
   TranscriptTxt: 'transcript.txt',
   TranscriptSrt: 'transcript.srt',
-  Alignment: 'alignment',
-  AlignmentWordStartAndEnd: 'alignment.word_start_and_end',
-  AlignmentOnePerLine: 'alignment.one_per_line',
   Data: 'data',
   Text: 'text',
 } as const;
