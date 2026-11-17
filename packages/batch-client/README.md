@@ -141,3 +141,7 @@ The alignment job type has been removed from the API spec, so these fields have 
 - the alignment-related values from `ErrorResponseErrorEnum`
 
 The client only ever created transcription jobs, so this only affects code that read these fields from API responses.
+
+### Deep imports are no longer allowed
+
+The package now declares an `exports` map, so only the package root (and `package.json`) can be imported. Imports of paths inside the package, such as `@speechmatics/batch-client/dist/index.js`, now fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`. Import from `@speechmatics/batch-client` instead. Everything public is exported from there.
