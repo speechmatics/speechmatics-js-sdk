@@ -145,3 +145,24 @@ The client only ever created transcription jobs, so this only affects code that 
 ### Deep imports are no longer allowed
 
 The package now declares an `exports` map, so only the package root (and `package.json`) can be imported. Imports of paths inside the package, such as `@speechmatics/batch-client/dist/index.js`, now fail with `ERR_PACKAGE_PATH_NOT_EXPORTED`. Import from `@speechmatics/batch-client` instead. Everything public is exported from there.
+
+### `SpeechmaticsResponseError` accepts unknown error codes
+
+`SpeechmaticsResponseError.error` is now typed as `SpeechmaticsResponseErrorCode`: any of the known `ErrorResponseErrorEnum` values, or any other string. Previously an error code the SDK didn't know about caused a `SpeechmaticsUnexpectedResponse` instead, losing the code and detail. If you `switch` exhaustively over `error`, add a `default` case.
+
+The error's `message` now also includes the API's `detail`, when there is one (e.g. `Job rejected: Job config JSON is invalid`).
+
+The `zod` dependency has been removed.
+
+### `deleteJob` takes an options object
+
+```diff
+- await client.deleteJob(jobId, true);
++ await client.deleteJob(jobId, { force: true });
+```
+
+It also accepts a `signal`, like the other methods.
+
+### `getDataFile` removed
+
+`getDataFile` called an endpoint that isn't part of the documented API, and parsed its response as JSON, so it couldn't return a data file. It has been removed.

@@ -37,8 +37,5 @@
     "translation",
     "summary"
   ],
-  "license": "MIT",
-  "dependencies": {
-    "zod": "^3.23.8"
-  }
+  "license": "MIT"
 }

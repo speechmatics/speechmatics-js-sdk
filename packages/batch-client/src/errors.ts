@@ -1,7 +1,5 @@
-import { z } from 'zod';
-
-import {
-  type ErrorResponse,
+import type {
+  ErrorResponse,
   ErrorResponseErrorEnum,
 } from '../models/error-response';
 import type { JobDetails, JobDetailsStatusEnum } from '../models/job-details';
@@ -9,34 +7,52 @@ import type { JobDetails, JobDetailsStatusEnum } from '../models/job-details';
 /** Terminal job statuses other than `done` */
 export type JobFailedStatus = Exclude<JobDetailsStatusEnum, 'running' | 'done'>;
 
-const ErrorResponseSchema: z.ZodType<ErrorResponse> = z.object({
-  code: z.number(),
-  detail: z.optional(z.string()),
-  error: z.nativeEnum(ErrorResponseErrorEnum),
-});
+/**
+ * The `error` string of an API error response. Known values are typed via `ErrorResponseErrorEnum`,
+ * but any string is accepted so that errors the API adds later are still surfaced as-is.
+ */
+// `string & {}` keeps editor autocompletion for the known values
+export type SpeechmaticsResponseErrorCode =
+  | ErrorResponseErrorEnum
+  | (string & {});
 
-type SpeechamticsErrorEnum = InternalErrorEnum | ErrorResponseErrorEnum;
+/** An API error response body */
+export type SpeechmaticsErrorResponse = Omit<ErrorResponse, 'error'> & {
+  error: SpeechmaticsResponseErrorCode;
+};
+
+function isErrorResponse(value: unknown): value is SpeechmaticsErrorResponse {
+  if (typeof value !== 'object' || value === null) return false;
+  const { code, error, detail } = value as Record<string, unknown>;
+  return (
+    typeof code === 'number' &&
+    typeof error === 'string' &&
+    (detail === undefined || typeof detail === 'string')
+  );
+}
+
+type SpeechmaticsErrorCode = InternalErrorEnum | SpeechmaticsResponseErrorCode;
 interface SpeechmaticsErrorInterface extends Error {
-  error: SpeechamticsErrorEnum;
+  error: SpeechmaticsErrorCode;
 }
 
 export class SpeechmaticsResponseError
   extends Error
   implements SpeechmaticsErrorInterface
 {
-  response: ErrorResponse;
-  error: ErrorResponseErrorEnum;
+  response: SpeechmaticsErrorResponse;
+  error: SpeechmaticsResponseErrorCode;
 
-  constructor(errorResponse: ErrorResponse | unknown) {
-    const parse = ErrorResponseSchema.safeParse(errorResponse);
-    if (parse.success) {
-      super(parse.data.error);
-      this.response = parse.data;
-      this.error = parse.data.error;
-      this.name = 'SpeechmaticsResponseError';
-    } else {
+  /** @throws {SpeechmaticsUnexpectedResponse} if `errorResponse` isn't a valid API error response */
+  constructor(errorResponse: unknown) {
+    if (!isErrorResponse(errorResponse)) {
       throw new SpeechmaticsUnexpectedResponse(undefined, errorResponse);
     }
+    const { error, detail } = errorResponse;
+    super(detail ? `${error}: ${detail}` : error);
+    this.response = errorResponse;
+    this.error = error;
+    this.name = 'SpeechmaticsResponseError';
   }
 }
 
