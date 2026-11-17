@@ -74,18 +74,19 @@ test(
   'lower-level wait flow: create, getJob, getJobResult',
   { timeout: TEST_TIMEOUT_MS },
   async () => {
-    // wait: 0 opts in to the extended response without blocking
+    // wait: 1 opts in to the extended response with minimal blocking.
+    // (The API treats wait: 0 as omitted and returns only the job id.)
     const created = await client.createTranscriptionJob(
       await loadAudio(),
       config,
       {
-        wait: 0,
+        wait: 1,
         format: 'srt',
       },
     );
     assert.ok(created.id);
     assert.ok(
-      ['created', 'done'].includes(created.status),
+      created.status === 'created' || created.status === 'done',
       `unexpected status ${created.status}`,
     );
 
