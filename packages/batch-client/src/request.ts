@@ -2,6 +2,7 @@ import {
   SpeechmaticsInvalidTypeError,
   SpeechmaticsNetworkError,
   SpeechmaticsResponseError,
+  SpeechmaticsUnexpectedResponse,
 } from './errors';
 
 export type HttpMethod = 'GET' | 'PUT' | 'POST' | 'DELETE';
@@ -17,12 +18,15 @@ export async function request<T>(
   method: HttpMethod = 'POST',
   payload?: BodyInit | null | undefined,
   params?: QueryParams,
-  contentType?: string,
+  /** Expected response type. `text/plain` responses are returned as a string, anything else is parsed as JSON. */
+  accept?: string,
+  signal?: AbortSignal,
 ): Promise<T> {
   const requestOptions: RequestInit = {
     method,
+    signal,
     headers: {
-      ...(contentType ? { 'Content-Type': contentType } : {}),
+      ...(accept ? { Accept: accept } : {}),
       Authorization: `Bearer ${apiKey}`,
     },
     body: payload,
@@ -34,15 +38,16 @@ export async function request<T>(
   try {
     response = await fetch(fullUrl, requestOptions);
   } catch (err) {
+    // Let aborts propagate as-is, so callers can distinguish cancellation
+    if (signal?.aborted) throw signal.reason ?? err;
     throw new SpeechmaticsNetworkError(`Error fetching from ${path}`, err);
   }
 
   if (!response.ok) {
-    const responseJson = await response.json();
-    throw new SpeechmaticsResponseError(responseJson);
+    throw await errorFromResponse(response);
   }
 
-  const isPlain = contentType === 'text/plain';
+  const isPlain = accept === 'text/plain';
 
   let result: T;
 
@@ -113,4 +118,33 @@ export function addQueryParamsToUrl(
 
 export function addSDKInfoToRequestUrl(url: string): string {
   return addQueryParamsToUrl(url, { [SM_SDK_PARAM_NAME]: getSmSDKVersion() });
+}
+
+// Error bodies aren't guaranteed to be JSON (e.g. an HTML page from a gateway or proxy),
+// so read as text and only build a `SpeechmaticsResponseError` if it parses as one.
+async function errorFromResponse(response: Response): Promise<Error> {
+  const body = await response.text().catch(() => '');
+  const cause = {
+    status: response.status,
+    statusText: response.statusText,
+    body,
+  };
+  const message = `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`;
+
+  let json: unknown;
+  try {
+    json = JSON.parse(body);
+  } catch {
+    return new SpeechmaticsUnexpectedResponse(
+      `${message} (non-JSON response body)`,
+      cause,
+    );
+  }
+
+  try {
+    return new SpeechmaticsResponseError(json);
+  } catch {
+    // Valid JSON, but not the expected error shape
+    return new SpeechmaticsUnexpectedResponse(message, cause);
+  }
 }

@@ -1,17 +1,32 @@
 {
   "name": "@speechmatics/batch-client",
-  "version": "5.4.2",
+  "version": "6.0.0",
   "description": "Javascript client for the Speechmatics batch jobs API",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "files": ["dist/", "README.md"],
   "repository": "https://github.com/speechmatics/speechmatics-js-sdk/tree/main/packages/batch-client",
   "scripts": {
     "generate-types": "./scripts/generate-models.sh",
     "build": "rollup -c",
     "prepare": "pnpm build",
-    "test": "node --import ./test/setup.ts --import tsx ./test/index.test.ts"
+    "test": "node --import ./test/setup.ts --import tsx ./test/index.test.ts",
+    "test:live": "node --import ./test/setup.ts --import tsx ./test/live.test.ts"
   },
   "keywords": [
     "speech",
@@ -22,8 +37,5 @@
     "translation",
     "summary"
   ],
-  "license": "MIT",
-  "dependencies": {
-    "zod": "^3.23.8"
-  }
+  "license": "MIT"
 }

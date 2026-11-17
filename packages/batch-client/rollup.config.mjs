@@ -42,9 +42,9 @@ export default function rollup() {
         }),
       ],
       input: 'src/index.ts',
-      output: {
-        file: `${name}.d.ts`,
-      },
+      // Separate declaration files for each module format, so TypeScript resolves
+      // the correct format under `moduleResolution: node16`/`nodenext`
+      output: [{ file: `${name}.d.ts` }, { file: `${name}.d.mts` }],
     },
   ];
 }
