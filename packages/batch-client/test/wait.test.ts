@@ -127,6 +127,40 @@ test('requests send Accept, not Content-Type', async () => {
   }
 });
 
+test('v5-style arguments throw a helpful error instead of being ignored', async () => {
+  const m = mockFetch([]);
+  // Casts simulate plain JS callers, who get no type errors
+  // biome-ignore lint/suspicious/noExplicitAny: deliberately passing invalid arguments
+  const anyClient = client as any;
+  try {
+    await assert.rejects(
+      anyClient.transcribe(file, config, 'txt'),
+      (err: Error) =>
+        err instanceof SpeechmaticsConfigurationError &&
+        /options object/.test(err.message),
+    );
+    await assert.rejects(
+      anyClient.transcribe(file, config, { format: 'text' }),
+      (err: Error) =>
+        err instanceof SpeechmaticsConfigurationError &&
+        /'txt'/.test(err.message),
+    );
+    await assert.rejects(
+      anyClient.getJobResult('j1', 'text'),
+      SpeechmaticsConfigurationError,
+    );
+    await assert.rejects(
+      anyClient.deleteJob('j1', true),
+      (err: Error) =>
+        err instanceof SpeechmaticsConfigurationError &&
+        /\{ force: true \}/.test(err.message),
+    );
+    assert.strictEqual(m.calls.length, 0, 'no requests should be sent');
+  } finally {
+    m.restore();
+  }
+});
+
 test('invalid wait values are rejected', async () => {
   for (const wait of [-1, 1.5, Number.NaN]) {
     await assert.rejects(

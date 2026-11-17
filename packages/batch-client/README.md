@@ -10,7 +10,6 @@ API documentation can be found here: https://docs.speechmatics.com/jobsapi#tag/j
 npm i @speechmatics/batch-client
 ```
 
-
 ## Usage
 
 More examples will be available soon. For now, you can checkout the [NodeJS example](/examples/nodejs/batch-example.ts).
@@ -62,7 +61,9 @@ if (job.status === 'done') {
 }
 ```
 
-Without `wait`, `createTranscriptionJob` returns as soon as the job is created. Note that when `wait` is omitted, `getJob` and `getJobResult` use a short wait that the server chooses. Pass `wait: 0` to return immediately.
+Without `wait`, `createTranscriptionJob` returns as soon as the job is created, with only the job `id`. The API currently treats `wait: 0` the same way, so use `wait: 1` or more to get a `status` back.
+
+When `wait` is omitted, `getJob` and `getJobResult` use a short wait that the server chooses. Pass `wait: 0` to return immediately.
 
 All of these methods also accept an AbortSignal through the `signal` option.
 

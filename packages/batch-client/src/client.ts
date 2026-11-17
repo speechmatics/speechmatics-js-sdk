@@ -101,6 +101,11 @@ export class BatchClient {
     jobConfig: CreateJobConfig,
     options: TranscribeOptions<F> = {},
   ): Promise<TranscriptResult<F>> {
+    if (typeof options !== 'object' || options === null) {
+      throw new SpeechmaticsConfigurationError(
+        `transcribe's third argument is now an options object, e.g. { format: 'txt' } (changed in v6)`,
+      );
+    }
     const {
       format = 'json-v2' as F,
       wait = DEFAULT_TRANSCRIBE_WAIT_SECONDS,
@@ -206,6 +211,7 @@ export class BatchClient {
     formData.append('config', JSON.stringify(config));
 
     const { wait, format, signal } = options;
+    if (format !== undefined) validateFormat(format);
     const params =
       wait === undefined ? {} : { wait: validateWait(wait), format };
 
@@ -240,8 +246,14 @@ export class BatchClient {
    */
   async deleteJob(
     id: string,
-    { force = false, signal }: DeleteJobOptions = {},
+    options: DeleteJobOptions = {},
   ): Promise<DeleteJobResponse> {
+    if (typeof options === 'boolean') {
+      throw new SpeechmaticsConfigurationError(
+        `deleteJob's second argument is now an options object, e.g. { force: ${options} } (changed in v6)`,
+      );
+    }
+    const { force = false, signal } = options;
     const params = force ? { force } : undefined;
     return this.delete(`/v2/jobs/${id}`, params, signal);
   }
@@ -259,6 +271,7 @@ export class BatchClient {
     format: F = 'json-v2' as F,
     { wait, signal }: WaitOptions = {},
   ): Promise<TranscriptResult<F>> {
+    validateFormat(format);
     const params = {
       format,
       ...(wait === undefined ? {} : { wait: validateWait(wait) }),
@@ -299,8 +312,18 @@ function validateWait(wait: number): number {
   return wait;
 }
 
+// Plain JS callers don't get type errors for v5-style arguments, so catch the common ones with a hint
+function validateFormat(format: string) {
+  if (format === 'text') {
+    throw new SpeechmaticsConfigurationError(
+      `The 'text' format was renamed to 'txt' in v6`,
+    );
+  }
+}
+
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-  signal?.throwIfAborted();
+  // Not `signal.throwIfAborted()`, which isn't available in all runtimes (e.g. some React Native versions)
+  if (signal?.aborted) return Promise.reject(signal.reason);
   if (ms <= 0) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const onAbort = () => {
