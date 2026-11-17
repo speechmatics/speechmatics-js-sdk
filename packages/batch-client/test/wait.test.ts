@@ -81,6 +81,21 @@ test('createTranscriptionJob with wait: 0 handles the id-only response', async (
   }
 });
 
+test('deleteJob passes force only when set', async () => {
+  const m = mockFetch([
+    () => json({ job: { id: 'j1' } }),
+    () => json({ job: { id: 'j1' } }),
+  ]);
+  try {
+    await client.deleteJob('j1');
+    await client.deleteJob('j1', { force: true });
+    assert.strictEqual(m.calls[0].searchParams.has('force'), false);
+    assert.strictEqual(m.calls[1].searchParams.get('force'), 'true');
+  } finally {
+    m.restore();
+  }
+});
+
 test('invalid wait values are rejected', async () => {
   for (const wait of [-1, 1.5, Number.NaN]) {
     await assert.rejects(

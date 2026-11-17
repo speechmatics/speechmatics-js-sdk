@@ -110,7 +110,7 @@ test(
       }
       assert.ok(srt?.includes('-->'), 'expected SRT timestamps');
     } finally {
-      await client.deleteJob(created.id, true).catch(() => {});
+      await client.deleteJob(created.id, { force: true }).catch(() => {});
     }
   },
 );

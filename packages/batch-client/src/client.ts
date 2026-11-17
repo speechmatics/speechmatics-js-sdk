@@ -66,11 +66,21 @@ export class BatchClient {
     );
   }
 
-  private async delete<T>(endpoint: string, params?: QueryParams): Promise<T> {
-    return request(this.apiKey, this.apiUrl, endpoint, 'DELETE', null, {
-      ...params,
-      [SM_APP_PARAM_NAME]: this.appId,
-    });
+  private async delete<T>(
+    endpoint: string,
+    params?: QueryParams,
+    signal?: AbortSignal,
+  ): Promise<T> {
+    return request(
+      this.apiKey,
+      this.apiUrl,
+      endpoint,
+      'DELETE',
+      null,
+      { ...params, [SM_APP_PARAM_NAME]: this.appId },
+      undefined,
+      signal,
+    );
   }
 
   /**
@@ -223,9 +233,17 @@ export class BatchClient {
     return this.get(`/v2/jobs/${id}`, 'application/json', params, signal);
   }
 
-  async deleteJob(id: string, force = false): Promise<DeleteJobResponse> {
+  /**
+   * Delete a job.
+   *
+   * Running jobs can only be deleted with `force: true`, which stops the job.
+   */
+  async deleteJob(
+    id: string,
+    { force = false, signal }: DeleteJobOptions = {},
+  ): Promise<DeleteJobResponse> {
     const params = force ? { force } : undefined;
-    return this.delete(`/v2/jobs/${id}`, params);
+    return this.delete(`/v2/jobs/${id}`, params, signal);
   }
 
   /**
@@ -253,10 +271,6 @@ export class BatchClient {
       params,
       signal,
     );
-  }
-
-  async getDataFile(jobId: string) {
-    return this.get(`/v2/jobs/${jobId}/data`, 'application/json');
   }
 
   async getFeatureDiscovery(): Promise<BatchFeatureDiscovery> {
@@ -320,6 +334,13 @@ export interface WaitOptions {
    */
   wait?: number;
   /** Abort the request. Note this does not cancel the job itself. */
+  signal?: AbortSignal;
+}
+
+export interface DeleteJobOptions {
+  /** Delete the job even if it is still running, stopping it. Defaults to `false`. */
+  force?: boolean;
+  /** Abort the request */
   signal?: AbortSignal;
 }
 
