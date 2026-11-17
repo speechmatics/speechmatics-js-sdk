@@ -31,3 +31,4 @@ test('getFullURL', async (t) => {
   );
 });
 import './wait.test';
+import './request.test';
