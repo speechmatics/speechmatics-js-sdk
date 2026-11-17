@@ -1,6 +1,6 @@
 {
   "name": "@speechmatics/auth",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Library for fetching temporary keys for Speechmatics APIs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
