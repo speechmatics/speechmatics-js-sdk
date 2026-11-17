@@ -31,7 +31,7 @@ export class BatchClient {
 
   private async get<T>(
     endpoint: string,
-    contentType?: string,
+    accept?: string,
     queryParams?: QueryParams,
     signal?: AbortSignal,
   ): Promise<T> {
@@ -42,7 +42,7 @@ export class BatchClient {
       'GET',
       null,
       { ...queryParams, [SM_APP_PARAM_NAME]: this.appId },
-      contentType,
+      accept,
       signal,
     );
   }
@@ -50,10 +50,10 @@ export class BatchClient {
   private async post<T>(
     endpoint: string,
     body: FormData | null = null,
-    contentType?: string,
     queryParams?: QueryParams,
     signal?: AbortSignal,
   ): Promise<T> {
+    // No Content-Type header: fetch sets it for FormData, including the multipart boundary
     return await request(
       this.apiKey,
       this.apiUrl,
@@ -61,7 +61,7 @@ export class BatchClient {
       'POST',
       body,
       { ...queryParams, [SM_APP_PARAM_NAME]: this.appId },
-      contentType,
+      'application/json',
       signal,
     );
   }
@@ -209,7 +209,7 @@ export class BatchClient {
     const params =
       wait === undefined ? {} : { wait: validateWait(wait), format };
 
-    return this.post('/v2/jobs', formData, undefined, params, signal);
+    return this.post('/v2/jobs', formData, params, signal);
   }
 
   async listJobs(
@@ -263,14 +263,8 @@ export class BatchClient {
       format,
       ...(wait === undefined ? {} : { wait: validateWait(wait) }),
     };
-    const contentType =
-      format === 'json-v2' ? 'application/json' : 'text/plain';
-    return this.get(
-      `/v2/jobs/${jobId}/transcript`,
-      contentType,
-      params,
-      signal,
-    );
+    const accept = format === 'json-v2' ? 'application/json' : 'text/plain';
+    return this.get(`/v2/jobs/${jobId}/transcript`, accept, params, signal);
   }
 
   async getFeatureDiscovery(): Promise<BatchFeatureDiscovery> {

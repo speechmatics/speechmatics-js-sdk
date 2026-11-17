@@ -96,6 +96,37 @@ test('deleteJob passes force only when set', async () => {
   }
 });
 
+test('requests send Accept, not Content-Type', async () => {
+  const headers: Headers[] = [];
+  const capture = (res: () => Response) => (_url: URL, init?: RequestInit) => {
+    headers.push(new Headers(init?.headers));
+    return res();
+  };
+  const m = mockFetch([
+    capture(() => json({ id: 'j1' }, 201)),
+    capture(() => job('done')),
+    capture(() => new Response('hello')),
+    capture(() => json(transcript)),
+  ]);
+  try {
+    await client.createTranscriptionJob(file, config);
+    await client.getJob('j1');
+    await client.getJobResult('j1', 'srt');
+    await client.getJobResult('j1');
+    assert.deepStrictEqual(
+      headers.map((h) => [h.get('accept'), h.get('content-type')]),
+      [
+        ['application/json', null],
+        ['application/json', null],
+        ['text/plain', null],
+        ['application/json', null],
+      ],
+    );
+  } finally {
+    m.restore();
+  }
+});
+
 test('invalid wait values are rejected', async () => {
   for (const wait of [-1, 1.5, Number.NaN]) {
     await assert.rejects(
