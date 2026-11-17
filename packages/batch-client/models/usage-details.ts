@@ -20,6 +20,9 @@ import type { JobMode } from './job-mode';
 import type { JobType } from './job-type';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { Model } from './model';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { OperatingPoint } from './operating-point';
 
 /**
@@ -46,6 +49,12 @@ export interface UsageDetails {
    * @memberof UsageDetails
    */
   language?: string;
+  /**
+   *
+   * @type {Model}
+   * @memberof UsageDetails
+   */
+  model?: Model;
   /**
    *
    * @type {OperatingPoint}

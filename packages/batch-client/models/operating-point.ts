@@ -22,6 +22,7 @@ export const OperatingPoint = {
   Standard: 'standard',
   Enhanced: 'enhanced',
   Melia1: 'melia-1',
+  Oak1: 'oak-1',
 } as const;
 
 export type OperatingPoint =

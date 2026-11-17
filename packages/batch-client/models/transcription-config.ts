@@ -14,9 +14,6 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { Model } from './model';
-// May contain unused imports in some cases
-// @ts-ignore
 import type { OperatingPoint } from './operating-point';
 // May contain unused imports in some cases
 // @ts-ignore
@@ -26,7 +23,13 @@ import type { TranscriptionConfigAdditionalVocabInner } from './transcription-co
 import type { TranscriptionConfigAudioFilteringConfig } from './transcription-config-audio-filtering-config';
 // May contain unused imports in some cases
 // @ts-ignore
+import type { TranscriptionConfigEntitiesConfig } from './transcription-config-entities-config';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { TranscriptionConfigPunctuationOverrides } from './transcription-config-punctuation-overrides';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { TranscriptionConfigRedactionConfig } from './transcription-config-redaction-config';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { TranscriptionConfigSpeakerDiarizationConfig } from './transcription-config-speaker-diarization-config';
@@ -59,16 +62,27 @@ export interface TranscriptionConfig {
    */
   output_locale?: string;
   /**
-   *
-   * @type {Model}
+   * Specific model to use in transcription, alias to operating point.
+   * @type {string}
    * @memberof TranscriptionConfig
    */
-  model?: Model;
+  model?: string;
+  /**
+   * List of languages expected to be present in the audio, specified as ISO language codes. This is used to guide the transcription process, particularly for multilingual audio.
+   * @type {Array<string>}
+   * @memberof TranscriptionConfig
+   */
+  language_hints?: Array<string>;
+  /**
+   * Whether to treat the provided language hints as strict.
+   * @type {boolean}
+   * @memberof TranscriptionConfig
+   */
+  language_hints_strict?: boolean;
   /**
    *
    * @type {OperatingPoint}
    * @memberof TranscriptionConfig
-   * @deprecated: Use `model` instead. This property is only kept for backward compatability, and may be removed in the future.
    */
   operating_point?: OperatingPoint;
   /**
@@ -101,6 +115,24 @@ export interface TranscriptionConfig {
    * @memberof TranscriptionConfig
    */
   enable_entities?: boolean;
+  /**
+   *
+   * @type {TranscriptionConfigEntitiesConfig}
+   * @memberof TranscriptionConfig
+   */
+  entities_config?: TranscriptionConfigEntitiesConfig;
+  /**
+   * Redact advanced entities throughout the transcript: matching entity values are replaced with a consistent label based on the `entity_class` (e.g. \"[name_given]\"). Must be set together with `redaction_config.entity_classes`. If `enable_entities` is true, `entities_config.detect_advanced_entities` must also be true (redaction relies on advanced entity detection); if `enable_entities` is false or omitted, `enable_redaction` can be used on its own. Spoken and written forms are not available when redaction is enabled.
+   * @type {boolean}
+   * @memberof TranscriptionConfig
+   */
+  enable_redaction?: boolean;
+  /**
+   *
+   * @type {TranscriptionConfigRedactionConfig}
+   * @memberof TranscriptionConfig
+   */
+  redaction_config?: TranscriptionConfigRedactionConfig;
   /**
    * Whether or not to enable flexible endpointing and allow the entity to continue to be spoken.
    * @type {string}

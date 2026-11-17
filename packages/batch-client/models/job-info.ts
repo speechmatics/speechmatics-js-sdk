@@ -47,12 +47,6 @@ export interface JobInfo {
    */
   id: string;
   /**
-   * Name of the text file submitted to be aligned to audio.
-   * @type {string}
-   * @memberof JobInfo
-   */
-  text_name?: string;
-  /**
    *
    * @type {TrackingData}
    * @memberof JobInfo
