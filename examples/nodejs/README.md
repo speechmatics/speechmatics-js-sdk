@@ -30,6 +30,14 @@ pnpm run:batch
 pnpm run:real-time-file
 ```
 
+### Transcribe multichannel audio (real-time)
+
+Transcribes a stereo file where each channel is a different speaker, labelling each transcript with its channel.
+
+```
+pnpm run:real-time-multichannel
+```
+
 ### Get speakers (real-time)
 
 ```
