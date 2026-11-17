@@ -151,6 +151,9 @@ export class BatchClient {
    * status is `done`, the transcript is (on a best-effort basis) embedded under the key named after `format`.
    * If the status is `created`, the job is still running: use {@link getJob} or {@link getJobResult}
    * with `wait` to keep waiting.
+   *
+   * Note: the API currently treats `wait: 0` the same as omitting `wait`, returning only the job `id`
+   * with no `status`. Use `wait: 1` or more to get the extended response.
    */
   async createTranscriptionJob(
     input: JobInput,
@@ -346,8 +349,12 @@ export interface TranscribeOptions<F extends TranscriptionFormat>
  *   but this is best-effort: if absent, fetch it with {@link BatchClient.getJobResult}.
  * - `created`: the wait elapsed while the job was still running.
  * - `rejected` / `deleted`: the job failed. Use {@link BatchClient.getJob} for details.
+ * - No `status`: the server returned the basic response with only the job `id`. This happens when `wait` is 0
+ *   (current API behaviour), or on deployments that don't support `wait` (e.g. on-prem).
+ *   Use {@link BatchClient.getJob} to check on the job.
  */
 export type CreateJobWaitResponse<F extends TranscriptionFormat = 'json-v2'> =
+  | { id: string; status?: undefined }
   | { id: string; status: 'created' | 'rejected' | 'deleted' }
   | ({ id: string; status: 'done' } & {
       [K in F]?: TranscriptResult<K>;

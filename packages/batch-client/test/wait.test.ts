@@ -68,6 +68,19 @@ test('createTranscriptionJob passes wait and format', async () => {
   }
 });
 
+test('createTranscriptionJob with wait: 0 handles the id-only response', async () => {
+  // The API currently treats wait=0 as if wait were omitted
+  const m = mockFetch([() => json({ id: 'j1' }, 201)]);
+  try {
+    const res = await client.createTranscriptionJob(file, config, { wait: 0 });
+    assert.strictEqual(m.calls[0].searchParams.get('wait'), '0');
+    assert.strictEqual(res.status, undefined);
+    assert.strictEqual(res.id, 'j1');
+  } finally {
+    m.restore();
+  }
+});
+
 test('invalid wait values are rejected', async () => {
   for (const wait of [-1, 1.5, Number.NaN]) {
     await assert.rejects(
