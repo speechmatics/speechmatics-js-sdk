@@ -10,6 +10,72 @@ API documentation can be found here: https://docs.speechmatics.com/jobsapi#tag/j
 npm i @speechmatics/batch-client
 ```
 
+## Upgrading from v5 to v6
+
+v6 adds support for the API's [synchronous `wait` option](https://docs.speechmatics.com/speech-to-text/batch/synchronous), and `transcribe` now uses it in place of polling. If you hit errors after upgrading, check the changes below.
+
+### `transcribe` takes an options object
+
+The `format` and `timeoutMS` arguments have been replaced by an options object. There is no longer a default timeout. To stop waiting after a set time, pass an `AbortSignal`:
+
+```diff
+- const transcript = await client.transcribe(file, config, 'json-v2', 10 * 60_000);
++ const transcript = await client.transcribe(file, config, {
++   format: 'json-v2',
++   signal: AbortSignal.timeout(10 * 60_000),
++ });
+```
+
+When the signal aborts, `transcribe` rejects with the signal's reason (a `TimeoutError` for `AbortSignal.timeout`). In v5 it rejected with `Error('Exceeded timeout of … ms')`. Aborting only stops the client waiting. The job itself keeps running.
+
+The return type now follows the format: a `RetrieveTranscriptResponse` for `json-v2`, and a `string` for `txt` and `srt`. You no longer need to check `typeof transcript === 'string'`.
+
+### The `'text'` format is now `'txt'`
+
+This matches the API. It affects `transcribe` and `getJobResult`:
+
+```diff
+- await client.getJobResult(jobId, 'text');
++ await client.getJobResult(jobId, 'txt');
+```
+
+### Failed jobs throw `SpeechmaticsJobFailedError`
+
+In v5, a rejected job made `transcribe` throw the job's raw `errors` array. It now throws a `SpeechmaticsJobFailedError`, which has `jobId`, `status` and `job` properties. The job's `errors` are under `err.job?.errors`. Deleted and expired jobs also throw this error now, where v5 kept polling until the timeout.
+
+```diff
+  try {
+    await client.transcribe(file, config);
+  } catch (err) {
+-   if (Array.isArray(err)) console.error(err);
++   if (err instanceof SpeechmaticsJobFailedError) console.error(err.status, err.job?.errors);
+  }
+```
+
+### Error responses that aren't JSON throw `SpeechmaticsUnexpectedResponse`
+
+Some error responses don't have a JSON body, such as the HTML `401` page returned for an invalid API key. These used to surface as a raw `SyntaxError`. They now throw `SpeechmaticsUnexpectedResponse`, with the HTTP status in the message and `{ status, statusText, body }` as its `cause`. Error responses with a JSON body still throw `SpeechmaticsResponseError` as before.
+
+### `getJob` and `getJobResult` may wait briefly by default
+
+This is an API change, so it affects v5 as well. When `wait` is omitted, these endpoints wait a short, server-chosen time for the job to finish before responding. In v6 you can pass `wait: 0` if you need an immediate response, for example in your own polling loop:
+
+```ts
+const { job } = await client.getJob(jobId, { wait: 0 });
+```
+
+### Alignment types removed
+
+The alignment job type has been removed from the API spec, so these fields have been removed from the generated types:
+
+- `alignment_config` on `JobConfig` and `RecognitionMetadata`
+- `text_name` on `JobInfo`
+- `'alignment'` from `JobType`
+- the `alignment*` values from `NotificationConfig` contents
+- the alignment-related values from `ErrorResponseErrorEnum`
+
+The client only ever created transcription jobs, so this only affects code that read these fields from API responses.
+
 ## Usage
 
 More examples will be available soon. For now, you can checkout the [NodeJS example](/examples/nodejs/batch-example.ts).
