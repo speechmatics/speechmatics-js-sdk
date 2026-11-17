@@ -30,6 +30,18 @@ test('request: JSON error body becomes SpeechmaticsResponseError', async () => {
   );
 });
 
+test('request: unknown error codes are still surfaced as SpeechmaticsResponseError', async () => {
+  const body = { code: 400, error: 'Some future error', detail: 'details' };
+  await withResponse(new Response(JSON.stringify(body), { status: 400 }), () =>
+    assert.rejects(call(), (err) => {
+      assert(err instanceof SpeechmaticsResponseError);
+      assert.strictEqual(err.error, 'Some future error');
+      assert.strictEqual(err.message, 'Some future error: details');
+      return true;
+    }),
+  );
+});
+
 test('request: non-JSON error body becomes SpeechmaticsUnexpectedResponse', async () => {
   const html = '<html><body>401 Authorization Required</body></html>';
   await withResponse(
