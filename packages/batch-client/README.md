@@ -153,3 +153,16 @@ The package now declares an `exports` map, so only the package root (and `packag
 The error's `message` now also includes the API's `detail`, when there is one (e.g. `Job rejected: Job config JSON is invalid`).
 
 The `zod` dependency has been removed.
+
+### `deleteJob` takes an options object
+
+```diff
+- await client.deleteJob(jobId, true);
++ await client.deleteJob(jobId, { force: true });
+```
+
+It also accepts a `signal`, like the other methods.
+
+### `getDataFile` removed
+
+`getDataFile` called an endpoint that isn't part of the documented API, and parsed its response as JSON, so it couldn't return a data file. It has been removed.

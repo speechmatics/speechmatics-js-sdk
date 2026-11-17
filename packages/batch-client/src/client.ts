@@ -31,7 +31,7 @@ export class BatchClient {
 
   private async get<T>(
     endpoint: string,
-    contentType?: string,
+    accept?: string,
     queryParams?: QueryParams,
     signal?: AbortSignal,
   ): Promise<T> {
@@ -42,7 +42,7 @@ export class BatchClient {
       'GET',
       null,
       { ...queryParams, [SM_APP_PARAM_NAME]: this.appId },
-      contentType,
+      accept,
       signal,
     );
   }
@@ -50,10 +50,10 @@ export class BatchClient {
   private async post<T>(
     endpoint: string,
     body: FormData | null = null,
-    contentType?: string,
     queryParams?: QueryParams,
     signal?: AbortSignal,
   ): Promise<T> {
+    // No Content-Type header: fetch sets it for FormData, including the multipart boundary
     return await request(
       this.apiKey,
       this.apiUrl,
@@ -61,16 +61,26 @@ export class BatchClient {
       'POST',
       body,
       { ...queryParams, [SM_APP_PARAM_NAME]: this.appId },
-      contentType,
+      'application/json',
       signal,
     );
   }
 
-  private async delete<T>(endpoint: string, params?: QueryParams): Promise<T> {
-    return request(this.apiKey, this.apiUrl, endpoint, 'DELETE', null, {
-      ...params,
-      [SM_APP_PARAM_NAME]: this.appId,
-    });
+  private async delete<T>(
+    endpoint: string,
+    params?: QueryParams,
+    signal?: AbortSignal,
+  ): Promise<T> {
+    return request(
+      this.apiKey,
+      this.apiUrl,
+      endpoint,
+      'DELETE',
+      null,
+      { ...params, [SM_APP_PARAM_NAME]: this.appId },
+      undefined,
+      signal,
+    );
   }
 
   /**
@@ -199,7 +209,7 @@ export class BatchClient {
     const params =
       wait === undefined ? {} : { wait: validateWait(wait), format };
 
-    return this.post('/v2/jobs', formData, undefined, params, signal);
+    return this.post('/v2/jobs', formData, params, signal);
   }
 
   async listJobs(
@@ -223,9 +233,17 @@ export class BatchClient {
     return this.get(`/v2/jobs/${id}`, 'application/json', params, signal);
   }
 
-  async deleteJob(id: string, force = false): Promise<DeleteJobResponse> {
+  /**
+   * Delete a job.
+   *
+   * Running jobs can only be deleted with `force: true`, which stops the job.
+   */
+  async deleteJob(
+    id: string,
+    { force = false, signal }: DeleteJobOptions = {},
+  ): Promise<DeleteJobResponse> {
     const params = force ? { force } : undefined;
-    return this.delete(`/v2/jobs/${id}`, params);
+    return this.delete(`/v2/jobs/${id}`, params, signal);
   }
 
   /**
@@ -245,18 +263,8 @@ export class BatchClient {
       format,
       ...(wait === undefined ? {} : { wait: validateWait(wait) }),
     };
-    const contentType =
-      format === 'json-v2' ? 'application/json' : 'text/plain';
-    return this.get(
-      `/v2/jobs/${jobId}/transcript`,
-      contentType,
-      params,
-      signal,
-    );
-  }
-
-  async getDataFile(jobId: string) {
-    return this.get(`/v2/jobs/${jobId}/data`, 'application/json');
+    const accept = format === 'json-v2' ? 'application/json' : 'text/plain';
+    return this.get(`/v2/jobs/${jobId}/transcript`, accept, params, signal);
   }
 
   async getFeatureDiscovery(): Promise<BatchFeatureDiscovery> {
@@ -320,6 +328,13 @@ export interface WaitOptions {
    */
   wait?: number;
   /** Abort the request. Note this does not cancel the job itself. */
+  signal?: AbortSignal;
+}
+
+export interface DeleteJobOptions {
+  /** Delete the job even if it is still running, stopping it. Defaults to `false`. */
+  force?: boolean;
+  /** Abort the request */
   signal?: AbortSignal;
 }
 
