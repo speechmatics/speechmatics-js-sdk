@@ -18,15 +18,14 @@ export async function request<T>(
   method: HttpMethod = 'POST',
   payload?: BodyInit | null | undefined,
   params?: QueryParams,
-  /** Expected response type. `text/plain` responses are returned as a string, anything else is parsed as JSON. */
-  accept?: string,
+  contentType?: string,
   signal?: AbortSignal,
 ): Promise<T> {
   const requestOptions: RequestInit = {
     method,
     signal,
     headers: {
-      ...(accept ? { Accept: accept } : {}),
+      ...(contentType ? { 'Content-Type': contentType } : {}),
       Authorization: `Bearer ${apiKey}`,
     },
     body: payload,
@@ -47,7 +46,7 @@ export async function request<T>(
     throw await errorFromResponse(response);
   }
 
-  const isPlain = accept === 'text/plain';
+  const isPlain = contentType === 'text/plain';
 
   let result: T;
 
